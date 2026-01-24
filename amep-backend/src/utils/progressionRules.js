@@ -1,0 +1,1 @@
+exports.difficultyOrder = ["easy", "medium", "hard"];
