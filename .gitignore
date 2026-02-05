@@ -7,8 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-./amep-frontend/node_modules
-./amep-backend/node_modules
+node_modules/
 dist
 dist-ssr
 *.local
