@@ -14,6 +14,14 @@ const AttendanceSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    sessionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ClassSession",
+    },
+    location: {
+      latitude: Number,
+      longitude: Number,
+    },
   },
   { timestamps: true }
 );

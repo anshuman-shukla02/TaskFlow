@@ -11,6 +11,8 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    console.log("AUTH ERROR:", error.message);
+    console.log("RECEIVED TOKEN:", token);
     res.status(401).json({ message: "Invalid token" });
   }
 };

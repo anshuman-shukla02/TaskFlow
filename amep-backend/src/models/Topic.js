@@ -12,8 +12,8 @@ const TopicSchema = new mongoose.Schema(
       required: true,
     },
     notes: {
-      type: String,
-      required: true, // markdown / html
+      type: [String],
+      required: true,
     },
   },
   { timestamps: true }

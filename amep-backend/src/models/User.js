@@ -23,6 +23,15 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "faculty"],
       required: true,
     },
+    division: {
+      type: String,
+      enum: ["A", "B", "C"],
+    },
+    rollNumber: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null/missing for faculty
+    },
   },
   { timestamps: true }
 );

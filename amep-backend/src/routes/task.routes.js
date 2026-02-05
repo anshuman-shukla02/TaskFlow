@@ -1,8 +1,15 @@
 const express = require("express");
-const router = express.Router();
-const auth = require("../middleware/auth.middleware");
-const { createTask, getMyTasks } = require("../controllers/task.controller");
+const {
+  createTask,
+  getAllTasks,
+} = require("../controllers/task.controller");
 
-router.post("/", auth, createTask);
-router.get("/my", auth, getMyTasks);
+const router = express.Router();
+
+// Faculty
+router.post("/", createTask);
+
+// Student
+router.get("/", getAllTasks);
+
 module.exports = router;

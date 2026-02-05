@@ -158,3 +158,115 @@ exports.getDifficultyWisePerformance = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+/**
+ * 4️⃣ RESET PROGRESS (PENALTY)
+ * Called when proctoring violation occurs
+ */
+exports.resetProgress = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+    const { topic } = req.body;
+
+    // Create a penalty submission (0 score)
+    // We assume a generic 'cheating-penalty' task ID or just skip foreign key check if possible,
+    // but better to just log a submission with metadata.
+    // Since we are strict on Schema, let's find ANY task for this topic to link to, or create a dummy one.
+    // For simplicity, we just create a submission with a score of 0.
+
+    // Find a task for this topic to link to (so Schema doesn't break)
+    const task = await mongoose.model("Task").findOne({ topic });
+
+    if (!task) {
+      // If no task exists, we can't create a submission easily due to schema constraints.
+      // In a real app we'd have a specific "Penalty" task. 
+      // For now, we return success but maybe just log it.
+      return res.json({ message: "No task found to penalize, but session terminated." });
+    }
+
+    await Submission.create({
+      userId,
+      taskId: task._id,
+      topic: topic,
+      difficulty: "medium", // Default
+      bloomLevel: "APPLY",
+      code: "SESSION TERMINATED - CHEATING DETECTED",
+      isCorrect: false,
+      performanceScore: 0, // PENALTY
+      timeTaken: 0,
+      hintsUsed: 0,
+      fileUrl: null
+    });
+
+    res.json({ message: "Progress reset (penalty applied)." });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * 5️⃣ COMBINED PROGRESS FOR FRONTEND ANALYTICS PAGE
+ */
+exports.getCombinedProgress = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.user.userId);
+
+    // 1. Overall Stats
+    const totalTasks = await Submission.countDocuments({ userId });
+
+    // Average Score
+    const avgData = await Submission.aggregate([
+      { $match: { userId } },
+      { $group: { _id: null, avg: { $avg: "$performanceScore" } } }
+    ]);
+    const avgScore = avgData.length ? Math.round(avgData[0].avg) : 0;
+
+    // Top Bloom Level (Mode)
+    const bloomData = await Submission.aggregate([
+      { $match: { userId } },
+      { $group: { _id: "$bloomLevel", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 1 }
+    ]);
+    const topBloomLevel = bloomData.length ? bloomData[0]._id : "N/A";
+
+    // 2. Recent Scores (Growth Curve)
+    const recentScores = await Submission.find({ userId })
+      .sort({ createdAt: 1 }) // Oldest first for line chart
+      .select("createdAt performanceScore")
+      .limit(20);
+
+    const formattedRecent = recentScores.map(s => ({
+      date: s.createdAt.toISOString().split('T')[0],
+      score: s.performanceScore
+    }));
+
+    // 3. Topic Strengths
+    const topicStrengths = await Submission.aggregate([
+      { $match: { userId } },
+      {
+        $group: {
+          _id: "$topic",
+          avgScore: { $avg: "$performanceScore" },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { avgScore: -1 } }
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        avgScore,
+        totalTasks,
+        topBloomLevel,
+        recentScores: formattedRecent,
+        topicStrengths
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

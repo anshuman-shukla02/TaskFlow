@@ -7,17 +7,21 @@ const TopicProgress = require("../models/TopicProgress");
 exports.getTopicNotes = async (req, res) => {
   try {
     const { topic } = req.params;
+    console.log(`[TopicController] Fetching notes for: ${topic}`);
 
     const topicData = await Topic.findOne({ name: topic });
     if (!topicData) {
+      console.log(`[TopicController] Topic not found: ${topic}`);
       return res.status(404).json({ message: "Topic not found" });
     }
 
+    console.log(`[TopicController] Found notes for ${topic} (${topicData.notes.length} items)`);
     res.json({
       topic: topicData.name,
       notes: topicData.notes,
     });
   } catch (error) {
+    console.error("[TopicController] Error:", error);
     res.status(500).json({ message: error.message });
   }
 };

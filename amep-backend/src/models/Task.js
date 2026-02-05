@@ -6,18 +6,45 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     description: {
       type: String,
+      required: true,
     },
+
+    topic: {
+      type: String,
+      required: true,
+    },
+
     difficulty: {
       type: String,
       enum: ["easy", "medium", "hard"],
-      default: "easy",
+      required: true,
     },
+
+    type: {
+      type: String,
+      enum: ["task", "project"],
+      default: "task",
+    },
+
+    bloomLevel: {
+      type: String,
+      enum: [
+        "REMEMBER",
+        "UNDERSTAND",
+        "APPLY",
+        "ANALYZE",
+        "EVALUATE",
+        "CREATE",
+      ],
+      required: true,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
   },
   { timestamps: true }
