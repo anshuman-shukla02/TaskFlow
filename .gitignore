@@ -26,3 +26,7 @@ dist-ssr
 # Environment variables
 .env
 .env.*
+
+# Local admin files
+admin_login.json
+admin_token.txt
