@@ -89,7 +89,7 @@ export default function StudentOverview() {
 
     /* ── Attendance percentage ring colour ── */
     const attendanceColor = (pct) => {
-        if (pct >= 75) return { ring: "#22c55e", bg: "bg-green-50", text: "text-green-700", label: "Good" };
+        if (pct >= 75) return { ring: "#22c55e", bg: "clay-tint-mint", text: "text-green-700", label: "Good" };
         if (pct >= 50) return { ring: "#f59e0b", bg: "bg-amber-50", text: "text-amber-700", label: "Average" };
         return { ring: "#ef4444", bg: "bg-red-50", text: "text-red-700", label: "Low" };
     };
@@ -111,7 +111,7 @@ export default function StudentOverview() {
                     </select>
 
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clay-muted" size={20} />
                         <input
                             type="text"
                             placeholder="Search students..."
@@ -124,7 +124,7 @@ export default function StudentOverview() {
             </div>
 
             {loading ? (
-                <div className="text-center py-20 text-slate-400">Loading students...</div>
+                <div className="text-center py-20 text-clay-muted">Loading students...</div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredStudents.map((student) => (
@@ -133,34 +133,34 @@ export default function StudentOverview() {
                             layoutId={student._id}
                             onClick={() => setSelectedStudent(student)}
                             whileHover={{ y: -4 }}
-                            className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md cursor-pointer border border-transparent hover:border-slate-200 transition-all"
+                            className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md cursor-pointer border border-transparent hover: transition-all"
                         >
                             <div className="flex justify-between items-start mb-4">
-                                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-purple-600 font-bold text-lg">
                                     {student.name.charAt(0)}
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${student.tag === 'Top Performer' ? 'bg-green-100 text-green-700' :
                                     student.tag === 'Needs Support' ? 'bg-red-100 text-red-700' :
-                                        'bg-slate-100 text-slate-700'
+                                        'bg-slate-100 text-clay-secondary'
                                     }`}>
                                     {student.tag}
                                 </span>
                             </div>
 
-                            <h3 className="font-semibold text-lg text-slate-900 truncate">{student.name}</h3>
-                            <div className="flex justify-between items-center text-sm text-slate-500 mb-4">
+                            <h3 className="font-semibold text-lg text-clay-text truncate">{student.name}</h3>
+                            <div className="flex justify-between items-center text-sm text-clay-muted mb-4">
                                 <span className="truncate">{student.email}</span>
                                 <span className="font-mono bg-slate-100 px-2 py-0.5 rounded text-xs">{student.rollNumber}</span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-slate-50">
                                 <div className="text-center p-2 bg-slate-50 rounded-xl">
-                                    <p className="text-xs text-slate-400 uppercase font-bold">Score</p>
-                                    <p className="text-xl font-bold text-slate-900">{student.avgPerformance}%</p>
+                                    <p className="text-xs text-clay-muted uppercase font-bold">Score</p>
+                                    <p className="text-xl font-bold text-clay-text">{student.avgPerformance}%</p>
                                 </div>
                                 <div className="text-center p-2 bg-slate-50 rounded-xl">
-                                    <p className="text-xs text-slate-400 uppercase font-bold">Solved</p>
-                                    <p className="text-xl font-bold text-slate-900">{student.questionsSolved}</p>
+                                    <p className="text-xs text-clay-muted uppercase font-bold">Solved</p>
+                                    <p className="text-xl font-bold text-clay-text">{student.questionsSolved}</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -175,7 +175,7 @@ export default function StudentOverview() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex justify-end bg-black/20 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex justify-end clay-modal-overlay"
                         onClick={() => setSelectedStudent(null)}
                     >
                         <motion.div
@@ -189,12 +189,12 @@ export default function StudentOverview() {
                             {/* Header */}
                             <div className="flex justify-between items-start mb-8">
                                 <div>
-                                    <h2 className="text-3xl font-bold text-slate-900">{selectedStudent.name}</h2>
-                                    <p className="text-slate-500">{selectedStudent.email} • {selectedStudent.rollNumber} • Div {selectedStudent.division}</p>
+                                    <h2 className="text-3xl font-bold text-clay-text">{selectedStudent.name}</h2>
+                                    <p className="text-clay-muted">{selectedStudent.email} • {selectedStudent.rollNumber} • Div {selectedStudent.division}</p>
                                 </div>
                                 <button
                                     onClick={() => setSelectedStudent(null)}
-                                    className="p-2 rounded-full hover:bg-slate-100 text-slate-500"
+                                    className="p-2 rounded-full hover:bg-slate-100 text-clay-muted"
                                 >
                                     <X size={24} />
                                 </button>
@@ -202,38 +202,38 @@ export default function StudentOverview() {
 
                             {/* STATS ROW */}
                             <div className="grid grid-cols-3 gap-4 mb-10">
-                                <div className="bg-blue-50 p-6 rounded-2xl">
-                                    <div className="flex items-center gap-3 mb-2 text-blue-600">
+                                <div className="clay-tint-sky p-6 rounded-2xl">
+                                    <div className="flex items-center gap-3 mb-2 text-purple-600">
                                         <TrendingUp size={20} />
                                         <span className="font-semibold text-sm uppercase">Avg Score</span>
                                     </div>
-                                    <p className="text-3xl font-bold text-slate-900">{selectedStudent.avgPerformance}%</p>
+                                    <p className="text-3xl font-bold text-clay-text">{selectedStudent.avgPerformance}%</p>
                                 </div>
-                                <div className="bg-purple-50 p-6 rounded-2xl">
+                                <div className="clay-tint-purple p-6 rounded-2xl">
                                     <div className="flex items-center gap-3 mb-2 text-purple-600">
                                         <CheckCircle size={20} />
                                         <span className="font-semibold text-sm uppercase">Tasks</span>
                                     </div>
-                                    <p className="text-3xl font-bold text-slate-900">{selectedStudent.tasksCompleted}</p>
+                                    <p className="text-3xl font-bold text-clay-text">{selectedStudent.tasksCompleted}</p>
                                 </div>
-                                <div className="bg-orange-50 p-6 rounded-2xl">
+                                <div className="clay-tint-peach p-6 rounded-2xl">
                                     <div className="flex items-center gap-3 mb-2 text-orange-600">
                                         <BookOpen size={20} />
                                         <span className="font-semibold text-sm uppercase">Projects</span>
                                     </div>
-                                    <p className="text-3xl font-bold text-slate-900">{selectedStudent.projectsCompleted}</p>
+                                    <p className="text-3xl font-bold text-clay-text">{selectedStudent.projectsCompleted}</p>
                                 </div>
                             </div>
 
                             {/* ── ATTENDANCE SECTION ── */}
                             <div className="mb-10">
-                                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <h3 className="text-xl font-bold text-clay-text mb-6 flex items-center gap-2">
                                     <CalendarCheck size={20} className="text-emerald-500" />
                                     Attendance
                                 </h3>
 
                                 {!attendanceData ? (
-                                    <div className="text-center py-8 text-slate-400">Loading attendance…</div>
+                                    <div className="text-center py-8 text-clay-muted">Loading attendance…</div>
                                 ) : (
                                     <>
                                         {/* Summary bar */}
@@ -243,7 +243,7 @@ export default function StudentOverview() {
                                                 <div className={`${c.bg} rounded-2xl p-5 mb-5 flex items-center justify-between`}>
                                                     <div>
                                                         <p className={`text-4xl font-extrabold ${c.text}`}>{attendanceData.percentage}%</p>
-                                                        <p className="text-sm text-slate-500 mt-1">
+                                                        <p className="text-sm text-clay-muted mt-1">
                                                             {attendanceData.attendedCount} of {attendanceData.totalSessions} sessions attended
                                                         </p>
                                                         <span className={`mt-2 inline-block text-xs font-bold uppercase px-3 py-1 rounded-full ${c.bg} ${c.text} border border-current/20`}>
@@ -273,20 +273,20 @@ export default function StudentOverview() {
 
                                         {/* Recent attendance log */}
                                         {attendanceData.records.length === 0 ? (
-                                            <div className="flex flex-col items-center py-8 text-slate-400 border border-dashed rounded-2xl">
+                                            <div className="flex flex-col items-center py-8 text-clay-muted border border-dashed rounded-2xl">
                                                 <CalendarX size={32} className="mb-2 opacity-40" />
                                                 <p>No attendance records yet</p>
                                             </div>
                                         ) : (
                                             <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Recent Sessions</p>
+                                                <p className="text-xs font-bold text-clay-muted uppercase tracking-wider mb-3">Recent Sessions</p>
                                                 {attendanceData.records.slice(0, 20).map((rec) => (
                                                     <div key={rec._id} className="flex justify-between items-center bg-slate-50 rounded-xl px-4 py-2.5 text-sm">
-                                                        <span className="text-slate-700 font-medium">
+                                                        <span className="text-clay-secondary font-medium">
                                                             {new Date(rec.date).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                                                         </span>
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-slate-400 text-xs">{rec.distance}m away</span>
+                                                            <span className="text-clay-muted text-xs">{rec.distance}m away</span>
                                                             <span className="w-2 h-2 rounded-full bg-green-400 inline-block" title="Present" />
                                                         </div>
                                                     </div>
@@ -299,7 +299,7 @@ export default function StudentOverview() {
 
                             {/* GROWTH CHART */}
                             <div className="mb-10">
-                                <h3 className="text-xl font-bold text-slate-900 mb-6">Performance Growth</h3>
+                                <h3 className="text-xl font-bold text-clay-text mb-6">Performance Growth</h3>
                                 <div className="h-64 w-full bg-white border rounded-2xl p-4 shadow-sm">
                                     {growthData.length > 0 ? (
                                         <ResponsiveContainer width="100%" height="100%">
@@ -319,7 +319,7 @@ export default function StudentOverview() {
                                             </LineChart>
                                         </ResponsiveContainer>
                                     ) : (
-                                        <div className="h-full flex items-center justify-center text-slate-400">
+                                        <div className="h-full flex items-center justify-center text-clay-muted">
                                             No enough data for growth chart
                                         </div>
                                     )}
@@ -328,7 +328,7 @@ export default function StudentOverview() {
 
                             {/* ACTIVITY BREAKDOWN */}
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-6">Activity Breakdown</h3>
+                                <h3 className="text-xl font-bold text-clay-text mb-6">Activity Breakdown</h3>
                                 <div className="h-64 w-full bg-white border rounded-2xl p-4 shadow-sm">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={[

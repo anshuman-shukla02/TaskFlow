@@ -15,7 +15,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { MoreVertical, Search, BookOpen, CheckSquare, BarChart2, Puzzle, LogOut, Calendar } from "lucide-react";
+import { MoreVertical, Search, BookOpen, CheckSquare, BarChart2, Puzzle, LogOut, Calendar, ChevronRight, Library } from "lucide-react";
 import ViewAnnouncementsModal from "../components/announcements/ViewAnnouncementsModal";
 
 /* ---------------- MOCK DATA (will replace with real later if needed) ---------------- */
@@ -91,11 +91,22 @@ export default function StudentDashboard() {
   // We can fetch real student data here later
 
   const quickActions = [
-    { name: "View Tasks", icon: <CheckSquare />, route: "/student/tasks", desc: "View and submit assigned tasks" },
-    { name: "Adaptive Learning", icon: <BookOpen />, route: "/student/adaptive-learning", desc: "Learn topics with AI assistance" },
-    { name: "Project Based Learning", icon: <Puzzle />, route: "/student/project", desc: "Build real-world applications" },
-    { name: "My Progress", icon: <BarChart2 />, route: "/student/progress", desc: "Detailed analytics of your performance" },
+    { name: "View Tasks", icon: <CheckSquare size={24} />, route: "/student/tasks", desc: "View and submit assigned tasks", color: "blue" },
+    { name: "Adaptive Learning", icon: <BookOpen size={24} />, route: "/student/adaptive-learning", desc: "Learn topics with AI assistance", color: "violet" },
+    { name: "Project Based Learning", icon: <Puzzle size={24} />, route: "/student/project", desc: "Build real-world applications", color: "emerald" },
+    { name: "Mark Attendance", icon: <Calendar size={24} />, route: "/student/attendance", desc: "Mark today's attendance & view history", color: "rose" },
+    { name: "Study Materials", icon: <Library size={24} />, route: "/student/materials", desc: "Access uploaded notes & syllabus", color: "sky" },
+    { name: "My Progress", icon: <BarChart2 size={24} />, route: "/student/progress", desc: "Detailed analytics of your performance", color: "amber" },
   ];
+
+  const actionColors = {
+    blue: { bg: "bg-blue-50", text: "text-blue-600", border: "hover:border-blue-200" },
+    violet: { bg: "bg-violet-50", text: "text-violet-600", border: "hover:border-violet-200" },
+    emerald: { bg: "bg-emerald-50", text: "text-emerald-600", border: "hover:border-emerald-200" },
+    sky: { bg: "bg-sky-50", text: "text-sky-600", border: "hover:border-sky-200" },
+    amber: { bg: "bg-amber-50", text: "text-amber-600", border: "hover:border-amber-200" },
+    rose: { bg: "bg-rose-50", text: "text-rose-600", border: "hover:border-rose-200" },
+  };
 
   return (
     <div className="flex-1 p-6 space-y-8 bg-gradient-to-br from-slate-50 to-slate-100 pb-20">
@@ -115,28 +126,25 @@ export default function StudentDashboard() {
           <motion.div
             key={item.name}
             variants={quickActionItem}
-            whileHover={{ y: -6, rotateX: 4 }}
-            className="min-h-[220px] bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+            whileHover={{ y: -4, scale: 1.01 }}
+            onClick={() => navigate(item.route)}
+            className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
           >
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 bg-slate-100 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-3 rounded-2xl ${actionColors[item.color].bg} ${actionColors[item.color].text}`}>
                   {item.icon}
                 </div>
-                <h3 className="font-semibold text-lg text-black">{item.name}</h3>
+                <h3 className="font-bold text-lg text-slate-800">{item.name}</h3>
               </div>
-              <p className="text-sm text-slate-500 mt-1">{item.desc}</p>
+              <p className="text-sm text-slate-500 mt-1 max-w-[85%]">{item.desc}</p>
             </div>
-
-            <div className="mt-6 flex">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate(item.route)}
-                className="px-5 py-2.5 bg-black text-white rounded-full w-full"
-              >
-                Open
-              </motion.button>
+            
+            {/* Elegant hover arrow replacing the button */}
+            <div className="absolute right-6 bottom-6 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+              <div className={`p-3 rounded-full ${actionColors[item.color].bg} ${actionColors[item.color].text} shadow-sm`}>
+                <ChevronRight size={20} className="stroke-[3]" />
+              </div>
             </div>
           </motion.div>
         ))}

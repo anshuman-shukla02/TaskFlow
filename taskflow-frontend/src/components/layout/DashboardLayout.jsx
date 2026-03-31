@@ -10,6 +10,9 @@ export default function DashboardLayout({ role }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
+    // Restore activeRole in sessionStorage so getToken() works across tabs/refreshes
+    sessionStorage.setItem("activeRole", role);
+    
     const userData = localStorage.getItem(`user_${role}`);
     if (userData) {
       try {
@@ -35,6 +38,7 @@ export default function DashboardLayout({ role }) {
       { name: "Dashboard", path: "/student" },
       { name: "Tasks", path: "/student/tasks" },
       { name: "Adaptive Learning", path: "/student/adaptive-learning" },
+      { name: "Study Materials", path: "/student/materials" },
       { name: "Project", path: "/student/project" }
     ]},
     { section: "Academics", items: [
@@ -48,6 +52,7 @@ export default function DashboardLayout({ role }) {
       { name: "Dashboard", path: "/faculty" },
       { name: "Students", path: "/faculty/students" },
       { name: "Tasks", path: "/faculty/tasks" },
+      { name: "Study Materials", path: "/faculty/materials" },
       { name: "Reviews", path: "/faculty/reviews" }
     ]},
     { section: "Academics", items: [
@@ -84,8 +89,10 @@ export default function DashboardLayout({ role }) {
     "/faculty/reviews": "Project Reviews",
     "/faculty/attendance": "Class Attendance",
     "/faculty/performance-report": "Performance Reports",
+    "/faculty/materials": "Study Materials",
     "/faculty/profile": "My Profile",
     "/student/profile": "My Profile",
+    "/student/materials": "Study Materials",
     "/admin/students": "Student Registration & Growth",
     "/admin/approvals": "Profile Change Requests",
     "/admin/user-approvals": "Account Registration Requests",

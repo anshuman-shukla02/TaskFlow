@@ -21,6 +21,20 @@ const submissionSchema = new mongoose.Schema(
       default: "PENDING",
     },
     reviewFeedback: { type: String, default: "" },
+    // Question-based task fields
+    questionAnswers: [
+      {
+        questionIndex: { type: Number },
+        answer: { type: String, default: "" },
+        fileUrl: { type: String, default: null },
+      }
+    ],
+    questionScores: [
+      {
+        questionIndex: { type: Number },
+        score: { type: Number, default: 0 },
+      }
+    ],
   },
   { timestamps: true }
 );

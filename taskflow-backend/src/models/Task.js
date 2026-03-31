@@ -25,6 +25,12 @@ const taskSchema = new mongoose.Schema(
         content: { type: String, default: "" }, 
       }
     ],
+    questions: [
+      {
+        text: { type: String, default: "" },
+        marks: { type: Number, default: 1, min: 0 },
+      }
+    ],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }

@@ -11,6 +11,7 @@ import FacultyTasks from "./pages/FacultyTasks";
 import FacultyAttendance from "./pages/FacultyAttendance";
 import FacultyReviews from "./pages/FacultyReviews";
 import FacultyPerformanceReport from "./pages/FacultyPerformanceReport";
+import FacultyMaterials from "./pages/FacultyMaterials";
 import StudentOverview from "./pages/StudentOverview";
 
 // Student Pages
@@ -20,6 +21,7 @@ import StudentAttendance from "./pages/StudentAttendance";
 import StudentProgress from "./pages/StudentProgress";
 import StudentProject from "./pages/StudentProject";
 import AdaptiveLearning from "./pages/AdaptiveLearning";
+import StudentMaterials from "./pages/StudentMaterials";
 
 // Admin Pages
 import AdminDashboard from "./pages/AdminDashboard";
@@ -46,6 +48,7 @@ export default function App() {
         <Route path="/faculty/reviews" element={<FacultyReviews />} />
         <Route path="/faculty/students" element={<StudentOverview />} />
         <Route path="/faculty/performance-report" element={<FacultyPerformanceReport />} />
+        <Route path="/faculty/materials" element={<FacultyMaterials />} />
         <Route path="/faculty/profile" element={<Profile />} />
       </Route>
 
@@ -57,6 +60,7 @@ export default function App() {
         <Route path="/student/progress" element={<StudentProgress />} />
         <Route path="/student/project" element={<StudentProject />} />
         <Route path="/student/adaptive-learning" element={<AdaptiveLearning />} />
+        <Route path="/student/materials" element={<StudentMaterials />} />
         <Route path="/student/profile" element={<Profile />} />
       </Route>
 

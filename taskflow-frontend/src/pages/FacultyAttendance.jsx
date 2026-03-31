@@ -99,36 +99,36 @@ export default function FacultyAttendance() {
         <div className="p-8 max-w-4xl mx-auto">
             {/* Stats Cards */}
             <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                <div className="bg-white p-6 rounded-2xl shadow-sm  flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 text-purple-600 rounded-xl">
                         <Users size={24} />
                     </div>
                     <div>
-                        <p className="text-sm text-slate-500 font-medium">Total Students</p>
+                        <p className="text-sm text-clay-muted font-medium">Total Students</p>
                         <p className="text-2xl font-bold">{stats.totalStudents}</p>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                <div className="bg-white p-6 rounded-2xl shadow-sm  flex items-center gap-4">
                     <div className="p-3 bg-green-100 text-green-600 rounded-xl">
                         <CheckCircleIcon />
                     </div>
                     <div>
-                        <p className="text-sm text-slate-500 font-medium">Present Today</p>
+                        <p className="text-sm text-clay-muted font-medium">Present Today</p>
                         <p className="text-2xl font-bold">{stats.presentToday}</p>
                     </div>
                 </div>
             </div>
 
             {/* Control Panel */}
-            <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-8 text-center">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
+            <div className="bg-white rounded-3xl shadow-lg  p-8 text-center">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-clay-muted">
                     <MapPin size={32} />
                 </div>
 
                 <h2 className="text-2xl font-bold mb-2">
                     {session ? "Session Active" : "Start Attendance"}
                 </h2>
-                <p className="text-slate-500 mb-8 max-w-md mx-auto">
+                <p className="text-clay-muted mb-8 max-w-md mx-auto">
                     {session
                         ? "Students can now mark their attendance within 50 meters of your current location."
                         : "Begin a new geo-fenced session. Ensure you are in the classroom before starting."}
@@ -147,7 +147,7 @@ export default function FacultyAttendance() {
                     <button
                         onClick={startSession}
                         disabled={loading}
-                        className="px-8 py-4 bg-black text-white rounded-full font-bold hover:scale-105 transition shadow-xl flex items-center gap-2 mx-auto"
+                        className="px-8 py-4 clay-btn-primary font-bold hover:scale-105 transition shadow-xl flex items-center gap-2 mx-auto"
                     >
                         {loading ? <Loader2 className="animate-spin" /> : <Play size={20} fill="currentColor" />}
                         Start Session

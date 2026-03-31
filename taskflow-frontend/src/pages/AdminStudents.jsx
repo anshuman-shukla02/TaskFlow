@@ -10,7 +10,7 @@ import {
 } from "recharts";
 
 const attendanceColor = (pct) => {
-  if (pct >= 75) return { ring: "#22c55e", bg: "bg-green-50", text: "text-green-700", label: "Good" };
+  if (pct >= 75) return { ring: "#22c55e", bg: "clay-tint-mint", text: "text-green-700", label: "Good" };
   if (pct >= 50) return { ring: "#f59e0b", bg: "bg-amber-50",  text: "text-amber-700",  label: "Average" };
   return            { ring: "#ef4444", bg: "bg-red-50",    text: "text-red-700",    label: "Low" };
 };
@@ -78,7 +78,7 @@ export default function AdminStudents() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="clay-spinner" />
       </div>
     );
   }
@@ -88,18 +88,18 @@ export default function AdminStudents() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Student Enrollment</h1>
-          <p className="text-slate-500 mt-1">Complete overview of registered students across all divisions.</p>
+          <h1 className="text-3xl font-bold text-clay-text">Student Enrollment</h1>
+          <p className="text-clay-muted mt-1">Complete overview of registered students across all divisions.</p>
         </div>
 
-        <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
-          <Filter size={18} className="text-slate-400 ml-2" />
+        <div className="flex items-center gap-3 bg-white p-2 rounded-2xl  shadow-sm">
+          <Filter size={18} className="text-clay-muted ml-2" />
           <div className="flex gap-1">
             {["All", "A", "B", "C"].map((div) => (
               <button
                 key={div}
                 onClick={() => setFilter(div)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition ${filter === div ? "bg-blue-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-50"}`}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition ${filter === div ? "bg-purple-600 text-white shadow-md" : "text-clay-muted hover:bg-slate-50"}`}
               >
                 Div {div}
               </button>
@@ -114,15 +114,15 @@ export default function AdminStudents() {
           <div
             key={student._id}
             onClick={() => openDetail(student)}
-            className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition group cursor-pointer"
+            className="bg-white rounded-3xl p-6 shadow-sm  hover:shadow-md hover:border-purple-100 transition group cursor-pointer"
           >
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xl uppercase">
+              <div className="w-14 h-14 rounded-2xl clay-tint-sky flex items-center justify-center text-purple-600 font-bold text-xl uppercase">
                 {student.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-bold text-slate-800 truncate group-hover:text-blue-600 transition">{student.name}</h3>
-                <p className="text-xs text-slate-500 flex items-center gap-1">
+                <h3 className="text-lg font-bold text-clay-text truncate group-hover:text-purple-600 transition">{student.name}</h3>
+                <p className="text-xs text-clay-muted flex items-center gap-1">
                   <Mail size={12} /> {student.email}
                 </p>
               </div>
@@ -132,19 +132,19 @@ export default function AdminStudents() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="p-3 bg-slate-50 rounded-2xl">
-                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Performance</p>
-                <p className="text-lg font-bold text-slate-800">{student.avgPerformance}%</p>
+              <div className="p-3 clay-card-flat">
+                <p className="text-[10px] font-bold text-clay-muted uppercase mb-1">Performance</p>
+                <p className="text-lg font-bold text-clay-text">{student.avgPerformance}%</p>
               </div>
-              <div className="p-3 bg-slate-50 rounded-2xl">
-                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Tasks</p>
-                <p className="text-lg font-bold text-slate-800">{student.tasksCompleted}</p>
+              <div className="p-3 clay-card-flat">
+                <p className="text-[10px] font-bold text-clay-muted uppercase mb-1">Tasks</p>
+                <p className="text-lg font-bold text-clay-text">{student.tasksCompleted}</p>
               </div>
             </div>
 
             <div className="flex justify-between items-center text-xs pt-4 border-t border-slate-50">
-              <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-                <GraduationCap size={14} className="text-slate-400" />
+              <div className="flex items-center gap-1.5 text-clay-muted font-medium">
+                <GraduationCap size={14} className="text-clay-muted" />
                 Roll: {student.rollNumber || "Not Set"}
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
@@ -160,9 +160,9 @@ export default function AdminStudents() {
       </div>
 
       {filteredStudents.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+        <div className="text-center py-20 bg-white rounded-3xl border border-dashed ">
           <Users size={40} className="mx-auto text-slate-200 mb-4" />
-          <p className="text-slate-500 font-medium">No students found for Division {filter}</p>
+          <p className="text-clay-muted font-medium">No students found for Division {filter}</p>
         </div>
       )}
 
@@ -173,7 +173,7 @@ export default function AdminStudents() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex justify-end bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex justify-end clay-modal-overlay"
             onClick={() => setSelectedStudent(null)}
           >
             <motion.div
@@ -187,14 +187,14 @@ export default function AdminStudents() {
               {/* Header */}
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">{selectedStudent.name}</h2>
-                  <p className="text-slate-500 text-sm mt-1">
+                  <h2 className="text-3xl font-bold text-clay-text">{selectedStudent.name}</h2>
+                  <p className="text-clay-muted text-sm mt-1">
                     {selectedStudent.email} • {selectedStudent.rollNumber} • Div {selectedStudent.division}
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="p-2 rounded-full hover:bg-slate-100 text-slate-500"
+                  className="p-2 rounded-full hover:bg-slate-100 text-clay-muted"
                 >
                   <X size={24} />
                 </button>
@@ -202,38 +202,38 @@ export default function AdminStudents() {
 
               {/* Stats Row */}
               <div className="grid grid-cols-3 gap-4 mb-10">
-                <div className="bg-blue-50 p-6 rounded-2xl">
-                  <div className="flex items-center gap-2 mb-2 text-blue-600">
+                <div className="clay-tint-sky p-6 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-2 text-purple-600">
                     <TrendingUp size={18} />
                     <span className="font-semibold text-xs uppercase">Avg Score</span>
                   </div>
-                  <p className="text-3xl font-bold text-slate-900">{selectedStudent.avgPerformance}%</p>
+                  <p className="text-3xl font-bold text-clay-text">{selectedStudent.avgPerformance}%</p>
                 </div>
-                <div className="bg-purple-50 p-6 rounded-2xl">
+                <div className="clay-tint-purple p-6 rounded-2xl">
                   <div className="flex items-center gap-2 mb-2 text-purple-600">
                     <CheckCircle size={18} />
                     <span className="font-semibold text-xs uppercase">Tasks</span>
                   </div>
-                  <p className="text-3xl font-bold text-slate-900">{selectedStudent.tasksCompleted}</p>
+                  <p className="text-3xl font-bold text-clay-text">{selectedStudent.tasksCompleted}</p>
                 </div>
-                <div className="bg-orange-50 p-6 rounded-2xl">
+                <div className="clay-tint-peach p-6 rounded-2xl">
                   <div className="flex items-center gap-2 mb-2 text-orange-600">
                     <BookOpen size={18} />
                     <span className="font-semibold text-xs uppercase">Projects</span>
                   </div>
-                  <p className="text-3xl font-bold text-slate-900">{selectedStudent.projectsCompleted}</p>
+                  <p className="text-3xl font-bold text-clay-text">{selectedStudent.projectsCompleted}</p>
                 </div>
               </div>
 
               {/* ── Attendance Section ── */}
               <div className="mb-10">
-                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <h3 className="text-xl font-bold text-clay-text mb-6 flex items-center gap-2">
                   <CalendarCheck size={20} className="text-emerald-500" />
                   Attendance
                 </h3>
 
                 {!attendanceData ? (
-                  <div className="text-center py-8 text-slate-400">Loading attendance…</div>
+                  <div className="text-center py-8 text-clay-muted">Loading attendance…</div>
                 ) : (
                   <>
                     {(() => {
@@ -242,7 +242,7 @@ export default function AdminStudents() {
                         <div className={`${c.bg} rounded-2xl p-5 mb-5 flex items-center justify-between`}>
                           <div>
                             <p className={`text-4xl font-extrabold ${c.text}`}>{attendanceData.percentage}%</p>
-                            <p className="text-sm text-slate-500 mt-1">
+                            <p className="text-sm text-clay-muted mt-1">
                               {attendanceData.attendedCount} of {attendanceData.totalSessions} sessions attended
                             </p>
                             <span className={`mt-2 inline-block text-xs font-bold uppercase px-3 py-1 rounded-full ${c.bg} ${c.text} border border-current/20`}>
@@ -270,20 +270,20 @@ export default function AdminStudents() {
                     })()}
 
                     {attendanceData.records.length === 0 ? (
-                      <div className="flex flex-col items-center py-8 text-slate-400 border border-dashed rounded-2xl">
+                      <div className="flex flex-col items-center py-8 text-clay-muted border border-dashed rounded-2xl">
                         <CalendarX size={32} className="mb-2 opacity-40" />
                         <p>No attendance records yet</p>
                       </div>
                     ) : (
                       <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Recent Sessions</p>
+                        <p className="text-xs font-bold text-clay-muted uppercase tracking-wider mb-3">Recent Sessions</p>
                         {attendanceData.records.slice(0, 20).map((rec) => (
                           <div key={rec._id} className="flex justify-between items-center bg-slate-50 rounded-xl px-4 py-2.5 text-sm">
-                            <span className="text-slate-700 font-medium">
+                            <span className="text-clay-secondary font-medium">
                               {new Date(rec.date).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                             </span>
                             <div className="flex items-center gap-2">
-                              <span className="text-slate-400 text-xs">{rec.distance}m away</span>
+                              <span className="text-clay-muted text-xs">{rec.distance}m away</span>
                               <span className="w-2 h-2 rounded-full bg-green-400 inline-block" title="Present" />
                             </div>
                           </div>
@@ -296,7 +296,7 @@ export default function AdminStudents() {
 
               {/* ── Performance Growth Chart ── */}
               <div className="mb-10">
-                <h3 className="text-xl font-bold text-slate-900 mb-6">Performance Growth</h3>
+                <h3 className="text-xl font-bold text-clay-text mb-6">Performance Growth</h3>
                 <div className="h-64 w-full bg-white border rounded-2xl p-4 shadow-sm">
                   {growthData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -311,7 +311,7 @@ export default function AdminStudents() {
                       </LineChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="h-full flex items-center justify-center text-slate-400">
+                    <div className="h-full flex items-center justify-center text-clay-muted">
                       No submission history yet
                     </div>
                   )}
@@ -320,7 +320,7 @@ export default function AdminStudents() {
 
               {/* ── Activity Breakdown ── */}
               <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-6">Activity Breakdown</h3>
+                <h3 className="text-xl font-bold text-clay-text mb-6">Activity Breakdown</h3>
                 <div className="h-64 w-full bg-white border rounded-2xl p-4 shadow-sm">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={[

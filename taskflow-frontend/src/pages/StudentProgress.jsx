@@ -52,29 +52,29 @@ export default function StudentProgress() {
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border flex items-center gap-4">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+          <div className="p-3 clay-tint-sky text-purple-600 rounded-xl">
             <TrendingUp />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Average Score</p>
+            <p className="text-sm text-clay-muted">Average Score</p>
             <p className="text-2xl font-bold">{data.avgScore}%</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border flex items-center gap-4">
-          <div className="p-3 bg-green-50 text-green-600 rounded-xl">
+          <div className="p-3 clay-tint-mint text-green-600 rounded-xl">
             <Activity />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Tasks Completed</p>
+            <p className="text-sm text-clay-muted">Tasks Completed</p>
             <p className="text-2xl font-bold">{data.totalTasks}</p>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border flex items-center gap-4">
-          <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
+          <div className="p-3 clay-tint-purple text-purple-600 rounded-xl">
             <Target />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Bloom Level</p>
+            <p className="text-sm text-clay-muted">Bloom Level</p>
             <p className="text-2xl font-bold">{data.topBloomLevel || "N/A"}</p>
           </div>
         </div>

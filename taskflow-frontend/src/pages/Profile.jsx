@@ -207,7 +207,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-40">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="clay-spinner"></div>
       </div>
     );
   }
@@ -231,27 +231,27 @@ export default function Profile() {
       </div>
 
       {/* Main Profile Content Panel */}
-      <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 -mt-16 relative z-20 border border-slate-100 p-8 grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 -mt-16 relative z-20  p-8 grid grid-cols-1 md:grid-cols-3 gap-10">
         
         {/* Left Column: Avatar Selection */}
-        <div className="md:col-span-1 flex flex-col items-center border-r border-slate-100 pr-4">
+        <div className="md:col-span-1 flex flex-col items-center border-r  pr-4">
             <div className="relative mb-6">
                <div className="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-slate-50 overflow-hidden flex items-center justify-center">
                     {selectedAvatar.includes('dicebear') ? (
                        <img src={selectedAvatar} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
-                       <span className="text-4xl font-bold text-slate-400">{user.name?.charAt(0)}</span>
+                       <span className="text-4xl font-bold text-clay-muted">{user.name?.charAt(0)}</span>
                     )}
                </div>
                <button 
                  onClick={handleSaveAvatar}
-                 className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full shadow-lg cursor-pointer hover:bg-blue-700 transition transform hover:scale-105"
+                 className="absolute bottom-0 right-0 p-2 clay-btn-primary shadow-lg cursor-pointer hover:bg-blue-700 transition transform hover:scale-105"
                >
                  <Camera size={18} />
                </button>
             </div>
 
-            <h3 className="text-lg font-bold text-slate-900 mb-4 w-full text-center">Customize Avatar</h3>
+            <h3 className="text-lg font-bold text-clay-text mb-4 w-full text-center">Customize Avatar</h3>
             <div className="flex flex-wrap gap-3 justify-center">
                 {AVATARS.map((avatarUrl, idx) => (
                     <motion.div 
@@ -259,7 +259,7 @@ export default function Profile() {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => setSelectedAvatar(avatarUrl)}
-                      className={`w-12 h-12 rounded-full cursor-pointer p-0.5 transition-all ${selectedAvatar === avatarUrl ? 'ring-2 ring-blue-600 ring-offset-2 bg-blue-50' : 'bg-slate-50 hover:bg-slate-100'}`}
+                      className={`w-12 h-12 rounded-full cursor-pointer p-0.5 transition-all ${selectedAvatar === avatarUrl ? 'ring-2 ring-blue-600 ring-offset-2 clay-tint-sky' : 'bg-slate-50 hover:bg-slate-100'}`}
                     >
                         <img src={avatarUrl} alt={`Avatar ${idx}`} className="w-full h-full rounded-full" />
                     </motion.div>
@@ -270,8 +270,8 @@ export default function Profile() {
         {/* Right Column: User Details Form */}
         <div className="md:col-span-2 space-y-6">
             <div className="flex justify-between items-center mb-6">
-               <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                  <User className="text-blue-600" size={24} /> Basic Information
+               <h2 className="text-2xl font-bold text-clay-text flex items-center gap-2">
+                  <User className="text-purple-600" size={24} /> Basic Information
                </h2>
                {hasPendingRequest && currentRole !== "admin" && (
                   <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-100 rounded-full text-xs font-bold">
@@ -282,56 +282,56 @@ export default function Profile() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2 relative">
-                    <label className="text-sm font-semibold text-slate-600">Full Name</label>
+                    <label className="text-sm font-semibold text-clay-secondary">Full Name</label>
                     <div className="relative">
-                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted" size={18} />
                        <input 
                            type="text" 
                            value={editData.name} 
                            onChange={(e) => setEditData({...editData, name: e.target.value})}
                            disabled={currentRole !== "admin" && hasPendingRequest}
-                           className={`w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           className={`w-full pl-11 pr-4 py-3 bg-slate-50 border rounded-xl text-clay-secondary font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
                        />
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-600">Email Address</label>
+                    <label className="text-sm font-semibold text-clay-secondary">Email Address</label>
                     <div className="relative">
-                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted" size={18} />
                        <input 
                            type="email" 
                            value={editData.email} 
                            onChange={(e) => setEditData({...editData, email: e.target.value})}
                            disabled={currentRole !== "admin" && hasPendingRequest}
-                           className={`w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           className={`w-full pl-11 pr-4 py-3 bg-slate-50 border rounded-xl text-clay-secondary font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
                        />
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                   <label className="text-sm font-semibold text-slate-600">Roll / ID Number</label>
+                   <label className="text-sm font-semibold text-clay-secondary">Roll / ID Number</label>
                    <div className="relative">
-                      <IdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <IdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted" size={18} />
                       <input 
                           type="text" 
                           value={editData.rollNumber} 
                           onChange={(e) => setEditData({...editData, rollNumber: e.target.value})}
                           disabled={currentRole !== "admin" && hasPendingRequest}
-                          className={`w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          className={`w-full pl-11 pr-4 py-3 bg-slate-50 border rounded-xl text-clay-secondary font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
                       />
                    </div>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-600">Division</label>
+                    <label className="text-sm font-semibold text-clay-secondary">Division</label>
                     <div className="relative">
-                       <School className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                       <School className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted" size={18} />
                        <select 
                            value={editData.division} 
                            onChange={(e) => setEditData({...editData, division: e.target.value})}
                            disabled={currentRole !== "admin" && hasPendingRequest}
-                           className={`w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none appearance-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                           className={`w-full pl-11 pr-4 py-3 bg-slate-50 border rounded-xl text-clay-secondary font-medium transition focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none appearance-none ${currentRole !== "admin" && hasPendingRequest ? 'opacity-50 cursor-not-allowed' : ''}`}
                        >
                           <option value="">Select Division</option>
                           <option value="A">Division A</option>
@@ -342,21 +342,21 @@ export default function Profile() {
                 </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4">
+            <div className="p-4 rounded-2xl bg-slate-50  flex items-start gap-4">
                 <AlertCircle className="text-blue-500 mt-1 flex-shrink-0" size={20} />
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-clay-secondary leading-relaxed">
                    {currentRole === "admin"
-                     ? <><span className="font-bold text-slate-800">Admin note:</span> Changes are applied immediately to your account.</>
-                     : <><span className="font-bold text-slate-800">Note:</span> Demographic changes require admin approval. Your profile will be updated automatically upon approval.</>
+                     ? <><span className="font-bold text-clay-text">Admin note:</span> Changes are applied immediately to your account.</>
+                     : <><span className="font-bold text-clay-text">Note:</span> Demographic changes require admin approval. Your profile will be updated automatically upon approval.</>
                    }
                 </p>
             </div>
 
-            <div className="pt-6 border-t border-slate-100 flex justify-end">
+            <div className="pt-6 border-t  flex justify-end">
                  <button 
                   onClick={handleSubmitRequest}
                   disabled={saving || !isDataChanged || (currentRole !== "admin" && hasPendingRequest)}
-                  className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 disabled:opacity-50 disabled:shadow-none active:scale-95 flex items-center gap-2"
+                  className="px-8 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 disabled:opacity-50 disabled:shadow-none active:scale-95 flex items-center gap-2"
                 >
                     {saving
                       ? "Saving..."

@@ -69,7 +69,7 @@ export default function AdminAnnouncements() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-24">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="clay-spinner"></div>
       </div>
     );
   }
@@ -79,18 +79,18 @@ export default function AdminAnnouncements() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-            <Megaphone className="text-blue-600" size={32} />
+          <h1 className="text-3xl font-bold text-clay-text flex items-center gap-3">
+            <Megaphone className="text-purple-600" size={32} />
             System Announcements
           </h1>
-          <p className="text-slate-500 mt-1">Broadcast important updates to faculty and students across the institution.</p>
+          <p className="text-clay-muted mt-1">Broadcast important updates to faculty and students across the institution.</p>
         </div>
         
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200"
+          className="flex items-center gap-2 px-6 py-3 clay-btn-primary"
         >
           <Plus size={20} />
           Create New Broadcast
@@ -98,23 +98,23 @@ export default function AdminAnnouncements() {
       </div>
 
       {/* Controls Bar */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm  flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted" size={18} />
           <input 
             type="text"
             placeholder="Search announcements..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 transition"
+            className="w-full pl-11 pr-4 py-2 clay-input transition"
           />
         </div>
         <div className="flex items-center gap-3">
-          <Filter className="text-slate-400" size={18} />
+          <Filter className="text-clay-muted" size={18} />
           <select 
             value={filterAudience}
             onChange={(e) => setFilterAudience(e.target.value)}
-            className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-sm font-medium text-slate-600 outline-none focus:ring-2 focus:ring-blue-100"
+            className="bg-slate-50  rounded-xl px-4 py-2 text-sm font-medium text-clay-secondary outline-none focus:ring-2 focus:ring-blue-100"
           >
             <option value="all">Everywhere</option>
             <option value="faculty">Faculty Only</option>
@@ -135,30 +135,30 @@ export default function AdminAnnouncements() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition group overflow-hidden relative"
+                className="clay-card-solid p-6 hover:shadow-md transition group overflow-hidden relative"
               >
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg bg-blue-50 text-blue-600`}>
+                      <div className={`p-2 rounded-lg clay-tint-sky text-purple-600`}>
                         <Bell size={18} />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition tracking-tight">
+                      <h3 className="text-xl font-bold text-clay-text group-hover:text-purple-600 transition tracking-tight">
                         {ann.title}
                       </h3>
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        ann.targetAudience === 'all' ? 'bg-purple-50 text-purple-600' :
-                        ann.targetAudience === 'faculty' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+                        ann.targetAudience === 'all' ? 'clay-tint-purple text-purple-600' :
+                        ann.targetAudience === 'faculty' ? 'clay-tint-amber text-amber-600' : 'clay-tint-mint text-emerald-600'
                       }`}>
                         {ann.targetAudience}
                       </span>
                     </div>
                     
-                    <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-wrap">
+                    <p className="text-clay-secondary leading-relaxed text-sm whitespace-pre-wrap">
                       {ann.content}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-4 pt-2 text-[11px] font-medium text-slate-400">
+                    <div className="flex flex-wrap items-center gap-4 pt-2 text-[11px] font-medium text-clay-muted">
                       <div className="flex items-center gap-1.5">
                         <Users size={14} />
                         By {ann.createdBy?.name || "System Admin"}
@@ -172,7 +172,7 @@ export default function AdminAnnouncements() {
 
                   <button 
                     onClick={() => handleDelete(ann._id)}
-                    className="p-2.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition duration-300"
+                    className="p-2.5 text-slate-300 hover:text-rose-600 hover:clay-tint-rose rounded-xl transition duration-300"
                     title="Delete Announcement"
                   >
                     <Trash2 size={20} />
@@ -181,12 +181,12 @@ export default function AdminAnnouncements() {
               </motion.div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed ">
               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
                 <Megaphone size={32} />
               </div>
-              <h3 className="text-lg font-bold text-slate-700">No announcements found</h3>
-              <p className="text-slate-500 text-sm mt-1">Try adjusting your filters or create a new broadcast.</p>
+              <h3 className="text-lg font-bold text-clay-secondary">No announcements found</h3>
+              <p className="text-clay-muted text-sm mt-1">Try adjusting your filters or create a new broadcast.</p>
             </div>
           )}
         </AnimatePresence>

@@ -119,10 +119,10 @@ export default function StudentAttendance() {
                     {isPresent && (
                         <div className="absolute inset-0 bg-green-100 rounded-full scale-90" />
                     )}
-                    <span className={`z-10 text-sm font-medium ${isPresent ? 'text-green-700' : 'text-slate-600'} ${isToday ? 'border-b-2 border-black' : ''}`}>
+                    <span className={`z-10 text-sm font-medium ${isPresent ? 'text-green-700' : 'text-clay-secondary'} ${isToday ? 'border-b-2 border-black' : ''}`}>
                         {day}
                     </span>
-                    {isPresent && <div className="w-1 h-1 bg-green-500 rounded-full mt-0.5 z-10" />}
+                    {isPresent && <div className="w-1 h-1 clay-tint-mint0 rounded-full mt-0.5 z-10" />}
                 </div>
             );
         }
@@ -136,7 +136,7 @@ export default function StudentAttendance() {
         <div className="p-8 max-w-4xl mx-auto flex flex-col md:flex-row gap-8 items-start">
             {/* LEFT: Mark Attendance Card */}
             <div className="flex flex-col items-center justify-center w-full md:w-1/2">
-                <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-10 w-full relative overflow-hidden text-center h-[500px] flex flex-col justify-center">
+                <div className="bg-white rounded-3xl shadow-xl  p-10 w-full relative overflow-hidden text-center h-[500px] flex flex-col justify-center">
 
                     {/* Background blobs */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-100 rounded-full blur-3xl -z-10 opacity-50"></div>
@@ -156,7 +156,7 @@ export default function StudentAttendance() {
                             </div>
                             <h2 className="text-xl font-bold text-green-700 mb-1">Present!</h2>
                             <p className="text-green-600">{message}</p>
-                            {distance && <p className="text-xs text-slate-400 mt-2">Distance: {distance}m</p>}
+                            {distance && <p className="text-xs text-clay-muted mt-2">Distance: {distance}m</p>}
                         </motion.div>
                     ) : (
                         <div className="space-y-6">
@@ -164,7 +164,7 @@ export default function StudentAttendance() {
                                 onClick={markAttendance}
                                 disabled={loading}
                                 className={`w-full py-6 rounded-2xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-3
-                    ${loading ? "bg-slate-100 text-slate-400" : "bg-black text-white hover:scale-105 active:scale-95"}
+                    ${loading ? "bg-slate-100 text-clay-muted" : "bg-black text-white hover:scale-105 active:scale-95"}
                 `}
                             >
                                 {loading ? (
@@ -194,8 +194,8 @@ export default function StudentAttendance() {
             </div>
 
             {/* RIGHT: Calendar Visual */}
-            <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-8 w-full md:w-1/2 h-[500px]">
-                <h2 className="text-2xl font-bold mb-6 text-slate-900 flex justify-center">Attendance History</h2>
+            <div className="bg-white rounded-3xl shadow-lg  p-8 w-full md:w-1/2 h-[500px]">
+                <h2 className="text-2xl font-bold mb-6 text-clay-text flex justify-center">Attendance History</h2>
 
                 <div className="flex justify-between items-center mb-6">
                     <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))} className="p-2 hover:bg-slate-100 rounded-full">←</button>
@@ -205,7 +205,7 @@ export default function StudentAttendance() {
 
                 <div className="grid grid-cols-7 gap-1 text-center mb-2">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <div key={day} className="text-xs font-bold text-slate-400 uppercase">{day}</div>
+                        <div key={day} className="text-xs font-bold text-clay-muted uppercase">{day}</div>
                     ))}
                 </div>
 
@@ -215,12 +215,12 @@ export default function StudentAttendance() {
 
                 <div className="mt-8 flex justify-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-500 rounded-full" />
-                        <span className="text-sm text-slate-500">Present</span>
+                        <div className="w-3 h-3 clay-tint-mint0 rounded-full" />
+                        <span className="text-sm text-clay-muted">Present</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-white border border-slate-300 rounded-full" />
-                        <span className="text-sm text-slate-500">Top-Ups / No Data</span>
+                        <span className="text-sm text-clay-muted">Top-Ups / No Data</span>
                     </div>
                 </div>
             </div>

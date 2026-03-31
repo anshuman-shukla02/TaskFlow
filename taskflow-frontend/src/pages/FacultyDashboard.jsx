@@ -20,7 +20,7 @@ import CreateTaskModal from "../components/faculty/CreateTaskModal";
 import CreateAnnouncementModal from "../components/announcements/CreateAnnouncementModal";
 import ViewAnnouncementsModal from "../components/announcements/ViewAnnouncementsModal";
 import ReactMarkdown from 'react-markdown';
-import { Calendar } from "lucide-react";
+import { Calendar, ChevronRight, BookOpen, Users, ClipboardCheck, FileText, CheckSquare } from "lucide-react";
 
 /* ---------------- MOCK DATA (Backend-ready) ---------------- */
 
@@ -142,12 +142,20 @@ export default function FacultyDashboard() {
   };
 
   const quickActions = [
-    "Upload Study Material",
-    "Student Overview",
-    "Mark Attendance",
-    "Create / Evaluate Test",
-    "Project Reviews",
+    { name: "Study Materials", icon: <BookOpen size={24} />, route: "/faculty/materials", desc: "Manage study materials", color: "indigo" },
+    { name: "Student Overview", icon: <Users size={24} />, route: "/faculty/students", desc: "View class-wise student insights", color: "blue" },
+    { name: "Mark Attendance", icon: <ClipboardCheck size={24} />, route: "/faculty/attendance", desc: "Manage daily attendance", color: "emerald" },
+    { name: "Create / Evaluate Test", icon: <FileText size={24} />, route: "/faculty/tasks", state: { openCreate: true }, desc: "Manage assignments", color: "amber" },
+    { name: "Project Reviews", icon: <CheckSquare size={24} />, route: "/faculty/reviews", desc: "Evaluate student projects", color: "rose" }
   ];
+
+  const actionColors = {
+    indigo: { bg: "bg-indigo-50", text: "text-indigo-600", border: "hover:border-indigo-200" },
+    blue: { bg: "bg-blue-50", text: "text-blue-600", border: "hover:border-blue-200" },
+    emerald: { bg: "bg-emerald-50", text: "text-emerald-600", border: "hover:border-emerald-200" },
+    amber: { bg: "bg-amber-50", text: "text-amber-600", border: "hover:border-amber-200" },
+    rose: { bg: "bg-rose-50", text: "text-rose-600", border: "hover:border-rose-200" },
+  };
 
   return (
     <div className="flex-1 flex flex-col w-full h-full relative">
@@ -163,66 +171,27 @@ export default function FacultyDashboard() {
         >
           {quickActions.map((item) => (
             <motion.div
-              key={item}
+              key={item.name}
               variants={quickActionItem}
-              whileHover={{ y: -6, rotateX: 4 }}
-              className="min-h-[220px] bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+              whileHover={{ y: -4, scale: 1.01 }}
+              onClick={() => navigate(item.route, { state: item.state })}
+              className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
             >
-              <h3 className="font-semibold text-lg text-black">
-                {item}
-              </h3>
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`p-3 rounded-2xl ${actionColors[item.color].bg} ${actionColors[item.color].text}`}>
+                    {item.icon}
+                  </div>
+                  <h3 className="font-bold text-lg text-slate-800">{item.name}</h3>
+                </div>
+                <p className="text-sm text-slate-500 mt-1 max-w-[85%]">{item.desc}</p>
+              </div>
 
-              {item === "Student Overview" ? (
-                <motion.p
-                  initial={{ opacity: 0.6 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-sm text-slate-500 mt-1"
-                >
-                  View class-wise student insights
-                </motion.p>
-              ) : (
-                <motion.p
-                  initial={{ opacity: 0.6 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                  className="text-sm text-slate-500 mt-1"
-                >
-                  Manage {item.toLowerCase()}
-                </motion.p>
-              )}
-
-              <div className={`mt-6 flex ${item === "Upload Study Material" ? "gap-4" : ""}`}>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    if (item === "Create Task") {
-                      navigate("/faculty/tasks", { state: { openCreate: true } });
-                    }
-                    if (item === "Mark Attendance") {
-                      navigate("/faculty/attendance");
-                    }
-                    if (item === "Student Overview") {
-                      navigate("/faculty/students");
-                    }
-                    if (item === "Project Reviews") {
-                      navigate("/faculty/reviews");
-                    }
-                  }}
-                  className="px-5 py-2.5 bg-black text-white rounded-full"
-                >
-                  Open
-                </motion.button>
-                {(item === "Upload Study Material") && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 border rounded-full text-sm text-slate-700 hover:bg-slate-50 transition"
-                  >
-                    Quick Upload
-                  </motion.button>
-                )}
+              {/* Elegant hover arrow replacing the button */}
+              <div className="absolute right-6 bottom-6 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                <div className={`p-3 rounded-full ${actionColors[item.color].bg} ${actionColors[item.color].text} shadow-sm`}>
+                  <ChevronRight size={20} className="stroke-[3]" />
+                </div>
               </div>
             </motion.div>
           ))}

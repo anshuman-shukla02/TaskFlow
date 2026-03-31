@@ -6,7 +6,7 @@ const Task = require("../models/Task");
 // POST /api/submissions — student submits a task
 router.post("/", auth, async (req, res) => {
   try {
-    const { taskId, code, fileUrl, content } = req.body;
+    const { taskId, code, fileUrl, content, questionAnswers } = req.body;
 
     // Look up the task to get topic / bloom info
     const task = await Task.findById(taskId);
@@ -14,8 +14,19 @@ router.post("/", auth, async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Simple auto-score: random 50-100 for demo (replace with real evaluation later)
-    const performanceScore = Math.floor(Math.random() * 51) + 50;
+    // Prevent duplicate submissions for the same task by this user (if not a project milestone)
+    // For project milestones, they submit multiple phases so we don't block them entirely, but for standard tasks they should only submit once.
+    if (task.type !== "project") {
+      const existingSubmission = await Submission.findOne({ taskId, userId: req.user.id });
+      if (existingSubmission) {
+        return res.status(400).json({ message: "You have already submitted this task." });
+      }
+    }
+
+    // For question-based tasks we leave score at 0 until faculty grades.
+    // For plain tasks keep the random auto-score demo behaviour.
+    const isQuestionBased = Array.isArray(task.questions) && task.questions.length > 0;
+    const performanceScore = isQuestionBased ? 0 : Math.floor(Math.random() * 51) + 50;
 
     const submission = await Submission.create({
       taskId,
@@ -25,12 +36,54 @@ router.post("/", auth, async (req, res) => {
       performanceScore,
       topic: task.topic,
       bloomLevel: task.bloomLevel,
+      questionAnswers: Array.isArray(questionAnswers) ? questionAnswers : [],
     });
 
     res.status(201).json({ success: true, submission });
   } catch (err) {
     console.error("Submit error:", err);
-    res.status(500).json({ message: "Failed to submit" });
+    res.status(500).json({ message: "Failed to submit: " + err.message });
+  }
+});
+
+// PUT /api/submissions/:id/score — faculty grades per-question scores
+router.put("/:id/score", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "faculty" && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const { questionScores } = req.body; // [{ questionIndex, score }]
+    const submission = await Submission.findById(req.params.id).populate("taskId");
+    if (!submission) return res.status(404).json({ message: "Submission not found" });
+
+    const questions = submission.taskId?.questions || [];
+    const totalMarks = questions.reduce((sum, q) => sum + (q.marks || 0), 0);
+    const earnedMarks = (questionScores || []).reduce((sum, qs) => sum + (qs.score || 0), 0);
+
+    // Normalise to 0-10
+    const performanceScore = totalMarks > 0 ? Math.round((earnedMarks / totalMarks) * 10) : 0;
+
+    submission.questionScores = questionScores || [];
+    submission.performanceScore = performanceScore;
+    await submission.save();
+
+    res.json({ success: true, submission });
+  } catch (err) {
+    console.error("Score error:", err);
+    res.status(500).json({ message: "Failed to save scores" });
+  }
+});
+
+// GET /api/submissions/me — student gets their own submissions
+router.get("/me", auth, async (req, res) => {
+  try {
+    const submissions = await Submission.find({ userId: req.user.id })
+      .select("taskId status createdAt performanceScore");
+    res.json({ success: true, submissions });
+  } catch (err) {
+    console.error("Fetch my submissions error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

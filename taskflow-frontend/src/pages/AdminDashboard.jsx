@@ -49,6 +49,13 @@ export default function AdminDashboard() {
     purple: { bg: "bg-purple-50", text: "text-purple-600", shadow: "shadow-purple-200" },
   };
 
+  const actionColors = {
+    blue: { bg: "bg-blue-50", text: "text-blue-600", border: "hover:border-blue-200" },
+    amber: { bg: "bg-amber-50", text: "text-amber-600", border: "hover:border-amber-200" },
+    purple: { bg: "bg-purple-50", text: "text-purple-600", border: "hover:border-purple-200" },
+    emerald: { bg: "bg-emerald-50", text: "text-emerald-600", border: "hover:border-emerald-200" },
+  };
+
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
     title: "",
@@ -374,6 +381,13 @@ export default function AdminDashboard() {
 
   // Approval/Rejection helpers can stay here as they are not Hooks
 
+  const quickActions = [
+    { name: "Manage Accounts", icon: <UserPlus size={24} />, desc: "Approve or reject registrations", color: "blue", action: () => navigate("/admin/user-approvals") },
+    { name: "Review Profiles", icon: <Clock size={24} />, desc: "Verify profile update requests", color: "amber", action: () => navigate("/admin/profile-approvals") },
+    { name: "Broadcast MSG", icon: <MessageSquarePlus size={24} />, desc: "Publish system announcements", color: "purple", action: () => setShowAnnouncementModal(true) },
+    { name: "Student Roster", icon: <School size={24} />, desc: "View and manage students", color: "emerald", action: () => navigate("/admin/students") },
+  ];
+
   return (
     <div className="p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full">
       {/* Header */}
@@ -382,18 +396,36 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold text-slate-900">Institution Overview</h1>
           <p className="text-slate-500 mt-1">Management dashboard for system-wide monitoring and controls.</p>
         </div>
-        
-        <div className="flex gap-3">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowAnnouncementModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200"
+      </div>
+
+      {/* QUICK ACTIONS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {quickActions.map((item) => (
+          <motion.div
+            key={item.name}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -4, scale: 1.01 }}
+            onClick={item.action}
+            className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
           >
-            <MessageSquarePlus size={20} />
-            New Announcement
-          </motion.button>
-        </div>
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-3 rounded-2xl ${actionColors[item.color].bg} ${actionColors[item.color].text}`}>
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-lg text-slate-800">{item.name}</h3>
+              </div>
+              <p className="text-sm text-slate-500 mt-1 max-w-[85%]">{item.desc}</p>
+            </div>
+            
+            <div className="absolute right-6 bottom-6 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+              <div className={`p-3 rounded-full ${actionColors[item.color].bg} ${actionColors[item.color].text} shadow-sm`}>
+                <ChevronRight size={20} className="stroke-[3]" />
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       {/* Main Stats Cards */}

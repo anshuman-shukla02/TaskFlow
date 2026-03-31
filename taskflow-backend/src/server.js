@@ -26,6 +26,7 @@ app.use("/api/topics", require("./routes/topicRoutes"));
 app.use("/api/announcements", require("./routes/announcementRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/upload", require("./routes/uploadRoutes"));
+app.use("/api/materials", require("./routes/studyMaterialRoutes"));
 
 
 // Health check

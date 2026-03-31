@@ -1,0 +1,10 @@
+# Introduction to Arrays
+An array is a data structure consisting of a collection of elements, each identified by at least one array index or key. An array is stored such that the position of each element can be computed from its index tuple by a mathematical formula. The simplest type of data structure is a linear array, also called one-dimensional array.
+
+## Key Points
+- Arrays are contiguous blocks of memory.
+- Random access to elements is fast, O(1).
+- Time complexity of insertion and deletion is O(N) because elements must be shifted.
+- In JavaScript, arrays are dynamic.
+
+Remember: an array is fundamental to building more complex data structures.

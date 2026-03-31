@@ -157,7 +157,7 @@ Use markdown formatting with headers, bullet points, and emphasis.`;
 
       const { GoogleGenerativeAI } = require("@google/generative-ai");
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
       const result = await model.generateContent(prompt);
       report = result.response.text();
     } catch (aiErr) {

@@ -177,7 +177,7 @@ export default function AdminUserApprovals() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="clay-spinner"></div>
       </div>
     );
   }
@@ -186,31 +186,31 @@ export default function AdminUserApprovals() {
     <div className="p-8 max-w-6xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-            <UserPlus className="text-blue-600" size={32} />
+          <h1 className="text-3xl font-bold text-clay-text flex items-center gap-3">
+            <UserPlus className="text-purple-600" size={32} />
             Registration Approvals
           </h1>
-          <p className="text-slate-500 mt-1">Review new student and faculty applications for access to the system.</p>
+          <p className="text-clay-muted mt-1">Review new student and faculty applications for access to the system.</p>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm  flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-clay-muted" size={18} />
           <input 
             type="text"
             placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 transition"
+            className="w-full pl-11 pr-4 py-2 clay-input transition"
           />
         </div>
         <div className="flex items-center gap-3">
-          <Filter className="text-slate-400" size={18} />
+          <Filter className="text-clay-muted" size={18} />
           <select 
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
-            className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-sm font-medium text-slate-600 outline-none focus:ring-2 focus:ring-blue-100"
+            className="bg-slate-50  rounded-xl px-4 py-2 text-sm font-medium text-clay-secondary outline-none focus:ring-2 focus:ring-blue-100"
           >
             <option value="all">All Roles</option>
             <option value="student">Students Only</option>
@@ -228,16 +228,16 @@ export default function AdminUserApprovals() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition relative flex flex-col"
+                className="clay-card-solid p-6 hover:shadow-md transition relative flex flex-col"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-extrabold text-xl shadow-inner border border-blue-100">
+                  <div className="w-14 h-14 rounded-2xl clay-tint-sky text-purple-600 flex items-center justify-center font-extrabold text-xl shadow-inner border border-purple-100">
                     {user.name.charAt(0)}
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 truncate max-w-[150px]">{user.name}</h3>
+                    <h3 className="font-bold text-clay-text truncate max-w-[150px]">{user.name}</h3>
                     <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
-                        user.role === 'faculty' ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-600'
+                        user.role === 'faculty' ? 'clay-tint-amber text-amber-600' : 'clay-tint-mint text-emerald-600'
                       }`}>
                       {user.role}
                     </span>
@@ -245,12 +245,12 @@ export default function AdminUserApprovals() {
                 </div>
 
                 <div className="space-y-2 mb-6 flex-1">
-                   <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <Mail size={14} className="text-slate-400" />
+                   <div className="flex items-center gap-2 text-xs text-clay-muted">
+                      <Mail size={14} className="text-clay-muted" />
                       <span className="truncate">{user.email}</span>
                    </div>
-                   <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <Clock size={14} className="text-slate-400" />
+                   <div className="flex items-center gap-2 text-xs text-clay-muted">
+                      <Clock size={14} className="text-clay-muted" />
                       <span>Applied: {new Date(user.createdAt).toLocaleDateString()}</span>
                    </div>
                 </div>
@@ -258,13 +258,13 @@ export default function AdminUserApprovals() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleApprove(user._id, user.name)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 clay-btn-success text-xs font-bold shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition"
                   >
                     <CheckCircle size={16} /> Approve
                   </button>
                   <button 
                     onClick={() => handleReject(user._id, user.name)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-white text-rose-600 border border-rose-100 rounded-xl text-xs font-bold hover:bg-rose-50 transition"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-white text-rose-600 border border-rose-100 rounded-xl text-xs font-bold hover:clay-tint-rose transition"
                   >
                     <XCircle size={16} /> Reject
                   </button>
@@ -272,9 +272,9 @@ export default function AdminUserApprovals() {
               </motion.div>
             ))
           ) : (
-            <div className="col-span-full py-24 bg-white rounded-3xl border border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+            <div className="col-span-full py-24 bg-white rounded-3xl border border-dashed  flex flex-col items-center justify-center text-clay-muted">
                <UserPlus size={48} className="mb-4 opacity-10" />
-               <h3 className="text-lg font-bold text-slate-700">No applications pending</h3>
+               <h3 className="text-lg font-bold text-clay-secondary">No applications pending</h3>
                <p className="text-sm">There are no new registrations waiting for review.</p>
             </div>
           )}

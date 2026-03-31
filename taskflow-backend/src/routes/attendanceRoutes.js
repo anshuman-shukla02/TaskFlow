@@ -67,35 +67,56 @@ router.post("/mark", auth, async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
 
-    // Find any active session
-    const session = await AttendanceSession.findOne({ active: true });
-    if (!session) {
-      return res.status(400).json({ message: "No active attendance session right now" });
+    if (latitude === undefined || longitude === undefined) {
+      return res.status(400).json({ message: "Valid location coordinates required" });
     }
 
-    // Calculate distance
-    const distance = haversineDistance(
-      latitude,
-      longitude,
-      session.latitude,
-      session.longitude
-    );
-
-    const distanceRounded = Math.round(distance);
-
-    if (distance > session.radius) {
-      return res.status(400).json({
-        message: "You are too far from the classroom",
-        details: `${distanceRounded}m away (allowed: ${session.radius}m)`,
-      });
-    }
-
-    // Check if already marked TODAY (one attendance per student per day)
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
 
+    // Find all active sessions created TODAY
+    const activeSessions = await AttendanceSession.find({ 
+      active: true,
+      createdAt: { $gte: todayStart, $lte: todayEnd }
+    });
+
+    if (activeSessions.length === 0) {
+      return res.status(400).json({ message: "No active attendance session right now" });
+    }
+
+    // Find the nearest session
+    let nearestSession = null;
+    let minDistance = Infinity;
+
+    for (const s of activeSessions) {
+      const d = haversineDistance(
+        latitude,
+        longitude,
+        s.latitude,
+        s.longitude
+      );
+      if (d < minDistance) {
+        minDistance = d;
+        nearestSession = s;
+      }
+    }
+
+    if (!nearestSession || isNaN(minDistance)) {
+      return res.status(400).json({ message: "Invalid location data" });
+    }
+
+    const distanceRounded = Math.round(minDistance);
+
+    if (minDistance > nearestSession.radius) {
+      return res.status(400).json({
+        message: "You are too far from the classroom",
+        details: `${distanceRounded}m away (allowed: ${nearestSession.radius}m)`,
+      });
+    }
+
+    // Check if already marked TODAY (one attendance per student per day)
     const existing = await Attendance.findOne({
       studentId: req.user.id,
       date: { $gte: todayStart, $lte: todayEnd },
@@ -107,7 +128,7 @@ router.post("/mark", auth, async (req, res) => {
 
     const attendance = await Attendance.create({
       studentId: req.user.id,
-      sessionId: session._id,
+      sessionId: nearestSession._id,
       distance: distanceRounded,
     });
 
@@ -186,9 +207,15 @@ router.get("/student/:studentId", auth, async (req, res) => {
 // GET /api/attendance/active — faculty checks for their own active session
 router.get("/active", auth, async (req, res) => {
   try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
     const session = await AttendanceSession.findOne({
       facultyId: req.user.id,
       active: true,
+      createdAt: { $gte: todayStart, $lte: todayEnd }
     });
 
     res.json({ success: true, session: session || null });
