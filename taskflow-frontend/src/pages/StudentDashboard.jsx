@@ -18,29 +18,7 @@ import {
 import { MoreVertical, Search, BookOpen, CheckSquare, BarChart2, Puzzle, LogOut, Calendar, ChevronRight, Library } from "lucide-react";
 import ViewAnnouncementsModal from "../components/announcements/ViewAnnouncementsModal";
 
-/* ---------------- MOCK DATA (will replace with real later if needed) ---------------- */
-
-const progressData = [
-  { week: "W1", score: 65 },
-  { week: "W2", score: 68 },
-  { week: "W3", score: 75 },
-  { week: "W4", score: 82 },
-];
-
-const topicPerformance = [
-  { topic: "Arrays", value: 85 },
-  { topic: "Linked Lists", value: 60 },
-  { topic: "Trees", value: 70 },
-  { topic: "Graphs", value: 55 },
-];
-
-const difficultyPerformance = [
-  { level: "Easy", score: 85 },
-  { level: "Medium", score: 70 },
-  { level: "Hard", score: 50 },
-];
-
-const COLORS = ["#3b82f6", "#22c55e", "#f59e0b", "#ef4444"];
+const CHART_COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#ec4899", "#06b6d4", "#8b5cf6"];
 
 /* ---------------- COMPONENT ---------------- */
 
@@ -66,9 +44,13 @@ export default function StudentDashboard() {
   const navigate = useNavigate();
   const [announcements, setAnnouncements] = useState([]);
   const [showAllAnnouncements, setShowAllAnnouncements] = useState(false);
+  const [progressData, setProgressData] = useState([]);
+  const [topicPerformance, setTopicPerformance] = useState([]);
+  const [chartsLoading, setChartsLoading] = useState(true);
 
   useEffect(() => {
     fetchAnnouncements();
+    fetchDashboardSummary();
   }, []);
 
   const fetchAnnouncements = async () => {
@@ -77,18 +59,28 @@ export default function StudentDashboard() {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
-      if (data.success) {
-        setAnnouncements(data.announcements);
-      }
+      if (data.success) setAnnouncements(data.announcements);
     } catch (err) {
       console.error("Failed to fetch announcements:", err);
     }
   };
 
-
-
-
-  // We can fetch real student data here later
+  const fetchDashboardSummary = async () => {
+    try {
+      const res = await fetch("http://localhost:5002/api/progress/dashboard-summary", {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProgressData(data.progressData);
+        setTopicPerformance(data.topicPerformance);
+      }
+    } catch (err) {
+      console.error("Failed to fetch dashboard summary:", err);
+    } finally {
+      setChartsLoading(false);
+    }
+  };
 
   const quickActions = [
     { name: "View Tasks", icon: <CheckSquare size={24} />, route: "/student/tasks", desc: "View and submit assigned tasks", color: "blue" },
@@ -194,44 +186,74 @@ export default function StudentDashboard() {
       {/* ---------------- ANALYTICS OVERVIEW ---------------- */}
       <div className="border rounded-3xl p-8 space-y-8 bg-white shadow-sm">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">
-            Your Performance Overview
-          </h2>
+          <h2 className="text-xl font-semibold">Your Performance Overview</h2>
+          <button
+            onClick={() => navigate("/student/progress")}
+            className="text-sm text-slate-500 hover:text-violet-600 flex items-center gap-1 transition font-medium"
+          >
+            Full Report <ChevronRight size={14} />
+          </button>
         </div>
 
-        {/* CHART GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Progress Overview */}
-          <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
-            <h3 className="font-semibold mb-2">Weekly Progress</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={progressData}>
-                <XAxis dataKey="week" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="score"
-                  stroke="#2563eb"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+        {chartsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[0, 1].map(i => (
+              <div key={i} className="border rounded-2xl p-5 bg-slate-50 animate-pulse">
+                <div className="h-4 w-32 bg-slate-200 rounded mb-4" />
+                <div className="h-56 bg-slate-200 rounded-xl" />
+              </div>
+            ))}
           </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Weekly Progress */}
+            <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+              <h3 className="font-semibold mb-1 text-slate-800">Weekly Score Trend</h3>
+              <p className="text-xs text-slate-400 mb-4">Average submission score per week</p>
+              {progressData.length === 0 ? (
+                <div className="h-56 flex items-center justify-center text-slate-400 text-sm">No submissions yet.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={progressData}>
+                    <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: 12 }} />
+                    <Line
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#6366f1"
+                      strokeWidth={3}
+                      dot={{ r: 4, fill: '#6366f1', strokeWidth: 0 }}
+                      activeDot={{ r: 6, strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
+            </div>
 
-          {/* Topic-wise Performance */}
-          <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
-            <h3 className="font-semibold mb-2">Strongest Topics</h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={topicPerformance}>
-                <XAxis dataKey="topic" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="#22c55e" />
-              </BarChart>
-            </ResponsiveContainer>
+            {/* Topic Performance */}
+            <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+              <h3 className="font-semibold mb-1 text-slate-800">Topic Performance</h3>
+              <p className="text-xs text-slate-400 mb-4">Average score per topic from task submissions</p>
+              {topicPerformance.length === 0 ? (
+                <div className="h-56 flex items-center justify-center text-slate-400 text-sm">Submit tasks to see topic data.</div>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={topicPerformance} barSize={22}>
+                    <XAxis dataKey="topic" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: 12 }} />
+                    <Bar dataKey="value" name="Avg Score" radius={[5, 5, 0, 0]}>
+                      {topicPerformance.map((_, i) => (
+                        <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Modals */}

@@ -53,7 +53,8 @@ export default function DashboardLayout({ role }) {
       { name: "Students", path: "/faculty/students" },
       { name: "Tasks", path: "/faculty/tasks" },
       { name: "Study Materials", path: "/faculty/materials" },
-      { name: "Reviews", path: "/faculty/reviews" }
+      { name: "Reviews", path: "/faculty/reviews" },
+      { name: "Submissions", path: "/faculty/submissions" }
     ]},
     { section: "Academics", items: [
       { name: "Attendance", path: "/faculty/attendance" },
@@ -90,6 +91,7 @@ export default function DashboardLayout({ role }) {
     "/faculty/attendance": "Class Attendance",
     "/faculty/performance-report": "Performance Reports",
     "/faculty/materials": "Study Materials",
+    "/faculty/submissions": "Submissions Hub",
     "/faculty/profile": "My Profile",
     "/student/profile": "My Profile",
     "/student/materials": "Study Materials",
@@ -107,11 +109,23 @@ export default function DashboardLayout({ role }) {
 
   const isRootDashboard = location.pathname === "/faculty" || location.pathname === "/student" || location.pathname === "/admin";
 
+  // Determine if the current route should be fullscreen (no navbar, no sidebar)
+  const fullScreenRoutes = [
+    "/student/tasks",
+    "/student/adaptive-learning",
+    "/student/materials",
+    "/student/materials",
+    "/student/project",
+    "/faculty/tasks/create",
+    "/faculty/performance-report"
+  ];
+  const isFullScreen = fullScreenRoutes.includes(location.pathname);
+
   return (
-    <div className="h-screen flex overflow-hidden bg-slate-50 font-sans text-slate-900">
+    <div className="h-screen flex overflow-hidden bg-slate-50 font-sans text-slate-900 print:h-auto print:overflow-visible">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
-        {isSidebarOpen && (
+        {isSidebarOpen && !isFullScreen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -123,8 +137,9 @@ export default function DashboardLayout({ role }) {
       </AnimatePresence>
 
       {/* SIDEBAR */}
-      <div className={`fixed lg:static top-0 left-0 h-screen w-64 bg-slate-900 text-white p-6 space-y-6 flex flex-col z-50 transform transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
-        <div className="flex justify-between items-center">
+      {!isFullScreen && (
+        <div className={`fixed lg:static top-0 left-0 h-screen w-64 bg-slate-900 text-white p-6 space-y-6 flex flex-col z-50 transform transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
+          <div className="flex justify-between items-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-white">TASKFLOW</h2>
           <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
             <X size={24} />
@@ -159,10 +174,12 @@ export default function DashboardLayout({ role }) {
           <LogOut size={18} /> Logout
         </button>
       </div>
+      )}
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible">
         {/* TOP NAVBAR */}
-        <header className="flex items-center justify-between px-6 lg:px-8 py-4 bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        {!isFullScreen && (
+          <header className="flex items-center justify-between px-6 lg:px-8 py-4 bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-lg hover:bg-slate-100 lg:hidden focus:outline-none">
               <Menu size={24} className="text-slate-600" />
@@ -203,9 +220,18 @@ export default function DashboardLayout({ role }) {
             )}
           </div>
         </header>
+        )}
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-y-auto w-full relative">
+        <main className={`flex-1 overflow-y-auto ${isFullScreen ? "" : "p-6 lg:p-8"} print:overflow-visible print:p-0`}>
+          {isFullScreen && (
+            <button
+              onClick={() => navigate(-1)}
+              className="absolute top-6 left-6 z-[100] p-2.5 bg-white text-slate-700 hover:bg-slate-100 rounded-full shadow-lg border border-slate-200 transition-colors flex items-center justify-center group"
+            >
+              <ArrowLeft size={22} className="group-hover:-translate-x-1 transition-transform" />
+            </button>
+          )}
           <Outlet />
         </main>
       </div>

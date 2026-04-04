@@ -1,0 +1,508 @@
+[
+  {
+    "id": "flood-fill",
+    "title": "Flood Fill",
+    "difficulty": "Easy",
+    "description": "An image is represented by an m x n integer grid image where image[i][j] represents the pixel value of the image. You are also given three integers sr, sc, and color. You should perform a flood fill on the image starting from the pixel image[sr][sc]. To perform a flood fill, consider the starting pixel, plus any pixels connected 4-directionally to the starting pixel of the same color as the starting pixel, plus any pixels connected 4-directionally to those pixels (also with the same color), and so on. Replace the color of all of the aforementioned pixels with color. Return the modified image.",
+    "examples": [
+      {
+        "input": "image = [[1,1,1],[1,1,0],[1,0,1]], sr = 1, sc = 1, color = 2",
+        "output": "[[2,2,2],[2,2,0],[2,0,1]]"
+      },
+      {
+        "input": "image = [[0,0,0],[0,0,0]], sr = 0, sc = 0, color = 0",
+        "output": "[[0,0,0],[0,0,0]]"
+      }
+    ],
+    "constraints": [
+      "m == image.length",
+      "n == image[i].length",
+      "1 <= m, n <= 50",
+      "0 <= image[i][j], color < 2^16",
+      "0 <= sr < m",
+      "0 <= sc < n"
+    ],
+    "hints": [
+      "Use recursion (DFS) or a queue (BFS) to visit all connected pixels of the same color.",
+      "Keep track of visited pixels to avoid infinite loops and redundant processing."
+    ],
+    "defaultCodeJS": "function floodFill(image, sr, sc, color) {\n}",
+    "defaultCodePY": "def floodFill(image, sr, sc, color):\n    pass",
+    "defaultCodeC": "int** floodFill(int** image, int imageSize, int* imageColSize, int sr, int sc, int color) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    std::vector<std::vector<int>> floodFill(std::vector<std::vector<int>>& image, int sr, int sc, int color) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[][] floodFill(int[][] image, int sr, int sc, int color) {\n    }\n}"
+  },
+  {
+    "id": "find-if-path-exists-in-graph",
+    "title": "Find if Path Exists in Graph",
+    "difficulty": "Easy",
+    "description": "There is a bi-directional graph with n vertices, where each vertex is labeled from 0 to n - 1 (inclusive). The edges in the graph are represented as a 2D integer array edges, where each edges[i] = [ui, vi] denotes a bi-directional edge between vertex ui and vertex vi. Every vertex has at most one incoming edge and at most one outgoing edge. You are also given three integers n, start, and end. Return true if there is a valid path from start to end, and false otherwise.",
+    "examples": [
+      {
+        "input": "n = 3, edges = [[0,1],[1,2],[2,0]], start = 0, end = 2",
+        "output": "true"
+      },
+      {
+        "input": "n = 6, edges = [[0,1],[0,2],[3,5],[5,4],[4,3]], start = 0, end = 5",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "1 <= n <= 2 * 10^5",
+      "0 <= edges.length <= 2 * 10^5",
+      "edges[i].length == 2",
+      "0 <= ui, vi <= n - 1",
+      "ui != vi",
+      "0 <= start, end <= n - 1",
+      "There are no self-loops or multiple edges."
+    ],
+    "hints": [
+      "Build an adjacency list to represent the graph.",
+      "Use BFS or DFS to traverse the graph starting from the `start` node and check if `end` is reachable."
+    ],
+    "defaultCodeJS": "function validPath(n, edges, start, end) {\n}",
+    "defaultCodePY": "def validPath(n, edges, start, end):\n    pass",
+    "defaultCodeC": "bool validPath(int n, int** edges, int edgesSize, int* edgesColSize, int start, int end) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool validPath(int n, std::vector<std::vector<int>>& edges, int start, int end) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean validPath(int n, int[][] edges, int start, int end) {\n    }\n}"
+  },
+  {
+    "id": "number-of-connected-components",
+    "title": "Number of Connected Components in Undirected Graph",
+    "difficulty": "Easy",
+    "description": "You have a graph of `n` nodes labeled from `0` to `n - 1`. You are given an integer `n` and a list of `edges` where `edges[i] = [ai, bi]` indicates that there is an undirected edge between nodes `ai` and `bi` in the graph.\n\nReturn the number of connected components in the graph.",
+    "examples": [
+      {
+        "input": "n = 5, edges = [[0,1],[1,2],[3,4]]",
+        "output": "2"
+      },
+      {
+        "input": "n = 5, edges = [[0,1],[1,2],[2,3],[3,4]]",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "1 <= n <= 2000",
+      "1 <= edges.length <= 5000",
+      "edges[i].length == 2",
+      "0 <= ai <= bi < n",
+      "ai != bi",
+      "There are no repeated edges."
+    ],
+    "hints": [
+      "Use Union-Find (Disjoint Set Union) to group connected nodes together.",
+      "Alternatively, use DFS or BFS: iterate through all unvisited nodes, and for each unvisited node, run a DFS/BFS to mark all reachable nodes as visited, incrementing the component count.",
+      "The number of times you initiate a new DFS/BFS = number of connected components."
+    ],
+    "defaultCodeJS": "function countComponents(n, edges) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef countComponents(n: int, edges: List[List[int]]) -> int:\n    pass",
+    "defaultCodeC": "int countComponents(int n, int** edges, int edgesSize, int* edgesColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int countComponents(int n, vector<vector<int>>& edges) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int countComponents(int n, int[][] edges) {\n    }\n}"
+  },
+  {
+    "id": "is-graph-bipartite",
+    "title": "Is Graph Bipartite?",
+    "difficulty": "Easy",
+    "description": "There is an undirected graph with `n` nodes, where each node is numbered between `0` and `n - 1`. You are given a 2D array `graph`, where `graph[u]` is an array of nodes that node `u` is adjacent to.\n\nA graph is bipartite if the nodes can be partitioned into two independent sets `A` and `B` such that every edge in the graph connects a node in set `A` and a node in set `B`.\n\nReturn `true` if and only if it is bipartite.",
+    "examples": [
+      {
+        "input": "graph = [[1,2,3],[0,2],[0,1,3],[0,2]]",
+        "output": "false"
+      },
+      {
+        "input": "graph = [[1,3],[0,2],[1,3],[0,2]]",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "graph.length == n",
+      "1 <= n <= 100",
+      "0 <= graph[u].length < n",
+      "graph[u] does not contain u.",
+      "All the values of graph[u] are unique.",
+      "The graph is undirected."
+    ],
+    "hints": [
+      "A graph is bipartite if and only if it contains no odd-length cycles.",
+      "Try to color the graph using 2 colors. Use BFS or DFS: assign color 0 to the starting node, and alternate colors for each neighbor.",
+      "If you ever try to assign a color to a node that is already colored with the same color as the current node, the graph is NOT bipartite."
+    ],
+    "defaultCodeJS": "function isBipartite(graph) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef isBipartite(graph: List[List[int]]) -> bool:\n    pass",
+    "defaultCodeC": "bool isBipartite(int** graph, int graphSize, int* graphColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool isBipartite(vector<vector<int>>& graph) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean isBipartite(int[][] graph) {\n    }\n}"
+  },
+  {
+    "id": "keys-and-rooms",
+    "title": "Keys and Rooms",
+    "difficulty": "Easy",
+    "description": "There are `n` rooms labeled from `0` to `n - 1` and all the rooms are locked except for room `0`. Your goal is to visit all the rooms. However, you cannot enter a locked room without having its key.\n\nWhen you visit a room, you may find a set of distinct keys in it. Each key has a number on it, denoting which room it unlocks, and you can take all of them with you to unlock the other rooms.\n\nGiven an array `rooms` where `rooms[i]` is the set of keys that you can get if you visited room `i`, return `true` if you can visit all the rooms, or `false` otherwise.",
+    "examples": [
+      {
+        "input": "rooms = [[1],[2],[3],[]]",
+        "output": "true"
+      },
+      {
+        "input": "rooms = [[1,3],[3,0,1],[2],[0]]",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "n == rooms.length",
+      "2 <= n <= 1000",
+      "0 <= rooms[i].length <= 1000",
+      "1 <= sum(rooms[i].length) <= 3000",
+      "0 <= rooms[i][j] < n",
+      "All values of rooms[i] are unique."
+    ],
+    "hints": [
+      "Model this as a graph reachability problem \u2014 rooms are nodes, and keys are directed edges.",
+      "Start from room 0. Use DFS or BFS to explore all rooms reachable from the current set of keys.",
+      "Track which rooms have been visited. At the end, check if the count of visited rooms equals n."
+    ],
+    "defaultCodeJS": "function canVisitAllRooms(rooms) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef canVisitAllRooms(rooms: List[List[int]]) -> bool:\n    pass",
+    "defaultCodeC": "bool canVisitAllRooms(int** rooms, int roomsSize, int* roomsColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool canVisitAllRooms(vector<vector<int>>& rooms) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean canVisitAllRooms(List<List<Integer>> rooms) {\n    }\n}"
+  },
+  {
+    "id": "number-of-islands",
+    "title": "Number of Islands",
+    "difficulty": "Medium",
+    "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.",
+    "examples": [
+      {
+        "input": "grid = [[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]",
+        "output": "1"
+      },
+      {
+        "input": "grid = [[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]",
+        "output": "3"
+      }
+    ],
+    "constraints": [
+      "m == grid.length",
+      "n == grid[i].length",
+      "1 <= m, n <= 300",
+      "grid[i][j] is '0' or '1'."
+    ],
+    "hints": [
+      "Use DFS or BFS to traverse the connected components of '1's.",
+      "Mark visited cells to avoid recounting and infinite loops."
+    ],
+    "defaultCodeJS": "function numIslands(grid) {\n}",
+    "defaultCodePY": "def numIslands(grid):\n    pass",
+    "defaultCodeC": "int numIslands(char** grid, int gridSize, int* gridColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int numIslands(char[][] grid) {\n    }\n}"
+  },
+  {
+    "id": "clone-graph",
+    "title": "Clone Graph",
+    "difficulty": "Medium",
+    "description": "Given a reference of a node in a connected undirected graph. Return a deep copy (clone) of the graph.\n\nEach node in the graph contains a value (int) and a list (List[Node]) of its neighbors.\n\nTest case format:\n\nFor simplicity, each node's value is the same as the node's index (1-indexed). For example, if `val = 1`, then it is the first node visited. So on and so forth. The graph is represented in the test case using an adjacency list.\n\nAn adjacency list `[ [2,4], [1,3], [2,4], [1,3] ]` represents the graph:\n\n`1--2`\n`|  |`\n`4--3`\n\nThere are 4 nodes in total. Node 1 is connected to Node 2 and Node 4. Node 2 is connected to Node 1 and Node 3. Node 3 is connected to Node 2 and Node 4. Node 4 is connected to Node 1 and Node 3.",
+    "examples": [
+      {
+        "input": "adjList = [[2,4],[1,3],[2,4],[1,3]]",
+        "output": "[[2,4],[1,3],[2,4],[1,3]]"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the graph is in the range [0, 100].",
+      "1 <= Node.val <= 100",
+      "Node.val is unique for each node.",
+      "There are no repeated edges and no self-loops in the graph.",
+      "The graph is connected and all nodes have unique values."
+    ],
+    "hints": [
+      "Use a hash map to store visited nodes and their clones.",
+      "Traverse the graph using BFS or DFS."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a Node.\n * function Node(val, neighbors) {\n *    this.val = val === undefined ? 0 : val;\n *    this.neighbors = neighbors === undefined ? [] : neighbors;\n * };\n */\n\nfunction cloneGraph(node) {\n}",
+    "defaultCodePY": "class Solution:\n    def cloneGraph(self, node: 'Node') -> 'Node':\n        pass",
+    "defaultCodeC": "/**\n * Definition for a Node.\n * struct Node {\n *     int val;\n *     int numNeighbors;\n *     struct Node** neighbors;\n * };\n */\n\nstruct Node* cloneGraph(struct Node* node) {\n}",
+    "defaultCodeCPP": "/*\n// Definition for a Node.\nclass Node {\npublic:\n    int val;\n    vector<Node*> neighbors;\n    Node() {\n        val = 0;\n        neighbors = vector<Node*>();\n    }\n    Node(int _val) {\n        val = _val;\n        neighbors = vector<Node*>();\n    }\n    Node(int _val, vector<Node*> _neighbors) {\n        val = _val;\n        neighbors = _neighbors;\n    }\n};\n*/\n\nclass Solution {\npublic:\n    Node* cloneGraph(Node* node) {\n    }\n};",
+    "defaultCodeJAVA": "/*\n// Definition for a Node.\nclass Node {\n    public int val;\n    public List<Node> neighbors;\n    public Node() {\n        val = 0;\n        neighbors = new ArrayList<Node>();\n    }\n    public Node(int _val) {\n        val = _val;\n        neighbors = new ArrayList<Node>();\n    }\n    public Node(int _val, ArrayList<Node> _neighbors) {\n        val = _val;\n        neighbors = _neighbors;\n    }\n}\n*/\n\nclass Solution {\n    public Node cloneGraph(Node node) {\n    }\n}"
+  },
+  {
+    "id": "course-schedule",
+    "title": "Course Schedule",
+    "difficulty": "Medium",
+    "description": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` first if you want to take course `ai`. For example, the pair `[0, 1]`, indicates that to take course `0` you have to first take course `1`.\n\nReturn `true` if you can finish all courses. Otherwise, return `false`.",
+    "examples": [
+      {
+        "input": "numCourses = 2, prerequisites = [[1,0]]",
+        "output": "true"
+      },
+      {
+        "input": "numCourses = 2, prerequisites = [[1,0],[0,1]]",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "1 <= numCourses <= 2000",
+      "0 <= prerequisites.length <= 5000",
+      "prerequisites[i].length == 2",
+      "0 <= ai, bi < numCourses",
+      "ai != bi",
+      "All the pairs [ai, bi] are unique."
+    ],
+    "hints": [
+      "This problem can be modeled as a directed graph where courses are nodes and prerequisites are edges.",
+      "Detecting a cycle in this graph is key. If there's a cycle, you cannot finish all courses.",
+      "Use Kahn's algorithm (BFS-based topological sort) or DFS with cycle detection."
+    ],
+    "defaultCodeJS": "function canFinish(numCourses, prerequisites) {\n}",
+    "defaultCodePY": "class Solution:\n    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:\n        pass",
+    "defaultCodeC": "bool canFinish(int numCourses, int** prerequisites, int prerequisitesSize, int* prerequisitesColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean canFinish(int numCourses, int[][] prerequisites) {\n    }\n}"
+  },
+  {
+    "id": "pacific-atlantic-water-flow",
+    "title": "Pacific Atlantic Water Flow",
+    "difficulty": "Medium",
+    "description": "There is an `m x n` rectangular island that borders both the Pacific Ocean and Atlantic Ocean. The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges.\n\nThe island is partitioned into a grid of square cells. You are given an `m x n` integer matrix `heights` where `heights[r][c]` represents the height above sea level of the cell at coordinate `(r, c)`.\n\nWater can flow from any cell `(r, c)` to an adjacent cell `(r', c')` if `heights[r'][c'] <= heights[r][c]`. Water can flow horizontally, vertically, and to all four directions.\n\nFind the list of grid coordinates `(r, c)` where water can flow from `(r, c)` to both the Pacific and Atlantic Oceans.",
+    "examples": [
+      {
+        "input": "heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]",
+        "output": "[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]"
+      }
+    ],
+    "constraints": [
+      "m == heights.length",
+      "n == heights[r].length",
+      "1 <= m, n <= 200",
+      "0 <= heights[r][c] <= 10^5"
+    ],
+    "hints": [
+      "Instead of simulating water flow from every cell, try simulating water flow *into* cells from the oceans.",
+      "Use two separate BFS/DFS traversals, one starting from all cells bordering the Pacific, and another starting from all cells bordering the Atlantic.",
+      "A cell `(r, c)` is a valid answer if it's reachable by water from *both* oceans."
+    ],
+    "defaultCodeJS": "function pacificAtlantic(heights) {\n}",
+    "defaultCodePY": "class Solution:\n    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:\n        pass",
+    "defaultCodeC": "/**\n * Return an array of arrays of size *returnSize.\n * The sizes of the inner arrays are returned in *returnColumnSizes array. \n * Note: The returned array must be malloced, assume caller calls free().\n */\nint** pacificAtlantic(int** heights, int heightsSize, int* heightsColSize, int* returnSize, int** returnColumnSizes) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public List<List<Integer>> pacificAtlantic(int[][] heights) {\n    }\n}"
+  },
+  {
+    "id": "rotting-oranges",
+    "title": "Rotting Oranges",
+    "difficulty": "Medium",
+    "description": "You are given an `m x n` grid where each cell can have one of three values:\n\n`0` representing an empty cell,\n`1` representing a fresh orange,\n`2` representing a rotten orange.\n\nEvery minute, any fresh orange that is 4-directionally adjacent to a rotten orange becomes rotten.\n\nReturn the minimum number of minutes that must elapse until no fresh oranges remain. If it is impossible to make every fresh orange rotten, return `-1`.",
+    "examples": [
+      {
+        "input": "grid = [[2,1,1],[1,1,0],[0,1,1]]",
+        "output": "4"
+      },
+      {
+        "input": "grid = [[2,1,1],[0,1,1],[1,0,1]]",
+        "output": "-1"
+      },
+      {
+        "input": "grid = [[0,2]]",
+        "output": "0"
+      }
+    ],
+    "constraints": [
+      "m == grid.length",
+      "n == grid[i].length",
+      "1 <= m, n <= 10",
+      "grid[i][j] is 0, 1, or 2."
+    ],
+    "hints": [
+      "This is a multi-source BFS problem. All initial rotten oranges are sources.",
+      "Use a queue to store all initially rotten oranges, and process them level by level.",
+      "Keep track of the time elapsed and the number of fresh oranges.",
+      "If any fresh oranges remain after the BFS completes, it's impossible."
+    ],
+    "defaultCodeJS": "function orangesRotting(grid) {\n}",
+    "defaultCodePY": "class Solution:\n    def orangesRotting(self, grid: List[List[int]]) -> int:\n        pass",
+    "defaultCodeC": "int orangesRotting(int** grid, int gridSize, int* gridColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int orangesRotting(vector<vector<int>>& grid) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int orangesRotting(int[][] grid) {\n    }\n}"
+  },
+  {
+    "id": "alien-dictionary",
+    "title": "Alien Dictionary",
+    "difficulty": "Hard",
+    "description": "There is a new alien language that uses the English alphabet. However, the order among the letters is unknown to you.\nYou are given a list of strings `words` from the alien language's dictionary, where the strings are sorted lexicographically by the rules of this new language.\nDerive the order of the letters in this language. If there are multiple valid orderings, return any of them. If no ordering is possible, return an empty string.\nIt is guaranteed that all characters are lowercase English letters.\nThe dictionary may contain duplicate words. The order of characters is only determined by the first different character in two adjacent words.",
+    "examples": [
+      {
+        "input": "words = [\"wrt\",\"wrf\",\"er\",\"ett\",\"rftt\"]",
+        "output": "\"wertf\""
+      },
+      {
+        "input": "words = [\"z\",\"x\"]",
+        "output": "\"zx\""
+      },
+      {
+        "input": "words = [\"z\",\"x\",\"z\"]",
+        "output": "\"\""
+      }
+    ],
+    "constraints": [
+      "1 <= words.length <= 100",
+      "1 <= words[i].length <= 100",
+      "words[i] consists of lowercase English letters."
+    ],
+    "hints": [
+      "Build a directed graph where an edge `u -> v` means `u` comes before `v`.",
+      "Find the topological sort of the graph.",
+      "Handle cycles (impossible ordering) and unreachable characters."
+    ],
+    "defaultCodeJS": "function alienDictionary(words) {\n}",
+    "defaultCodePY": "def alienDictionary(words):\n    pass",
+    "defaultCodeC": "char* alienDictionary(char** words, int wordsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    string alienDictionary(vector<string>& words) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public String alienDictionary(String[] words) {\n    }\n}"
+  },
+  {
+    "id": "critical-connections-in-a-network",
+    "title": "Critical Connections in a Network",
+    "difficulty": "Hard",
+    "description": "There are `n` servers numbered from `0` to `n - 1` connected by undirected server-to-server connections. You are given an integer `n` and a `list<list<int>> connections` where `connections[i] = [a, b]` represents a connection between servers `a` and `b`. Any connection can be removed.\nA server is considered \"critical\" if its removal results in a network partition, meaning some servers that were previously connected become disconnected.\nReturn all `critical connections`. You may return the answer in any order.",
+    "examples": [
+      {
+        "input": "n = 4, connections = [[0,1],[1,2],[2,0],[1,3]]",
+        "output": "[[1,3]]"
+      },
+      {
+        "input": "n = 2, connections = [[0,1]]",
+        "output": "[[0,1]]"
+      }
+    ],
+    "constraints": [
+      "2 <= n <= 10^5",
+      "1 <= connections.length <= 10^5",
+      "connections[i].length == 2",
+      "0 <= a, b <= n - 1",
+      "a != b",
+      "There are no duplicate connections."
+    ],
+    "hints": [
+      "This problem asks for bridges in a graph.",
+      "Use Tarjan's algorithm or an alternative DFS-based approach to find bridges.",
+      "Keep track of discovery times and low-link values for each node."
+    ],
+    "defaultCodeJS": "function criticalConnections(n, connections) {\n}",
+    "defaultCodePY": "def criticalConnections(n, connections):\n    pass",
+    "defaultCodeC": "int** criticalConnections(int n, int** connections, int connectionsSize, int* connectionsColSize, int* returnSize, int** returnColumnSizes) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {\n    }\n}"
+  },
+  {
+    "id": "word-ladder-ii",
+    "title": "Word Ladder II",
+    "difficulty": "Hard",
+    "description": "A transformation sequence from `beginWord` to `endWord` using a dictionary `wordList` is a sequence of words `beginWord -> s1 -> s2 -> ... -> sk -> endWord` such that:\n1. Every adjacent pair of words differs by a single letter.\n2. Every `si` for `1 <= i <= k` is in `wordList`. Note that `beginWord` does not need to be in `wordList`.\n3. `endWord` is in `wordList`.\nGiven two words, `beginWord` and `endWord`, and a dictionary `wordList`, return *all the shortest transformation sequences* from `beginWord` to `endWord`, or an empty list if no such sequence exists. If there are multiple shortest transformation sequences, return all of them.",
+    "examples": [
+      {
+        "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]",
+        "output": "[[\"hit\",\"hot\",\"dot\",\"dog\",\"cog\"],[\"hit\",\"hot\",\"lot\",\"log\",\"cog\"]]"
+      },
+      {
+        "input": "beginWord = \"a\", endWord = \"c\", wordList = [\"a\",\"b\",\"c\"]",
+        "output": "[[\"a\",\"b\",\"c\"]]"
+      },
+      {
+        "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]",
+        "output": "[]"
+      }
+    ],
+    "constraints": [
+      "1 <= beginWord.length <= 5",
+      "endWord.length == beginWord.length",
+      "1 <= wordList.length <= 5000",
+      "wordList[i].length == beginWord.length",
+      "`beginWord`, `endWord`, and `wordList[i]` consist of lowercase English letters.",
+      "beginWord != endWord",
+      "All the words in `wordList` are unique."
+    ],
+    "hints": [
+      "This problem involves finding all shortest paths in an unweighted graph.",
+      "Use BFS to find the shortest path length and build a graph of valid predecessors for each word.",
+      "Then, use DFS to reconstruct all paths from `endWord` back to `beginWord` using the predecessor graph.",
+      "Avoid cycles during path reconstruction by ensuring words are visited in increasing order of distance from `beginWord`."
+    ],
+    "defaultCodeJS": "function findLadders(beginWord, endWord, wordList) {\n}",
+    "defaultCodePY": "def findLadders(beginWord, endWord, wordList):\n    pass",
+    "defaultCodeC": "char*** findLadders(char *beginWord, char *endWord, char **wordList, int wordListSize, int* returnSize, int** returnColumnSizes) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {\n    }\n}"
+  },
+  {
+    "id": "reconstruct-itinerary",
+    "title": "Reconstruct Itinerary",
+    "difficulty": "Hard",
+    "description": "You are given a list of airline tickets where `tickets[i] = [fromi, toi]` represent the departure and arrival airports of one flight. Reconstruct the itinerary in order of departure and arrival.\nAll of the tickets belong to a man who departs from `\"JFK\"`. Thus, the itinerary must begin with `\"JFK\"`.\nIf there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string. For example, the itinerary `[\"JFK\", \"LGA\"]` has a smaller lexical order than `[\"JFK\", \"LGB\"]`.\nAll airports are represented by three uppercase English letters.\nYou may assume that there exists at least one valid itinerary. All tickets are used exactly once.",
+    "examples": [
+      {
+        "input": "tickets = [[\"MUC\",\"LHR\"],[\"JFK\",\"MUC\"],[\"SFO\",\"SJC\"],[\"LHR\",\"SFO\"]]",
+        "output": "[\"JFK\",\"MUC\",\"LHR\",\"SFO\",\"SJC\"]"
+      },
+      {
+        "input": "tickets = [[\"JFK\",\"SFO\"],[\"JFK\",\"ATL\"],[\"SFO\",\"ATL\"],[\"ATL\",\"JFK\"],[\"ATL\",\"SFO\"]]",
+        "output": "[\"JFK\",\"ATL\",\"JFK\",\"SFO\",\"ATL\",\"SFO\"]"
+      }
+    ],
+    "constraints": [
+      "1 <= tickets.length <= 300",
+      "tickets[i].length == 2",
+      "fromi.length == 3, toi.length == 3",
+      "`fromi` and `toi` consist of uppercase English letters.",
+      "tickets can contain duplicate flights."
+    ],
+    "hints": [
+      "This is an Eulerian path problem.",
+      "Build an adjacency list where destinations from an airport are sorted lexicographically.",
+      "Use a DFS-based approach (Hierholzer's algorithm) to find the Eulerian path.",
+      "Since all tickets must be used exactly once, recursively explore paths. If a path leads to a dead end before using all tickets, backtrack."
+    ],
+    "defaultCodeJS": "function findItinerary(tickets) {\n}",
+    "defaultCodePY": "def findItinerary(tickets):\n    pass",
+    "defaultCodeC": "char** findItinerary(char*** tickets, int ticketsSize, int* ticketsColSize, int* returnSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<string> findItinerary(vector<vector<string>>& tickets) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public List<String> findItinerary(List<List<String>> tickets) {\n    }\n}"
+  },
+  {
+    "id": "path-with-minimum-effort",
+    "title": "Path With Minimum Effort",
+    "difficulty": "Hard",
+    "description": "You are a hiker preparing for an upcoming trip. You are given `heights`, a 2D array of size `rows x columns`, where `heights[row][col]` represents the height of a cell.\nYou are initially located at `(0, 0)` and wish to reach the bottom-right cell `(rows - 1, columns - 1)`. You can move up, down, left, or right.\nA path's *effort* is the maximum absolute difference in heights between two consecutive cells of the path.\nReturn the minimum *effort* required to travel from `(0, 0)` to `(rows - 1, columns - 1)`.",
+    "examples": [
+      {
+        "input": "heights = [[1,2,2],[3,8,2],[5,3,5]]",
+        "output": "2"
+      },
+      {
+        "input": "heights = [[1,2,3],[3,8,4],[5,3,5]]",
+        "output": "1"
+      },
+      {
+        "input": "heights = [[1,0,1],[1,0,1]]",
+        "output": "0"
+      }
+    ],
+    "constraints": [
+      "rows == heights.length",
+      "columns == heights[i].length",
+      "1 <= rows, columns <= 100",
+      "0 <= heights[i][j] <= 10^6"
+    ],
+    "hints": [
+      "This problem can be framed as finding a path from source to destination such that the maximum edge weight on the path is minimized. This is a classic \"minimax\" path problem.",
+      "Consider binary searching on the answer (the maximum effort). For a given `k` (max effort), can you reach the destination using only edges with effort <= `k`? Use BFS/DFS for this check.",
+      "Alternatively, adapt Dijkstra's algorithm. Instead of minimizing the sum of weights, minimize the maximum weight encountered so far. Use a priority queue to always explore the cell that can be reached with the minimum *current maximum effort*."
+    ],
+    "defaultCodeJS": "function minimumEffortPath(heights) {\n}",
+    "defaultCodePY": "def minimumEffortPath(heights):\n    pass",
+    "defaultCodeC": "int minimumEffortPath(int** heights, int heightsSize, int* heightsColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int minimumEffortPath(vector<vector<int>>& heights) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int minimumEffortPath(int[][] heights) {\n    }\n}"
+  }
+]

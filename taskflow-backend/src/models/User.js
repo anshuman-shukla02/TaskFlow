@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
       enum: ["pending", "approved", "rejected"], 
       default: "approved" // Defaulting to approved for existing logic, but registration will set to pending
     },
+    adaptiveProgress: {
+      type: Map,
+      of: String,
+      default: {}
+    }
   },
 
   { timestamps: true }

@@ -1,0 +1,369 @@
+[
+  {
+    "id": "two-sum",
+    "title": "Two Sum",
+    "difficulty": "Easy",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
+    "examples": [
+      {
+        "input": "nums = [2,7,11,15], target = 9",
+        "output": "[0,1]"
+      }
+    ],
+    "constraints": [
+      "2 <= nums.length <= 10^4",
+      "Only one valid answer exists."
+    ],
+    "hints": [
+      "Try using a Hash Map to store elements and their indices as you iterate. This allows O(1) lookups."
+    ],
+    "defaultCodeJS": "function twoSum(nums, target) {\n}",
+    "defaultCodePY": "def twoSum(nums, target):\n    pass",
+    "defaultCodeC": "int* twoSum(int* nums, int numsSize, int target, int* returnSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n    }\n}"
+  },
+  {
+    "id": "contains-duplicate",
+    "title": "Contains Duplicate",
+    "difficulty": "Easy",
+    "description": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+    "examples": [
+      {
+        "input": "nums = [1,2,3,1]",
+        "output": "true"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^5"
+    ],
+    "hints": [
+      "Use a Hash Set to detect duplicates in O(N) time."
+    ],
+    "defaultCodeJS": "function containsDuplicate(nums) {\n}",
+    "defaultCodePY": "def containsDuplicate(nums):\n    pass",
+    "defaultCodeC": "bool containsDuplicate(int* nums, int numsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool containsDuplicate(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean containsDuplicate(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "missing-number",
+    "title": "Missing Number",
+    "difficulty": "Easy",
+    "description": "Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.",
+    "examples": [
+      {
+        "input": "nums = [3,0,1]",
+        "output": "2"
+      }
+    ],
+    "constraints": [
+      "n == nums.length"
+    ],
+    "hints": [
+      "You can use the math formula for the sum of the first n numbers: n*(n+1)/2. The missing number is the difference between this and the actual sum."
+    ],
+    "defaultCodeJS": "function missingNumber(nums) {\n}",
+    "defaultCodePY": "def missingNumber(nums):\n    pass",
+    "defaultCodeC": "int missingNumber(int* nums, int numsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int missingNumber(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "best-time-to-buy-and-sell-stock",
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": "Easy",
+    "description": "You are given an array prices where prices[i] is the price of a given stock on the i-th day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.",
+    "examples": [
+      {
+        "input": "prices = [7,1,5,3,6,4]",
+        "output": "5"
+      }
+    ],
+    "constraints": [
+      "1 <= prices.length <= 10^5"
+    ],
+    "hints": [
+      "Track the minimum price seen so far and continuously update the maximum possible profit at each day."
+    ],
+    "defaultCodeJS": "function maxProfit(prices) {\n}",
+    "defaultCodePY": "def maxProfit(prices):\n    pass",
+    "defaultCodeC": "int maxProfit(int* prices, int pricesSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int maxProfit(int[] prices) {\n    }\n}"
+  },
+  {
+    "id": "maximum-subarray",
+    "title": "Maximum Subarray",
+    "difficulty": "Medium",
+    "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.",
+    "examples": [
+      {
+        "input": "nums = [-2,1,-3,4,-1,2,1,-5,4]",
+        "output": "6"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^5"
+    ],
+    "hints": [
+      "Use Kadane's Algorithm. Keep a running sum, and if it ever goes negative, reset it to 0 because a negative sum will only actively hurt future sums."
+    ],
+    "defaultCodeJS": "function maxSubArray(nums) {\n}",
+    "defaultCodePY": "def maxSubArray(nums):\n    pass",
+    "defaultCodeC": "int maxSubArray(int* nums, int numsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int maxSubArray(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "product-of-array-except-self",
+    "title": "Product of Array Except Self",
+    "difficulty": "Medium",
+    "description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i]. You must write an algorithm that runs in O(n) time and without using the division operation.",
+    "examples": [
+      {
+        "input": "nums = [1,2,3,4]",
+        "output": "[24,12,8,6]"
+      }
+    ],
+    "constraints": [
+      "2 <= nums.length <= 10^5"
+    ],
+    "hints": [
+      "Compute prefix products from left-to-right, then suffix products from right-to-left. Multiply them together for the answer."
+    ],
+    "defaultCodeJS": "function productExceptSelf(nums) {\n}",
+    "defaultCodePY": "def productExceptSelf(nums):\n    pass",
+    "defaultCodeC": "int* productExceptSelf(int* nums, int numsSize, int* returnSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<int> productExceptSelf(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[] productExceptSelf(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "3sum",
+    "title": "3Sum",
+    "difficulty": "Medium",
+    "description": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
+    "examples": [
+      {
+        "input": "nums = [-1,0,1,2,-1,-4]",
+        "output": "[[-1,-1,2],[-1,0,1]]"
+      }
+    ],
+    "constraints": [
+      "3 <= nums.length <= 3000"
+    ],
+    "hints": [
+      "Sort the array first. Then iterate through the array, setting the current item as targets and using the Two Pointer approach on the remaining subarray to find sums corresponding to 0."
+    ],
+    "defaultCodeJS": "function threeSum(nums) {\n}",
+    "defaultCodePY": "def threeSum(nums):\n    pass",
+    "defaultCodeC": "int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "container-with-most-water",
+    "title": "Container With Most Water",
+    "difficulty": "Medium",
+    "description": "You are given an integer array height of length n. There are n vertical lines drawn. Find two lines that together with the x-axis form a container, such that the container contains the most water.",
+    "examples": [
+      {
+        "input": "height = [1,8,6,2,5,4,8,3,7]",
+        "output": "49"
+      }
+    ],
+    "constraints": [
+      "2 <= n <= 10^5"
+    ],
+    "hints": [
+      "Use completely opposite Two Pointers (left = 0, right = end). Calculate area, then move the pointer that points to the shorter line inward."
+    ],
+    "defaultCodeJS": "function maxArea(height) {\n}",
+    "defaultCodePY": "def maxArea(height):\n    pass",
+    "defaultCodeC": "int maxArea(int* height, int heightSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int maxArea(int[] height) {\n    }\n}"
+  },
+  {
+    "id": "find-minimum-in-rotated-sorted-array",
+    "title": "Find Minimum in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "description": "Suppose an array of length n sorted in ascending order is rotated between 1 and n times. Find the minimum element of this array. Must run in O(log n) time.",
+    "examples": [
+      {
+        "input": "nums = [3,4,5,1,2]",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "n == nums.length"
+    ],
+    "hints": [
+      "Because it runs in O(log N), use modified Binary Search. If the mid element is greater than the rightmost element, the minimum is isolated in the right half."
+    ],
+    "defaultCodeJS": "function findMin(nums) {\n}",
+    "defaultCodePY": "def findMin(nums):\n    pass",
+    "defaultCodeC": "int findMin(int* nums, int numsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int findMin(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int findMin(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "search-in-rotated-sorted-array",
+    "title": "Search in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "description": "Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums. O(log N) required.",
+    "examples": [
+      {
+        "input": "nums = [4,5,6,7,0,1,2], target = 0",
+        "output": "4"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 5000"
+    ],
+    "hints": [
+      "Modified Binary Search. Check if the left half is strictly sorted. If target lies within it, search left. Otherwise search right."
+    ],
+    "defaultCodeJS": "function search(nums, target) {\n}",
+    "defaultCodePY": "def search(nums, target):\n    pass",
+    "defaultCodeC": "int search(int* nums, int numsSize, int target) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int search(int[] nums, int target) {\n    }\n}"
+  },
+  {
+    "id": "merge-intervals",
+    "title": "Merge Intervals",
+    "difficulty": "Medium",
+    "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals.",
+    "examples": [
+      {
+        "input": "intervals = [[1,3],[2,6],[8,10],[15,18]]",
+        "output": "[[1,6],[8,10],[15,18]]"
+      }
+    ],
+    "constraints": [
+      "1 <= intervals.length <= 10^4"
+    ],
+    "hints": [
+      "Sort the intervals by their start index first. Then iterate through, fusing intervals if the start of the next is less than or equals to the end of the previous."
+    ],
+    "defaultCodeJS": "function merge(intervals) {\n}",
+    "defaultCodePY": "def merge(intervals):\n    pass",
+    "defaultCodeC": "int** merge(int** intervals, int intervalsSize, int* intervalsColSize, int* returnSize, int** returnColumnSizes) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[][] merge(int[][] intervals) {\n    }\n}"
+  },
+  {
+    "id": "non-overlapping-intervals",
+    "title": "Non-overlapping Intervals",
+    "difficulty": "Medium",
+    "description": "Given an array of intervals intervals where intervals[i] = [starti, endi], return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.",
+    "examples": [
+      {
+        "input": "intervals = [[1,2],[2,3],[3,4],[1,3]]",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "1 <= intervals.length <= 10^5"
+    ],
+    "hints": [
+      "Sort intervals by their END time. Keep track of the 'current' valid end time and iterate. If the next interval starts before current ends, it overlaps\u2014so increment remove count."
+    ],
+    "defaultCodeJS": "function eraseOverlapIntervals(intervals) {\n}",
+    "defaultCodePY": "def eraseOverlapIntervals(intervals):\n    pass",
+    "defaultCodeC": "int eraseOverlapIntervals(int** intervals, int intervalsSize, int* intervalsColSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int eraseOverlapIntervals(vector<vector<int>>& intervals) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int eraseOverlapIntervals(int[][] intervals) {\n    }\n}"
+  },
+  {
+    "id": "first-missing-positive",
+    "title": "First Missing Positive",
+    "difficulty": "Hard",
+    "description": "Given an unsorted integer array `nums`, return the smallest missing positive integer.\n\nYou must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space.",
+    "examples": [
+      {
+        "input": "nums = [1,2,0]",
+        "output": "3"
+      },
+      {
+        "input": "nums = [3,4,-1,1]",
+        "output": "2"
+      },
+      {
+        "input": "nums = [7,8,9,11,12]",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^5",
+      "-2^31 <= nums[i] <= 2^31 - 1"
+    ],
+    "hints": [
+      "The answer must be in the range [1, n+1] where n is the length of the array.",
+      "Use the array itself as a hash map. For each number x in range [1, n], place it at index x-1.",
+      "After rearranging, scan the array: the first index i where nums[i] != i+1 gives the answer i+1. If all positions are correct, the answer is n+1."
+    ],
+    "defaultCodeJS": "function firstMissingPositive(nums) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef firstMissingPositive(nums: List[int]) -> int:\n    pass",
+    "defaultCodeC": "int firstMissingPositive(int* nums, int numsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int firstMissingPositive(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int firstMissingPositive(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "jump-game-ii",
+    "title": "Jump Game II",
+    "difficulty": "Hard",
+    "description": "You are given a 0-indexed array of integers `nums` of length `n`. You are initially at `nums[0]`.\n\nEach element `nums[i]` represents the maximum length of a forward jump from index `i`. In other words, if you are at `nums[i]`, you can jump to any `nums[i + j]` where `0 <= j <= nums[i]` and `i + j < n`.\n\nReturn the minimum number of jumps to reach `nums[n - 1]`. The test cases are generated so that you can always reach `nums[n - 1]`.",
+    "examples": [
+      {
+        "input": "nums = [2,3,1,1,4]",
+        "output": "2"
+      },
+      {
+        "input": "nums = [2,3,0,1,4]",
+        "output": "2"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^4",
+      "0 <= nums[i] <= 1000",
+      "The generated input is such that you can always reach the last index."
+    ],
+    "hints": [
+      "Greedy approach: at each step, track the farthest index reachable with the current number of jumps.",
+      "Use two pointers: `curEnd` (the farthest you can reach with current jumps) and `farthest` (the farthest reachable if you take one more jump).",
+      "When you reach `curEnd`, increment jumps and set `curEnd = farthest`. Stop when `curEnd >= n-1`."
+    ],
+    "defaultCodeJS": "function jump(nums) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef jump(nums: List[int]) -> int:\n    pass",
+    "defaultCodeC": "int jump(int* nums, int numsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int jump(vector<int>& nums) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int jump(int[] nums) {\n    }\n}"
+  },
+  {
+    "id": "median-of-two-sorted-arrays",
+    "title": "Median of Two Sorted Arrays",
+    "difficulty": "Hard",
+    "description": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).",
+    "examples": [
+      {
+        "input": "nums1 = [1,3], nums2 = [2]",
+        "output": "2.00000"
+      }
+    ],
+    "constraints": [
+      "nums1.length == m",
+      "nums2.length == n",
+      "0 <= m, n <= 1000"
+    ],
+    "hints": [
+      "Use Binary Search on the smaller array. Partition both arrays such that the number of elements on the left side is equal to the right side, and max_left <= min_right."
+    ],
+    "defaultCodeJS": "function findMedianSortedArrays(nums1, nums2) {\n}",
+    "defaultCodePY": "def findMedianSortedArrays(nums1, nums2):\n    pass",
+    "defaultCodeC": "double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n    }\n}"
+  }
+]

@@ -155,10 +155,10 @@ export default function StudentProject() {
         return (
             <div className="min-h-screen bg-slate-50 font-sans text-clay-text p-8">
                 <div className="max-w-6xl mx-auto space-y-8">
-                    <div className="flex justify-between items-end mb-6">
+                    <div className="flex flex-col justify-center items-center text-center mb-10 pt-4">
                         <div>
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">Project Based Learning</h1>
-                            <p className="text-clay-muted mt-2">Select a project to start working through its phases.</p>
+                            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent tracking-tight">Project Based Learning</h1>
+                            <p className="text-slate-500 mt-3 text-sm">Select a project to start working through its phases.</p>
                         </div>
                     </div>
 

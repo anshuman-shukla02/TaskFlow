@@ -1,0 +1,479 @@
+[
+  {
+    "id": "maximum-depth-of-binary-tree",
+    "title": "Maximum Depth of Binary Tree",
+    "difficulty": "Easy",
+    "description": "Given the `root` of a binary tree, return its maximum depth.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.\n\nA leaf node is a node with no children.\n\n**Definition for a binary tree node.**\njs\nfunction TreeNode(val, left, right) {\n    this.val = (val===undefined ? 0 : val)\n    this.left = (left===undefined ? null : left)\n    this.right = (right===undefined ? null : right)\n}\n",
+    "examples": [
+      {
+        "input": "root = [3,9,20,null,null,15,7]",
+        "output": "3"
+      },
+      {
+        "input": "root = [1,null,2]",
+        "output": "2"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[0, 10^4]`.",
+      "-100 <= Node.val <= 100"
+    ],
+    "hints": [
+      "Use recursion. The maximum depth of a node is 1 plus the maximum depth of its children.",
+      "Handle the base case where the root is null."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nfunction maxDepth(root) {\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -> int:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nint maxDepth(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public int maxDepth(TreeNode root) {\n    }\n}"
+  },
+  {
+    "id": "symmetric-tree",
+    "title": "Symmetric Tree",
+    "difficulty": "Easy",
+    "description": "Given the `root` of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).\n\n**Definition for a binary tree node.**\njs\nfunction TreeNode(val, left, right) {\n    this.val = (val===undefined ? 0 : val)\n    this.left = (left===undefined ? null : left)\n    this.right = (right===undefined ? null : right)\n}\n",
+    "examples": [
+      {
+        "input": "root = [1,2,2,3,4,4,3]",
+        "output": "true"
+      },
+      {
+        "input": "root = [1,2,2,null,3,null,3]",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[1, 1000]`.",
+      "-100 <= Node.val <= 100"
+    ],
+    "hints": [
+      "A tree is symmetric if the left subtree is a mirror reflection of the right subtree.",
+      "This can be solved recursively by comparing the left child of one tree with the right child of another (mirror) tree, and vice-versa."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {boolean}\n */\nfunction isSymmetric(root) {\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def isSymmetric(self, root: Optional[TreeNode]) -> bool:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nbool isSymmetric(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    bool isSymmetric(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public boolean isSymmetric(TreeNode root) {\n    }\n}"
+  },
+  {
+    "id": "same-tree",
+    "title": "Same Tree",
+    "difficulty": "Easy",
+    "description": "Given the roots of two binary trees, `p` and `q`, return `true` if they are the same or `false` otherwise.\n\nTwo binary trees are considered the same if they are structurally identical, and the nodes have the same value.\n\n**Definition for a binary tree node.**\njs\nfunction TreeNode(val, left, right) {\n    this.val = (val===undefined ? 0 : val)\n    this.left = (left===undefined ? null : left)\n    this.right = (right===undefined ? null : right)\n}\n",
+    "examples": [
+      {
+        "input": "p = [1,2,3], q = [1,2,3]",
+        "output": "true"
+      },
+      {
+        "input": "p = [1,2], q = [1,null,2]",
+        "output": "false"
+      },
+      {
+        "input": "p = [1,2,1], q = [1,1,2]",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in both trees is in the range `[0, 100]`.",
+      "-10^4 <= Node.val <= 10^4"
+    ],
+    "hints": [
+      "Use a recursive approach. Compare the current nodes' values and then recursively compare their left and right subtrees.",
+      "Pay attention to null checks for both nodes."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} p\n * @param {TreeNode} q\n * @return {boolean}\n */\nfunction isSameTree(p, q) {\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nbool isSameTree(struct TreeNode* p, struct TreeNode* q) {\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    bool isSameTree(TreeNode* p, TreeNode* q) {\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public boolean isSameTree(TreeNode p, TreeNode q) {\n    }\n}"
+  },
+  {
+    "id": "invert-binary-tree",
+    "title": "Invert Binary Tree",
+    "difficulty": "Easy",
+    "description": "Given the `root` of a binary tree, invert the tree, and return its `root`.\n\n**Definition for a binary tree node.**\njs\nfunction TreeNode(val, left, right) {\n    this.val = (val===undefined ? 0 : val)\n    this.left = (left===undefined ? null : left)\n    this.right = (right===undefined ? null : right)\n}\n",
+    "examples": [
+      {
+        "input": "root = [4,2,7,1,3,6,9]",
+        "output": "[4,7,2,9,6,3,1]"
+      },
+      {
+        "input": "root = [2,1,3]",
+        "output": "[2,3,1]"
+      },
+      {
+        "input": "root = []",
+        "output": "[]"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[0, 100]`.",
+      "-100 <= Node.val <= 100"
+    ],
+    "hints": [
+      "A recursive solution can be quite elegant. Invert the left subtree and the right subtree, then swap them.",
+      "Handle the base case where the root is null."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {TreeNode}\n */\nfunction invertTree(root) {\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nstruct TreeNode* invertTree(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    TreeNode* invertTree(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public TreeNode invertTree(TreeNode root) {\n    }\n}"
+  },
+  {
+    "id": "path-sum",
+    "title": "Path Sum",
+    "difficulty": "Easy",
+    "description": "Given the `root` of a binary tree and an integer `targetSum`, return `true` if the tree has a root-to-leaf path such that adding up all the values along the path equals `targetSum`.\n\nA leaf node is a node with no children.\n\n**Definition for a binary tree node.**\njs\nfunction TreeNode(val, left, right) {\n    this.val = (val===undefined ? 0 : val)\n    this.left = (left===undefined ? null : left)\n    this.right = (right===undefined ? null : right)\n}\n",
+    "examples": [
+      {
+        "input": "root = [5,4,8,11,null,13,4,7,2,null,null,null,1], targetSum = 22",
+        "output": "true"
+      },
+      {
+        "input": "root = [1,2,3], targetSum = 5",
+        "output": "false"
+      },
+      {
+        "input": "root = [], targetSum = 0",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[0, 5000]`.",
+      "-1000 <= Node.val <= 1000",
+      "-1000 <= targetSum <= 1000"
+    ],
+    "hints": [
+      "Use a recursive approach (DFS). When traversing, subtract the current node's value from the `targetSum`.",
+      "If you reach a leaf node and the remaining `targetSum` is zero, then a path exists.",
+      "Be careful with the base case for an empty tree."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {number} targetSum\n * @return {boolean}\n */\nfunction hasPathSum(root, targetSum) {\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nbool hasPathSum(struct TreeNode* root, int targetSum) {\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    bool hasPathSum(TreeNode* root, int targetSum) {\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public boolean hasPathSum(TreeNode root, int targetSum) {\n    }\n}"
+  },
+  {
+    "id": "binary-tree-level-order-traversal",
+    "title": "Binary Tree Level Order Traversal",
+    "difficulty": "Medium",
+    "description": "Given the `root` of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).",
+    "examples": [
+      {
+        "input": "root = [3,9,20,null,null,15,7]",
+        "output": "[[3],[9,20],[15,7]]"
+      },
+      {
+        "input": "root = [1]",
+        "output": "[[1]]"
+      },
+      {
+        "input": "root = []",
+        "output": "[]"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range [0, 2000].",
+      "-1000 <= Node.val <= 1000"
+    ],
+    "hints": [
+      "Use a queue to keep track of nodes at each level.",
+      "Process nodes level by level."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number[][]}\n */\nfunction levelOrder(root) {\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\n/**\n * Note: The returned array must be malloced, and no larger than 'returnSize * (sizeof(int*))' bytes.\n * 'columnSizes' is an array of integers, where columnSizes[i] is the size of the i-th row.\n * The sizes of 'columnSizes' and the returned array (or row) must be set in the function.\n * (e.g., *returnSize = 0; *columnSizes = NULL; if the tree is empty).\n */\nint** levelOrder(struct TreeNode* root, int* returnSize, int** columnSizes) {\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public List<List<Integer>> levelOrder(TreeNode root) {\n\n    }\n}"
+  },
+  {
+    "id": "validate-binary-search-tree",
+    "title": "Validate Binary Search Tree",
+    "difficulty": "Medium",
+    "description": "Given the `root` of a binary tree, determine if it is a valid Binary Search Tree (BST).\n\nA valid BST is defined as follows:\n\n*   The left subtree of a node contains only nodes with values **less than** the node's value.\n*   The right subtree of a node contains only nodes with values **greater than** the node's value.\n*   Both the left and right subtrees must also be valid BSTs.",
+    "examples": [
+      {
+        "input": "root = [2,1,3]",
+        "output": "true"
+      },
+      {
+        "input": "root = [5,1,4,null,null,3,6]",
+        "output": "false"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range [0, 10^4].",
+      "-2^31 <= Node.val <= 2^31 - 1"
+    ],
+    "hints": [
+      "A BST's values must be strictly increasing in an in-order traversal.",
+      "Use recursion with a range (min, max) for node values."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {boolean}\n */\nfunction isValidBST(root) {\n\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def isValidBST(self, root: Optional[TreeNode]) -> bool:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nbool isValidBST(struct TreeNode* root) {\n\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public boolean isValidBST(TreeNode root) {\n\n    }\n}"
+  },
+  {
+    "id": "lowest-common-ancestor-of-a-binary-tree",
+    "title": "Lowest Common Ancestor of a Binary Tree",
+    "difficulty": "Medium",
+    "description": "Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.\n\nAccording to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes `p` and `q` as the lowest node in `T` that has both `p` and `q` as descendants (where we allow a node to be a descendant of itself).”",
+    "examples": [
+      {
+        "input": "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1",
+        "output": "3"
+      },
+      {
+        "input": "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4",
+        "output": "5"
+      },
+      {
+        "input": "root = [1,2], p = 1, q = 2",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range [2, 10^5].",
+      "-10^9 <= Node.val <= 10^9",
+      "All Node.val are unique.",
+      "p != q",
+      "p and q are different nodes are both present in the tree."
+    ],
+    "hints": [
+      "Perform a DFS traversal.",
+      "If the current node is `p`, `q`, or `null`, return the current node.",
+      "Recursively call for left and right children.",
+      "If both left and right calls return non-null, the current node is the LCA.",
+      "If only one call returns non-null, that node is the LCA."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n *     this.val = val;\n *     this.left = this.right = null;\n * }\n */\n/**\n * @param {TreeNode} root\n * @param {TreeNode} p\n * @param {TreeNode} q\n * @return {TreeNode}\n */\nfunction lowestCommonAncestor(root, p, q) {\n\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, x):\n#         self.val = x\n#         self.left = None\n#         self.right = None\nclass Solution:\n    def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nstruct TreeNode* lowestCommonAncestor(struct TreeNode* root, struct TreeNode* p, struct TreeNode* q) {\n\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n * };\n */\nclass Solution {\npublic:\n    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {\n\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode(int x) { val = x; }\n * }\n */\nclass Solution {\n    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {\n\n    }\n}"
+  },
+  {
+    "id": "construct-binary-tree-from-preorder-and-inorder-traversal",
+    "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+    "difficulty": "Medium",
+    "description": "Given two integer arrays `preorder` and `inorder` where `preorder` is the preorder traversal of a binary tree and `inorder` is the inorder traversal of the same tree, construct and return the binary tree.",
+    "examples": [
+      {
+        "input": "preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]",
+        "output": "[3,9,20,null,null,15,7]"
+      },
+      {
+        "input": "preorder = [-1], inorder = [-1]",
+        "output": "[-1]"
+      }
+    ],
+    "constraints": [
+      "1 <= preorder.length <= 3000",
+      "inorder.length == preorder.length",
+      "-3000 <= preorder[i], inorder[i] <= 3000",
+      "All values of `preorder` and `inorder` are **unique**.",
+      "`preorder` is guaranteed to be the preorder traversal of the tree.",
+      "`inorder` is guaranteed to be the inorder traversal of the tree."
+    ],
+    "hints": [
+      "The first element in preorder traversal is the root.",
+      "In inorder traversal, elements to the left of the root are in the left subtree, and elements to the right are in the right subtree.",
+      "Use recursion and pass sub-arrays or indices for left and right subtrees."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {number[]} preorder\n * @param {number[]} inorder\n * @return {TreeNode}\n */\nfunction buildTree(preorder, inorder) {\n\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nstruct TreeNode* buildTree(int* preorder, int preorderSize, int* inorder, int inorderSize) {\n\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {\n\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public TreeNode buildTree(int[] preorder, int[] inorder) {\n\n    }\n}"
+  },
+  {
+    "id": "diameter-of-binary-tree",
+    "title": "Diameter of Binary Tree",
+    "difficulty": "Medium",
+    "description": "Given the `root` of a binary tree, return the length of the diameter of the tree.\n\nThe diameter of a binary tree is the length of the longest path between any two nodes in a tree. This path may or may not pass through the root.\n\nThe length of a path between two nodes is represented by the number of edges between them.",
+    "examples": [
+      {
+        "input": "root = [1,2,3,4,5]",
+        "output": "3"
+      },
+      {
+        "input": "root = [1,2]",
+        "output": "1"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range [1, 10^4].",
+      "-100 <= Node.val <= 100"
+    ],
+    "hints": [
+      "The diameter of a tree can be found by a depth-first search (DFS).",
+      "For each node, calculate the sum of the depths of its left and right subtrees. Keep track of the maximum sum found.",
+      "A helper function that returns the height of a subtree can be useful."
+    ],
+    "defaultCodeJS": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n */\n/**\n * @param {TreeNode} root\n * @return {number}\n */\nfunction diameterOfBinaryTree(root) {\n\n}",
+    "defaultCodePY": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:\n        pass",
+    "defaultCodeC": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     struct TreeNode *left;\n *     struct TreeNode *right;\n * };\n */\nint diameterOfBinaryTree(struct TreeNode* root) {\n\n}",
+    "defaultCodeCPP": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    int diameterOfBinaryTree(TreeNode* root) {\n\n    }\n};",
+    "defaultCodeJAVA": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public int diameterOfBinaryTree(TreeNode root) {\n\n    }\n}"
+  },
+  {
+    "id": "binary-tree-maximum-path-sum",
+    "title": "Binary Tree Maximum Path Sum",
+    "difficulty": "Hard",
+    "description": "A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.\n\nThe path sum of a path is the sum of the node's values in the path.\n\nGiven the `root` of a binary tree, return the maximum path sum of any non-empty path.",
+    "examples": [
+      {
+        "input": "root = [1,2,3]",
+        "output": "6"
+      },
+      {
+        "input": "root = [-10,9,20,null,null,15,7]",
+        "output": "42"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[1, 3 * 10^4]`.",
+      "`-1000 <= Node.val <= 1000`"
+    ],
+    "hints": [
+      "A recursive function can return the maximum path sum starting from the current node and going *up* (towards its parent).",
+      "The overall maximum path sum might be formed by a path that includes the current node and paths from both its children, without going up further. This requires a global maximum variable."
+    ],
+    "defaultCodeJS": "function maxPathSum(root) {\n}",
+    "defaultCodePY": "class Solution:\n    def maxPathSum(self, root: Optional[TreeNode]) -> int:\n        pass",
+    "defaultCodeC": "int maxPathSum(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int maxPathSum(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int maxPathSum(TreeNode root) {\n    }\n}"
+  },
+  {
+    "id": "serialize-and-deserialize-binary-tree",
+    "title": "Serialize and Deserialize Binary Tree",
+    "difficulty": "Hard",
+    "description": "Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.\n\nDesign an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.",
+    "examples": [
+      {
+        "input": "root = [1,2,3,null,null,4,5]",
+        "output": "[1,2,3,null,null,4,5]"
+      },
+      {
+        "input": "root = []",
+        "output": "[]"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[0, 10^4]`.",
+      "`-1000 <= Node.val <= 1000`"
+    ],
+    "hints": [
+      "Consider using a pre-order traversal for serialization, including null markers to denote missing children.",
+      "For deserialization, reconstruct the tree using the same traversal order, processing the null markers appropriately to build the correct structure."
+    ],
+    "defaultCodeJS": "/** * Definition for a binary tree node. * function TreeNode(val) { *     this.val = val; *     this.left = this.right = null; * } */\n\n/** * Encodes a tree to a single string. * * @param {TreeNode} root * @return {string} */\nvar serialize = function(root) {\n};\n\n/** * Decodes your encoded data to tree. * * @param {string} data * @return {TreeNode} */\nvar deserialize = function(data) {\n};",
+    "defaultCodePY": "class Codec:\n    def serialize(self, root: Optional[TreeNode]) -> str:\n        pass\n    def deserialize(self, data: str) -> Optional[TreeNode]:\n        pass",
+    "defaultCodeC": "struct TreeNode* serialize(struct TreeNode* root) {\n    return NULL; // Placeholder\n}\nstruct TreeNode* deserialize(char* data) {\n    return NULL; // Placeholder\n}",
+    "defaultCodeCPP": "class Codec {\npublic:\n    // Encodes a tree to a single string.\n    string serialize(TreeNode* root) {\n        return \"\"; // Placeholder\n    }\n    // Decodes your encoded data to tree.\n    TreeNode* deserialize(string data) {\n        return NULL; // Placeholder\n    }\n};",
+    "defaultCodeJAVA": "public class Codec {\n    // Encodes a tree to a single string.\n    public String serialize(TreeNode root) {\n        return \"\"; // Placeholder\n    }\n    // Decodes your encoded data to tree.\n    public TreeNode deserialize(String data) {\n        return null; // Placeholder\n    }\n}"
+  },
+  {
+    "id": "binary-tree-cameras",
+    "title": "Binary Tree Cameras",
+    "difficulty": "Hard",
+    "description": "You are given the `root` of a binary tree. We install cameras on some nodes of the tree. Each camera at a node can monitor itself, its parent, and its immediate children.\n\nReturn the minimum number of cameras needed to monitor all nodes of the tree.",
+    "examples": [
+      {
+        "input": "root = [0,0,null,0,0]",
+        "output": "1"
+      },
+      {
+        "input": "root = [0,0,null,0,null,0,null,null,0]",
+        "output": "2"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[1, 1000]`.",
+      "`Node.val == 0`"
+    ],
+    "hints": [
+      "This is a Tree Dynamic Programming problem. Define states for a node indicating its monitoring status:",
+      "`0`: The node is not monitored.",
+      "`1`: The node is monitored but does not have a camera.",
+      "`2`: The node has a camera.",
+      "Process the tree using a post-order traversal (bottom-up approach). The root needs to be monitored. If after processing all children, the root itself is not monitored, it needs a camera."
+    ],
+    "defaultCodeJS": "function minCameraCover(root) {\n}",
+    "defaultCodePY": "class Solution:\n    def minCameraCover(self, root: Optional[TreeNode]) -> int:\n        pass",
+    "defaultCodeC": "int minCameraCover(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int minCameraCover(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int minCameraCover(TreeNode root) {\n    }\n}"
+  },
+  {
+    "id": "count-complete-tree-nodes",
+    "title": "Count Complete Tree Nodes",
+    "difficulty": "Hard",
+    "description": "Given the `root` of a complete binary tree, return the number of nodes in the tree.\n\nIn a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between `1` and `2^h` nodes inclusive at the last level `h`.\n\nDesign an algorithm that runs in less than `O(n)` time complexity.",
+    "examples": [
+      {
+        "input": "root = [1,2,3,4,5,6]",
+        "output": "6"
+      },
+      {
+        "input": "root = []",
+        "output": "0"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[0, 5 * 10^4]`.",
+      "`0 <= Node.val <= 1000`",
+      "The tree is guaranteed to be complete."
+    ],
+    "hints": [
+      "Leverage the property of a complete binary tree: if the height of the left subtree is equal to the height of the right subtree, then the left subtree is a full binary tree of height `h-1` and the right subtree is a complete binary tree of height `h-1`.",
+      "If the heights are different, then the left subtree is a complete binary tree of height `h-1` and the right subtree is a full binary tree of height `h-2`.",
+      "The height of a full binary tree with height `h` (0-indexed) is `2^(h+1) - 1` nodes. This can be calculated directly.",
+      "Height calculation for a subtree can be done in `O(log N)` by always traversing down the leftmost path."
+    ],
+    "defaultCodeJS": "function countNodes(root) {\n}",
+    "defaultCodePY": "class Solution:\n    def countNodes(self, root: Optional[TreeNode]) -> int:\n        pass",
+    "defaultCodeC": "int countNodes(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int countNodes(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int countNodes(TreeNode root) {\n    }\n}"
+  },
+  {
+    "id": "maximum-sum-bst-in-binary-tree",
+    "title": "Maximum Sum BST in Binary Tree",
+    "difficulty": "Hard",
+    "description": "Given the `root` of a binary tree, return the maximum sum of all keys of any sub-tree which is also a Binary Search Tree (BST).\n\nA Binary Search Tree (BST) is defined as follows:\n\n*   The left subtree of a node contains only nodes with keys less than the node's key.\n*   The right subtree of a node contains only nodes with keys greater than the node's key.\n*   Both the left and right subtrees must also be binary search trees.",
+    "examples": [
+      {
+        "input": "root = [1,4,3,2,4,2,5,null,null,null,null,null,null,4,6]",
+        "output": "20"
+      },
+      {
+        "input": "root = [4,3,null,1,2]",
+        "output": "2"
+      }
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range `[0, 4 * 10^4]`.",
+      "`-10^4 <= Node.val <= 10^4`"
+    ],
+    "hints": [
+      "Perform a post-order traversal (bottom-up approach) to process children before the parent. For each node, determine if the subtree rooted at it is a BST.",
+      "A recursive helper function can return multiple pieces of information about a subtree: `[is_bst, min_val_in_subtree, max_val_in_subtree, sum_of_subtree]`.",
+      "Initialize `min_val_in_subtree` to `infinity` and `max_val_in_subtree` to `-infinity` for base cases (null nodes) to ensure correct BST validation.",
+      "Maintain a global variable for the maximum BST sum found so far."
+    ],
+    "defaultCodeJS": "function maxSumBST(root) {\n}",
+    "defaultCodePY": "class Solution:\n    def maxSumBST(self, root: Optional[TreeNode]) -> int:\n        pass",
+    "defaultCodeC": "int maxSumBST(struct TreeNode* root) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int maxSumBST(TreeNode* root) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int maxSumBST(TreeNode root) {\n    }\n}"
+  }
+]

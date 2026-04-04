@@ -185,9 +185,7 @@ ${topicSummary || "No topic data available yet."}
 ## Action Plan
 1. Assign more tasks at higher Bloom's levels
 2. Provide targeted practice for struggling topics
-3. Review individual student progress regularly
-
-*Note: This is a fallback report. Configure a valid Gemini API key for AI-powered analysis.*`;
+3. Review individual student progress regularly`;
     }
 
     res.json({ success: true, report });

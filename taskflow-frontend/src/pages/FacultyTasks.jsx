@@ -1,411 +1,39 @@
 import { getToken } from "../utils/auth";
 import { useEffect, useState, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  X, User, Clock, FileText, ArrowLeft, Save, Pencil, Trash2,
-  Plus, CheckCircle, ChevronLeft, ChevronRight,
+  X, User, Clock, FileText, Trash2,
+  CheckCircle, BarChart2,
 } from "lucide-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import ConfirmationModal from "../components/common/ConfirmationModal";
-
-const EMPTY_TASK = {
-  title: "",
-  description: "",
-  topic: "",
-  difficulty: "medium",
-  type: "task",
-  bloomLevel: "REMEMBER",
-  taskMode: "single",   // "single" | "questions"
-  questions: [],        // [{ text, marks }]
-};
-
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link", "code-block"],
-    ["clean"],
-  ],
-};
-
-/* ════════════════════════════════════════════════════════
-   QuestionEditor — full-page card for a single question
-   with prev / next navigation
-   ════════════════════════════════════════════════════════ */
-function QuestionEditor({ questions, activeIdx, onNavigate, onChange, onAdd, onRemove }) {
-  const q = questions[activeIdx] || { text: "", marks: 1 };
-  const total = questions.length;
-  const totalMarks = questions.reduce((s, qItem) => s + (Number(qItem.marks) || 0), 0);
-
-  return (
-    <div className="flex-1 flex flex-col bg-slate-50/50 overflow-hidden relative">
-      {/* Question nav bar */}
-      <div className="flex items-center justify-between px-8 pt-6 pb-3 shrink-0">
-        <div className="flex items-center gap-2">
-          {questions.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => onNavigate(i)}
-              className={`w-8 h-8 rounded-full text-sm font-bold transition border ${
-                i === activeIdx
-                  ? "bg-black text-white border-black"
-                  : "bg-white text-clay-muted  hover:border-slate-400"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={onAdd}
-            className="flex items-center gap-1 ml-2 text-xs font-medium text-purple-600 hover:text-blue-800 clay-tint-sky hover:bg-blue-100 px-3 py-1.5 rounded-full transition border border-purple-100"
-          >
-            <Plus size={13} /> Add
-          </button>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-clay-muted font-medium">Total {totalMarks} marks</span>
-          {total > 1 && (
-            <button
-              type="button"
-              onClick={() => onRemove(activeIdx)}
-              className="text-xs text-rose-500 hover:text-rose-700 px-3 py-1.5 rounded-full clay-tint-rose hover:bg-rose-100 transition"
-            >
-              Remove Q{activeIdx + 1}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Question card */}
-      <div className="flex-1 overflow-y-auto px-8 pb-8">
-        <div className="bg-white rounded-2xl shadow-sm border flex flex-col overflow-hidden min-h-[480px]">
-          {/* Card header */}
-          <div className="flex items-center justify-between px-8 pt-7 pb-4 border-b ">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl font-black text-slate-200">Q{activeIdx + 1}</span>
-              <span className="text-sm text-clay-muted font-medium">of {total}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold text-clay-muted">Marks</label>
-              <input
-                type="number"
-                min="1"
-                value={q.marks}
-                onChange={(e) => onChange(activeIdx, "marks", parseInt(e.target.value, 10) || 1)}
-                className="w-20 border rounded-lg px-3 py-1.5 text-sm font-bold text-center focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Question text — full Quill editor */}
-          <div className="flex-1 p-6">
-            <ReactQuill
-              key={`qeditor-${activeIdx}`}
-              theme="snow"
-              value={q.text}
-              onChange={(content) => onChange(activeIdx, "text", content)}
-              className="flex-1 flex flex-col bg-white text-base w-full"
-              placeholder={`Write question ${activeIdx + 1} here…`}
-              modules={QUILL_MODULES}
-            />
-          </div>
-
-          {/* Prev / Next */}
-          <div className="flex items-center justify-between px-8 py-4 border-t  bg-slate-50/60">
-            <button
-              type="button"
-              disabled={activeIdx === 0}
-              onClick={() => onNavigate(activeIdx - 1)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium text-clay-secondary hover:bg-white disabled:opacity-30 transition"
-            >
-              <ChevronLeft size={16} /> Previous
-            </button>
-            <button
-              type="button"
-              disabled={activeIdx === total - 1}
-              onClick={() => onNavigate(activeIdx + 1)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-medium text-clay-secondary hover:bg-white disabled:opacity-30 transition"
-            >
-              Next <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ════════════════════════════════════════════════════════
-   TaskFormOverlay — must be outside FacultyTasks
-   ════════════════════════════════════════════════════════ */
-function TaskFormOverlay({ form, setForm, onSave, onBack, isSaving, isEdit }) {
-  const [activeQIdx, setActiveQIdx] = useState(0);
-  const isQuestionMode = form.taskMode === "questions";
-
-  const addQuestion = () => {
-    setForm(prev => {
-      const qs = prev.questions || [];
-      return { ...prev, questions: [...qs, { text: "", marks: 1 }] };
-    });
-    // Use length + 1 because state hasn't updated synchronously here. We know we are appending one.
-    setActiveQIdx((form.questions || []).length);
-  };
-
-  const removeQuestion = (i) => {
-    setForm(prev => {
-      const qs = prev.questions || [];
-      if (qs.length <= 1) return prev;
-      return { ...prev, questions: qs.filter((_, idx) => idx !== i) };
-    });
-    setActiveQIdx(prevIdx => Math.min(i, Math.max(0, (form.questions || []).length - 2)));
-  };
-
-  const updateQuestion = (i, field, value) => {
-    setForm(prev => {
-      const qs = prev.questions || [];
-      const updated = qs.map((q, idx) =>
-        idx === i ? { ...q, [field]: value } : q
-      );
-      return { ...prev, questions: updated };
-    });
-  };
-
-  const isSaveDisabled = isSaving || !form.title || form.title.trim() === "";
-
-  return (
-    <div className="absolute inset-0 bg-white z-40 flex flex-col overflow-hidden animate-in fade-in duration-200">
-      {/* Top bar */}
-      <div className="flex justify-between items-center p-6 border-b  bg-white shadow-sm shrink-0">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onBack}
-            className="p-2 hover:bg-slate-100 rounded-full text-clay-muted transition-colors"
-          >
-            <ArrowLeft size={24} />
-          </button>
-          <h2 className="text-2xl font-bold text-clay-text">
-            {isEdit ? "Edit Task" : "Create New Task"}
-          </h2>
-        </div>
-        <button
-          onClick={onSave}
-          disabled={isSaveDisabled}
-          className="flex items-center gap-2 bg-black text-white px-8 py-2.5 rounded-full font-medium hover:bg-slate-800 transition shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          <Save size={18} />
-          {isEdit ? (isSaving ? "Saving…" : "Save Changes") : "Publish Task"}
-        </button>
-      </div>
-
-      <div className="flex-1 flex overflow-hidden bg-slate-50 relative">
-        {/* Sidebar */}
-        <div className="w-72 border-r  bg-white p-6 overflow-y-auto space-y-5 shadow-sm shrink-0">
-          <div>
-            <label className="block text-sm font-semibold text-clay-secondary mb-1.5">Topic</label>
-            <input
-              type="text"
-              className="w-full border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none bg-slate-50 font-medium text-clay-text"
-              value={form.topic}
-              onChange={(e) => setForm({ ...form, topic: e.target.value })}
-              placeholder="e.g. Data Structures"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-clay-secondary mb-1.5">Type</label>
-            <select
-              className="w-full border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none bg-slate-50 font-medium text-clay-text"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              <option value="task">Task</option>
-              <option value="project">Project</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-clay-secondary mb-1.5">Difficulty</label>
-            <select
-              className="w-full border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none bg-slate-50 font-medium text-clay-text"
-              value={form.difficulty}
-              onChange={(e) => setForm({ ...form, difficulty: e.target.value })}
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-clay-secondary mb-1.5">Bloom Level</label>
-            <select
-              className="w-full border rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none bg-slate-50 font-medium text-clay-text"
-              value={form.bloomLevel}
-              onChange={(e) => setForm({ ...form, bloomLevel: e.target.value })}
-            >
-              <option value="REMEMBER">Remember</option>
-              <option value="UNDERSTAND">Understand</option>
-              <option value="APPLY">Apply</option>
-              <option value="ANALYZE">Analyze</option>
-              <option value="EVALUATE">Evaluate</option>
-              <option value="CREATE">Create</option>
-            </select>
-          </div>
-
-          {/* Task Mode Toggle */}
-          <div>
-            <label className="block text-sm font-semibold text-clay-secondary mb-1.5">Task Mode</label>
-            <div className="flex rounded-xl overflow-hidden border">
-              <button
-                type="button"
-                onClick={() => setForm({ ...form, taskMode: "single", questions: [] })}
-                className={`flex-1 py-2 text-sm font-medium transition ${
-                  form.taskMode === "single"
-                    ? "bg-black text-white"
-                    : "bg-white text-clay-secondary hover:bg-slate-50"
-                }`}
-              >
-                Single
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const qs = form.questions?.length ? form.questions : [{ text: "", marks: 1 }];
-                  setForm({ ...form, taskMode: "questions", questions: qs });
-                  setActiveQIdx(0);
-                }}
-                className={`flex-1 py-2 text-sm font-medium transition ${
-                  form.taskMode === "questions"
-                    ? "bg-black text-white"
-                    : "bg-white text-clay-secondary hover:bg-slate-50"
-                }`}
-              >
-                Questions
-              </button>
-            </div>
-          </div>
-
-          {/* Question index quick-jump */}
-          {isQuestionMode && form.questions?.length > 0 && (
-            <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-clay-muted uppercase tracking-wider">Questions</p>
-              {form.questions.map((q, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setActiveQIdx(i)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition border ${
-                    i === activeQIdx
-                      ? "bg-slate-900 text-white border-slate-900"
-                      : "bg-white  text-clay-secondary hover:bg-slate-50"
-                  }`}
-                >
-                  <span className="font-bold">Q{i + 1}</span>
-                  <span className="text-xs ml-2 opacity-60">{q.marks} mark{q.marks !== 1 ? "s" : ""}</span>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {!isQuestionMode && (
-            <div className="clay-tint-sky p-4 rounded-xl border border-purple-100">
-              <p className="text-sm text-blue-800 leading-relaxed font-medium">
-                <strong>Tip:</strong> Provide clear instructions to help students understand the task.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Main editor area */}
-        {isQuestionMode ? (
-          /* Question card editor */
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Title input at top */}
-            <div className="px-8 pt-7 pb-3 bg-white border-b  shrink-0">
-              <input
-                type="text"
-                placeholder="Task Title..."
-                className="w-full text-3xl font-extrabold border-none outline-none placeholder:text-slate-300 bg-transparent text-clay-text"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-              />
-            </div>
-            <QuestionEditor
-              questions={form.questions || []}
-              activeIdx={activeQIdx}
-              onNavigate={setActiveQIdx}
-              onChange={updateQuestion}
-              onAdd={addQuestion}
-              onRemove={removeQuestion}
-            />
-          </div>
-        ) : (
-          /* Plain description editor */
-          <div className="flex-1 flex flex-col bg-slate-50/50 overflow-hidden relative">
-            <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-slate-100 to-transparent z-10 pointer-events-none opacity-40" />
-            <div className="flex-1 overflow-y-auto flex flex-col items-center py-8 px-4 sm:px-8">
-              <div className="w-full max-w-4xl bg-white rounded-2xl shadow-sm border flex flex-col pb-12 overflow-hidden shrink-0 mt-2 mb-12 min-h-[800px]">
-                <div className="px-10 lg:px-14 pt-12 pb-4">
-                  <input
-                    type="text"
-                    placeholder="Task Title..."
-                    className="w-full text-4xl lg:text-5xl font-extrabold border-none outline-none placeholder:text-slate-300 bg-transparent text-clay-text leading-tight tracking-tight"
-                    value={form.title}
-                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  />
-                </div>
-                <div className="flex-1 flex flex-col custom-quill-wrapper relative">
-                  <ReactQuill
-                    theme="snow"
-                    value={form.description}
-                    onChange={(content) => setForm({ ...form, description: content })}
-                    className="flex-1 flex flex-col bg-white text-lg w-full"
-                    placeholder="Write the task details, attachments, and instructions here..."
-                    modules={QUILL_MODULES}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* ════════════════════════════════════════════════════════
    FacultyTasks — main page component
    ════════════════════════════════════════════════════════ */
 export default function FacultyTasks() {
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTaskForReview, setSelectedTaskForReview] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
-  const location = useLocation();
-
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newTask, setNewTask] = useState({ ...EMPTY_TASK });
-
-  const [editingTask, setEditingTask] = useState(null);
-  const [editForm, setEditForm] = useState({ ...EMPTY_TASK });
-  const [savingEdit, setSavingEdit] = useState(false);
 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  // { [submissionId]: [{ questionIndex, score }] }
+  // Question-based grading
   const [scoreDrafts, setScoreDrafts] = useState({});
   const [savingScore, setSavingScore] = useState(null);
 
+  // Plain-task direct marks
+  const [plainScoreDrafts, setPlainScoreDrafts] = useState({});
+  const [savingPlainScore, setSavingPlainScore] = useState(null);
+  const [savedPlain, setSavedPlain] = useState({});
+
   useEffect(() => {
     fetchTasks();
-    if (location.state?.openCreate) {
-      setShowCreateModal(true);
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
+  }, []);
 
   const fetchTasks = async () => {
     try {
@@ -446,77 +74,6 @@ export default function FacultyTasks() {
     }
   };
 
-  /* ── helpers ── */
-  // Strip questions with blank text before sending to backend
-  const sanitiseQuestions = (form) => {
-    if (form.taskMode !== "questions") return [];
-    return (form.questions || []).filter((q) => q.text && q.text.trim() !== "" && q.text !== "<p><br></p>");
-  };
-
-  /* ── CREATE ── */
-  const handleCreateTask = async (e) => {
-    e.preventDefault();
-    try {
-      const payload = { ...newTask, questions: sanitiseQuestions(newTask) };
-      const res = await fetch("http://localhost:5002/api/tasks/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setTasks([data.task, ...tasks]);
-        setShowCreateModal(false);
-        setNewTask({ ...EMPTY_TASK });
-      } else {
-        alert("Failed to create task: " + (data.message || "Unknown error"));
-      }
-    } catch (err) {
-      console.error("Failed to create task", err);
-      alert("Failed to create task. Check console for details.");
-    }
-  };
-
-  /* ── EDIT ── */
-  const openEditModal = (task) => {
-    const hasQ = Array.isArray(task.questions) && task.questions.length > 0;
-    setEditingTask(task);
-    setEditForm({
-      title: task.title,
-      description: task.description,
-      topic: task.topic,
-      difficulty: task.difficulty,
-      type: task.type,
-      bloomLevel: task.bloomLevel,
-      taskMode: hasQ ? "questions" : "single",
-      questions: task.questions || [],
-    });
-  };
-
-  const handleEditSave = async (e) => {
-    e.preventDefault();
-    setSavingEdit(true);
-    try {
-      const payload = { ...editForm, questions: sanitiseQuestions(editForm) };
-      const res = await fetch(`http://localhost:5002/api/tasks/${editingTask._id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setTasks(tasks.map((t) => (t._id === editingTask._id ? data.task : t)));
-        setEditingTask(null);
-      } else {
-        alert("Failed to update task: " + (data.message || "Unknown error"));
-      }
-    } catch (err) {
-      console.error("Failed to update task", err);
-    } finally {
-      setSavingEdit(false);
-    }
-  };
-
   /* ── DELETE ── */
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
@@ -540,7 +97,7 @@ export default function FacultyTasks() {
     }
   };
 
-  /* ── GRADING ── */
+  /* ── GRADING helpers ── */
   const getScoreDraft = (subId, questions) => {
     if (scoreDrafts[subId]) return scoreDrafts[subId];
     return questions.map((_, i) => ({ questionIndex: i, score: 0 }));
@@ -590,35 +147,32 @@ export default function FacultyTasks() {
     }
   };
 
-  const handleCreateBack = useCallback(() => setShowCreateModal(false), []);
-  const handleEditBack = useCallback(() => setEditingTask(null), []);
+  const handleSavePlainMark = async (sub) => {
+    const score = plainScoreDrafts[sub._id] ?? sub.performanceScore ?? 0;
+    setSavingPlainScore(sub._id);
+    try {
+      const res = await fetch(`http://localhost:5002/api/submissions/${sub._id}/mark`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ score }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmissions((prev) =>
+          prev.map((s) => s._id === sub._id ? { ...s, performanceScore: data.submission.performanceScore } : s)
+        );
+        setSavedPlain((prev) => ({ ...prev, [sub._id]: true }));
+        setTimeout(() => setSavedPlain((prev) => ({ ...prev, [sub._id]: false })), 2000);
+      }
+    } catch (err) {
+      console.error("Plain mark save error", err);
+    } finally {
+      setSavingPlainScore(null);
+    }
+  };
 
-  /* ════════ RENDER ════════ */
+  /* ════ RENDER ════ */
   if (loading) return <p className="p-6">Loading tasks...</p>;
-
-  if (showCreateModal)
-    return (
-      <TaskFormOverlay
-        form={newTask}
-        setForm={setNewTask}
-        onSave={handleCreateTask}
-        onBack={handleCreateBack}
-        isSaving={false}
-        isEdit={false}
-      />
-    );
-
-  if (editingTask)
-    return (
-      <TaskFormOverlay
-        form={editForm}
-        setForm={setEditForm}
-        onSave={handleEditSave}
-        onBack={handleEditBack}
-        isSaving={savingEdit}
-        isEdit={true}
-      />
-    );
 
   return (
     <div className="p-8 space-y-8 relative">
@@ -628,7 +182,7 @@ export default function FacultyTasks() {
           Total tasks created: <span className="font-medium">{tasks.length}</span>
         </p>
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={() => navigate("/faculty/tasks/create")}
           className="bg-black text-white px-6 py-2 rounded-full font-medium hover:bg-slate-800 transition"
         >
           + Create New Task
@@ -654,15 +208,11 @@ export default function FacultyTasks() {
                     <FileText size={28} />
                   </div>
                   <div>
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <p className="font-bold text-xl text-slate-900">{task.title}</p>
-                      <span
-                        className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wide ${
-                          task.type === "project"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-blue-100 text-blue-700"
-                        }`}
-                      >
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wide ${
+                        task.type === "project" ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
+                      }`}>
                         {task.type}
                       </span>
                       {Array.isArray(task.questions) && task.questions.length > 0 && (
@@ -670,11 +220,24 @@ export default function FacultyTasks() {
                           {task.questions.length} Qs
                         </span>
                       )}
+                      {/* Marks badge */}
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1 ${
+                        task.hasMarks
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-slate-100 text-slate-500"
+                      }`}>
+                        <BarChart2 size={10} />
+                        {task.hasMarks ? "Marked" : "Practice"}
+                      </span>
                     </div>
                     <p className="text-sm font-medium text-slate-500 flex items-center gap-2 flex-wrap">
-                      <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-md px-2">Topic: {task.topic}</span>
-                      <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-md px-2">Diff: {task.difficulty}</span>
-                      <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-md px-2 text-slate-600">Bloom: <span className="font-bold">{task.bloomLevel}</span></span>
+                      <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-md">Topic: {task.topic}</span>
+                      {task.difficulty && task.difficulty !== "none" && (
+                        <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-md">Diff: {task.difficulty}</span>
+                      )}
+                      {task.bloomLevel && task.bloomLevel !== "none" && (
+                        <span className="capitalize bg-slate-100 px-2 py-0.5 rounded-md text-slate-600">Bloom: <span className="font-bold">{task.bloomLevel}</span></span>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -685,13 +248,6 @@ export default function FacultyTasks() {
                     className="flex-1 md:flex-none text-sm px-6 py-2.5 rounded-xl bg-slate-50 text-slate-700 border border-slate-200 hover:bg-black hover:text-white hover:border-black transition-all font-bold"
                   >
                     Review
-                  </button>
-                  <button
-                    onClick={() => openEditModal(task)}
-                    title="Edit task"
-                    className="p-3 rounded-xl border border-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 text-slate-400 transition-all font-bold"
-                  >
-                    <Pencil size={18} />
                   </button>
                   <button
                     onClick={() => setDeleteTarget(task)}
@@ -714,7 +270,16 @@ export default function FacultyTasks() {
             <div className="p-6 border-b flex justify-between items-center bg-slate-50 shrink-0">
               <div>
                 <h2 className="text-2xl font-bold">{selectedTaskForReview.title}</h2>
-                <p className="text-clay-muted text-sm">Student Submissions</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-clay-muted text-sm">Student Submissions</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                    selectedTaskForReview.hasMarks
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-slate-100 text-slate-500"
+                  }`}>
+                    {selectedTaskForReview.hasMarks ? "Marked Task" : "Practice Task"}
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setSelectedTaskForReview(null)}
@@ -735,10 +300,11 @@ export default function FacultyTasks() {
                 submissions.map((sub) => {
                   const questions = selectedTaskForReview?.questions || [];
                   const isQBased = questions.length > 0;
-                  const draftScore = isQBased ? calcDraftScore(sub._id, questions) : null;
+                  const taskHasMarks = selectedTaskForReview?.hasMarks;
+                  const draftScore = (isQBased && taskHasMarks) ? calcDraftScore(sub._id, questions) : null;
 
                   return (
-                    <div key={sub._id} className="bg-white p-6 rounded-2xl shadow-sm ">
+                    <div key={sub._id} className="bg-white p-6 rounded-2xl shadow-sm">
                       {/* Student info */}
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-3">
@@ -765,8 +331,8 @@ export default function FacultyTasks() {
                         </div>
                       </div>
 
-                      {/* Question-based */}
-                      {isQBased ? (
+                      {/* Question-based with marks */}
+                      {isQBased && taskHasMarks ? (
                         <div className="space-y-4">
                           {questions.map((q, i) => {
                             const answerObj = (sub.questionAnswers || []).find((a) => a.questionIndex === i);
@@ -774,7 +340,7 @@ export default function FacultyTasks() {
                             const scoreDraft = draft.find((d) => d.questionIndex === i) || { score: 0 };
 
                             return (
-                              <div key={i} className=" rounded-xl overflow-hidden">
+                              <div key={i} className="rounded-xl overflow-hidden">
                                 <div className="bg-slate-50 px-4 py-2.5 flex items-center justify-between">
                                   <div
                                     className="text-xs font-bold text-clay-secondary flex-1 prose prose-xs max-w-none"
@@ -793,8 +359,12 @@ export default function FacultyTasks() {
                                       </a>
                                     </div>
                                   )}
-                                  <div className="bg-slate-50 rounded-lg p-3 text-sm text-clay-secondary whitespace-pre-wrap font-mono leading-relaxed max-h-32 overflow-y-auto ">
-                                    {answerObj?.answer || <span className="italic text-clay-muted">No text answer provided.</span>}
+                                  <div className="bg-slate-50 rounded-lg p-4 text-[14px] text-slate-700 max-h-48 overflow-y-auto border prose prose-sm max-w-none prose-slate">
+                                    {answerObj?.answer ? (
+                                      <div dangerouslySetInnerHTML={{ __html: answerObj.answer }} />
+                                    ) : (
+                                      <span className="italic text-slate-400">No text answer provided.</span>
+                                    )}
                                   </div>
                                   <div className="flex items-center gap-3">
                                     <label className="text-xs font-semibold text-clay-secondary">Score:</label>
@@ -832,31 +402,91 @@ export default function FacultyTasks() {
                             </button>
                           </div>
                         </div>
+
+                      ) : isQBased && !taskHasMarks ? (
+                        /* Question-based but no marks — read only */
+                        <div className="space-y-3">
+                          {questions.map((q, i) => {
+                            const answerObj = (sub.questionAnswers || []).find((a) => a.questionIndex === i);
+                            return (
+                              <div key={i} className="rounded-xl overflow-hidden border border-dashed border-slate-200">
+                                <div
+                                  className="bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-500 prose prose-xs max-w-none"
+                                  dangerouslySetInnerHTML={{ __html: `Q${i + 1} — ${q.text}` }}
+                                />
+                                <div className="p-4 text-[14px] text-slate-700 bg-white max-h-48 overflow-y-auto prose prose-sm max-w-none prose-slate">
+                                  {answerObj?.answer ? (
+                                    <div dangerouslySetInnerHTML={{ __html: answerObj.answer }} />
+                                  ) : (
+                                    <span className="italic text-slate-400">No answer.</span>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-50 px-3 py-2 rounded-lg border border-dashed">
+                            <BarChart2 size={12} /> Practice task — no marks assigned
+                          </div>
+                        </div>
+
                       ) : (
                         /* Plain text submission */
                         <>
-                          <div className="bg-slate-50 rounded-xl p-4  text-sm text-clay-secondary whitespace-pre-wrap font-mono leading-relaxed max-h-60 overflow-y-auto">
-                            {sub.code || "No text content submitted."}
+                          <div className="bg-slate-50 rounded-xl p-6 text-[15px] text-slate-700 max-h-64 overflow-y-auto border prose prose-sm max-w-none prose-slate">
+                            {sub.code ? (
+                              <div dangerouslySetInnerHTML={{ __html: sub.code }} />
+                            ) : (
+                              <span className="italic text-slate-400">No text content submitted.</span>
+                            )}
                           </div>
                           {sub.fileUrl && (
                             <div className="mt-4 border-t pt-4">
-                              <p className="text-xs font-bold text-clay-muted uppercase mb-2 tracking-wider">
-                                Attachment
-                              </p>
+                              <p className="text-xs font-bold text-clay-muted uppercase mb-2 tracking-wider">Attachment</p>
                               {sub.fileUrl.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
                                 <a href={sub.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-block border rounded-lg overflow-hidden hover:opacity-90 transition shadow-sm mt-1">
                                   <img src={sub.fileUrl} alt="Submitted attachment" className="max-h-64 w-auto object-contain" />
                                 </a>
                               ) : (
-                                <a
-                                  href={sub.fileUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="inline-flex items-center gap-2 px-4 py-2 clay-tint-sky text-blue-700 rounded-xl hover:bg-blue-100 transition border border-purple-100 font-medium text-sm"
-                                >
+                                <a href={sub.fileUrl} target="_blank" rel="noreferrer"
+                                  className="inline-flex items-center gap-2 px-4 py-2 clay-tint-sky text-blue-700 rounded-xl hover:bg-blue-100 transition border border-purple-100 font-medium text-sm">
                                   <FileText size={18} /> View Submitted File
                                 </a>
                               )}
+                            </div>
+                          )}
+
+                          {/* Plain score input — only if task has marks */}
+                          {taskHasMarks ? (
+                            <div className="mt-4 flex items-center gap-4 p-4 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl border border-indigo-100">
+                              <div className="flex items-center gap-3 flex-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Score (0–10):</label>
+                                <input
+                                  type="number" min="0" max="10" step="0.5"
+                                  value={plainScoreDrafts[sub._id] ?? sub.performanceScore ?? 0}
+                                  onChange={(e) => setPlainScoreDrafts(prev => ({
+                                    ...prev,
+                                    [sub._id]: Math.min(10, Math.max(0, Number(e.target.value) || 0))
+                                  }))}
+                                  className="w-20 border rounded-xl px-3 py-1.5 text-base font-bold text-center focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white"
+                                />
+                                <span className="text-slate-400 text-sm font-medium">/ 10</span>
+                              </div>
+                              <button
+                                onClick={() => handleSavePlainMark(sub)}
+                                disabled={savingPlainScore === sub._id}
+                                className={`flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm transition shadow-sm ${
+                                  savedPlain[sub._id]
+                                    ? "bg-emerald-500 text-white"
+                                    : "bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-60"
+                                }`}
+                              >
+                                <CheckCircle size={15} />
+                                {savingPlainScore === sub._id ? "Saving…" : savedPlain[sub._id] ? "Saved!" : "Save Score"}
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="mt-3 flex items-center gap-2 text-xs text-slate-400 bg-slate-50 px-3 py-2 rounded-lg border border-dashed">
+                              <BarChart2 size={12} /> Practice task — no marks assigned
                             </div>
                           )}
                         </>

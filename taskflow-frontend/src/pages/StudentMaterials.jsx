@@ -266,14 +266,15 @@ export default function StudentMaterials() {
   // ────────────── Materials Grid View ──────────────
   return (
     <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-center justify-center text-center gap-4 pt-4 mb-4">
         <div>
-          <p className="text-clay-muted">
+          <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight mb-2">Study Materials</h1>
+          <p className="text-slate-500 max-w-lg mx-auto text-sm">
             Browse study materials uploaded by your faculty. Click on any material to use the AI assistant.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-clay-muted bg-slate-100 px-4 py-2 rounded-full border">
-          <BookOpen size={16} />
+        <div className="flex items-center gap-2 text-xs font-bold text-slate-500 bg-white shadow-sm px-4 py-2 rounded-full border border-slate-200 mt-2">
+          <BookOpen size={14} className="text-purple-500" />
           {materials.length} material{materials.length !== 1 ? "s" : ""}
         </div>
       </div>

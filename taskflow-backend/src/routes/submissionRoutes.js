@@ -2,20 +2,18 @@ const router = require("express").Router();
 const auth = require("../middleware/auth");
 const Submission = require("../models/Submission");
 const Task = require("../models/Task");
+const User = require("../models/User");
 
 // POST /api/submissions — student submits a task
 router.post("/", auth, async (req, res) => {
   try {
     const { taskId, code, fileUrl, content, questionAnswers } = req.body;
 
-    // Look up the task to get topic / bloom info
     const task = await Task.findById(taskId);
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Prevent duplicate submissions for the same task by this user (if not a project milestone)
-    // For project milestones, they submit multiple phases so we don't block them entirely, but for standard tasks they should only submit once.
     if (task.type !== "project") {
       const existingSubmission = await Submission.findOne({ taskId, userId: req.user.id });
       if (existingSubmission) {
@@ -23,10 +21,9 @@ router.post("/", auth, async (req, res) => {
       }
     }
 
-    // For question-based tasks we leave score at 0 until faculty grades.
-    // For plain tasks keep the random auto-score demo behaviour.
     const isQuestionBased = Array.isArray(task.questions) && task.questions.length > 0;
-    const performanceScore = isQuestionBased ? 0 : Math.floor(Math.random() * 51) + 50;
+    // If task has marks enabled, start at 0 (pending grading); otherwise random auto-score (no progress impact)
+    const performanceScore = (isQuestionBased || task.hasMarks) ? 0 : Math.floor(Math.random() * 51) + 50;
 
     const submission = await Submission.create({
       taskId,
@@ -37,6 +34,7 @@ router.post("/", auth, async (req, res) => {
       topic: task.topic,
       bloomLevel: task.bloomLevel,
       questionAnswers: Array.isArray(questionAnswers) ? questionAnswers : [],
+      countForProgress: !!task.hasMarks,
     });
 
     res.status(201).json({ success: true, submission });
@@ -46,14 +44,53 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// PUT /api/submissions/:id/score — faculty grades per-question scores
+// GET /api/submissions/all — faculty views all submissions filtered by division & type
+// ?division=A|B|C|All  &type=task|project
+router.get("/all", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "faculty" && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const { division, type } = req.query;
+
+    // Build student filter
+    const studentFilter = { role: "student" };
+    if (division && division !== "All") studentFilter.division = division;
+
+    const students = await User.find(studentFilter).select("_id name email rollNumber division");
+    const studentIds = students.map((s) => s._id);
+    const studentMap = {};
+    students.forEach((s) => { studentMap[s._id.toString()] = s; });
+
+    // Build submission filter
+    const subFilter = { userId: { $in: studentIds } };
+    if (type === "project") {
+      subFilter.milestoneId = { $ne: null };
+    } else if (type === "task") {
+      subFilter.$or = [{ milestoneId: null }, { milestoneId: { $exists: false } }];
+    }
+
+    const submissions = await Submission.find(subFilter)
+      .populate("userId", "name email rollNumber division")
+      .populate("taskId", "title type topic bloomLevel difficulty questions phases hasMarks")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, submissions });
+  } catch (err) {
+    console.error("All submissions error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PUT /api/submissions/:id/score — faculty grades per-question scores (question-based tasks)
 router.put("/:id/score", auth, async (req, res) => {
   try {
     if (req.user.role !== "faculty" && req.user.role !== "admin") {
       return res.status(403).json({ message: "Not authorized" });
     }
 
-    const { questionScores } = req.body; // [{ questionIndex, score }]
+    const { questionScores } = req.body;
     const submission = await Submission.findById(req.params.id).populate("taskId");
     if (!submission) return res.status(404).json({ message: "Submission not found" });
 
@@ -61,7 +98,6 @@ router.put("/:id/score", auth, async (req, res) => {
     const totalMarks = questions.reduce((sum, q) => sum + (q.marks || 0), 0);
     const earnedMarks = (questionScores || []).reduce((sum, qs) => sum + (qs.score || 0), 0);
 
-    // Normalise to 0-10
     const performanceScore = totalMarks > 0 ? Math.round((earnedMarks / totalMarks) * 10) : 0;
 
     submission.questionScores = questionScores || [];
@@ -72,6 +108,29 @@ router.put("/:id/score", auth, async (req, res) => {
   } catch (err) {
     console.error("Score error:", err);
     res.status(500).json({ message: "Failed to save scores" });
+  }
+});
+
+// PUT /api/submissions/:id/mark — faculty directly sets performanceScore (0-10) for plain tasks
+router.put("/:id/mark", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "faculty" && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const { score } = req.body;
+    const parsedScore = Math.min(10, Math.max(0, Number(score) || 0));
+
+    const submission = await Submission.findById(req.params.id);
+    if (!submission) return res.status(404).json({ message: "Submission not found" });
+
+    submission.performanceScore = parsedScore;
+    await submission.save();
+
+    res.json({ success: true, submission });
+  } catch (err) {
+    console.error("Mark error:", err);
+    res.status(500).json({ message: "Failed to save mark" });
   }
 });
 
@@ -88,7 +147,7 @@ router.get("/me", auth, async (req, res) => {
 });
 
 // GET /api/submissions/task/:taskId — get submissions for a specific task (faculty)
-router.get("/task/:taskId", async (req, res) => {
+router.get("/task/:taskId", auth, async (req, res) => {
   try {
     const submissions = await Submission.find({ taskId: req.params.taskId })
       .populate("userId", "name email rollNumber")
@@ -119,17 +178,14 @@ router.get("/pending", auth, async (req, res) => {
   }
 });
 
-// POST /api/submissions/:id/review — faculty approves/rejects
+// POST /api/submissions/:id/review — faculty approves/rejects project milestone
 router.post("/:id/review", auth, async (req, res) => {
   try {
     const { status, feedback } = req.body;
 
     const submission = await Submission.findByIdAndUpdate(
       req.params.id,
-      {
-        reviewStatus: status,
-        reviewFeedback: feedback || "",
-      },
+      { reviewStatus: status, reviewFeedback: feedback || "" },
       { new: true }
     );
 

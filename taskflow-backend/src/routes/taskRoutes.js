@@ -16,7 +16,7 @@ router.get("/", auth, async (req, res) => {
 // POST /api/tasks — create task (from FacultyDashboard CreateTaskModal)
 router.post("/", auth, async (req, res) => {
   try {
-    const { title, description, topic, difficulty, type, bloomLevel, phases, questions } = req.body;
+    const { title, description, topic, difficulty, type, bloomLevel, phases, questions, hasMarks } = req.body;
 
     const task = await Task.create({
       title,
@@ -27,6 +27,7 @@ router.post("/", auth, async (req, res) => {
       bloomLevel,
       phases: type === "project" ? phases : [],
       questions: Array.isArray(questions) ? questions : [],
+      hasMarks: !!hasMarks,
       createdBy: req.user.id,
     });
 
@@ -40,7 +41,7 @@ router.post("/", auth, async (req, res) => {
 // POST /api/tasks/create — create task (from FacultyTasks page)
 router.post("/create", auth, async (req, res) => {
   try {
-    const { title, description, topic, difficulty, type, bloomLevel, phases, questions } = req.body;
+    const { title, description, topic, difficulty, type, bloomLevel, phases, questions, hasMarks } = req.body;
 
     const task = await Task.create({
       title,
@@ -51,6 +52,7 @@ router.post("/create", auth, async (req, res) => {
       bloomLevel,
       phases: type === "project" ? phases : [],
       questions: Array.isArray(questions) ? questions : [],
+      hasMarks: !!hasMarks,
       createdBy: req.user.id,
     });
 
@@ -71,7 +73,7 @@ router.put("/:id", auth, async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    const { title, description, topic, difficulty, type, bloomLevel, questions } = req.body;
+    const { title, description, topic, difficulty, type, bloomLevel, questions, hasMarks } = req.body;
     if (title !== undefined) task.title = title;
     if (description !== undefined) task.description = description;
     if (topic !== undefined) task.topic = topic;
@@ -79,6 +81,7 @@ router.put("/:id", auth, async (req, res) => {
     if (type !== undefined) task.type = type;
     if (bloomLevel !== undefined) task.bloomLevel = bloomLevel;
     if (questions !== undefined) task.questions = Array.isArray(questions) ? questions : [];
+    if (hasMarks !== undefined) task.hasMarks = !!hasMarks;
 
     await task.save();
     res.json({ success: true, task });

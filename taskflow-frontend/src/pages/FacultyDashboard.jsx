@@ -20,7 +20,7 @@ import CreateTaskModal from "../components/faculty/CreateTaskModal";
 import CreateAnnouncementModal from "../components/announcements/CreateAnnouncementModal";
 import ViewAnnouncementsModal from "../components/announcements/ViewAnnouncementsModal";
 import ReactMarkdown from 'react-markdown';
-import { Calendar, ChevronRight, BookOpen, Users, ClipboardCheck, FileText, CheckSquare } from "lucide-react";
+import { Calendar, ChevronRight, BookOpen, Users, ClipboardCheck, FileText, CheckSquare, Inbox } from "lucide-react";
 
 /* ---------------- MOCK DATA (Backend-ready) ---------------- */
 
@@ -145,8 +145,8 @@ export default function FacultyDashboard() {
     { name: "Study Materials", icon: <BookOpen size={24} />, route: "/faculty/materials", desc: "Manage study materials", color: "indigo" },
     { name: "Student Overview", icon: <Users size={24} />, route: "/faculty/students", desc: "View class-wise student insights", color: "blue" },
     { name: "Mark Attendance", icon: <ClipboardCheck size={24} />, route: "/faculty/attendance", desc: "Manage daily attendance", color: "emerald" },
-    { name: "Create / Evaluate Test", icon: <FileText size={24} />, route: "/faculty/tasks", state: { openCreate: true }, desc: "Manage assignments", color: "amber" },
-    { name: "Project Reviews", icon: <CheckSquare size={24} />, route: "/faculty/reviews", desc: "Evaluate student projects", color: "rose" }
+    { name: "Create / Evaluate Test", icon: <FileText size={24} />, route: "/faculty/tasks/create", desc: "Manage assignments", color: "amber" },
+    { name: "Submissions", icon: <Inbox size={24} />, route: "/faculty/submissions", desc: "View & grade all student submissions", color: "violet" },
   ];
 
   const actionColors = {
@@ -155,6 +155,7 @@ export default function FacultyDashboard() {
     emerald: { bg: "bg-emerald-50", text: "text-emerald-600", border: "hover:border-emerald-200" },
     amber: { bg: "bg-amber-50", text: "text-amber-600", border: "hover:border-amber-200" },
     rose: { bg: "bg-rose-50", text: "text-rose-600", border: "hover:border-rose-200" },
+    violet: { bg: "bg-violet-50", text: "text-violet-600", border: "hover:border-violet-200" },
   };
 
   return (

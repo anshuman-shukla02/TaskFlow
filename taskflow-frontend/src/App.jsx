@@ -12,6 +12,8 @@ import FacultyAttendance from "./pages/FacultyAttendance";
 import FacultyReviews from "./pages/FacultyReviews";
 import FacultyPerformanceReport from "./pages/FacultyPerformanceReport";
 import FacultyMaterials from "./pages/FacultyMaterials";
+import FacultySubmissions from "./pages/FacultySubmissions";
+import FacultyCreateTask from "./pages/FacultyCreateTask";
 import StudentOverview from "./pages/StudentOverview";
 
 // Student Pages
@@ -49,6 +51,8 @@ export default function App() {
         <Route path="/faculty/students" element={<StudentOverview />} />
         <Route path="/faculty/performance-report" element={<FacultyPerformanceReport />} />
         <Route path="/faculty/materials" element={<FacultyMaterials />} />
+        <Route path="/faculty/submissions" element={<FacultySubmissions />} />
+        <Route path="/faculty/tasks/create" element={<FacultyCreateTask />} />
         <Route path="/faculty/profile" element={<Profile />} />
       </Route>
 

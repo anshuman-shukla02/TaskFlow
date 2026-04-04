@@ -1,0 +1,453 @@
+[
+  {
+    "id": "valid-parentheses",
+    "title": "Valid Parentheses",
+    "difficulty": "Easy",
+    "description": "Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.\n\nAn input string is valid if:\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.",
+    "examples": [
+      { "input": "s = \"()\"", "output": "true" },
+      { "input": "s = \"()[]{}\",", "output": "true" },
+      { "input": "s = \"(]\"", "output": "false" }
+    ],
+    "constraints": [
+      "1 <= s.length <= 10^4",
+      "s consists of parentheses only '()[]{}'."
+    ],
+    "hints": [
+      "Use a stack. Push every opening bracket onto the stack.",
+      "When you see a closing bracket, check if the top of the stack is the matching opening bracket. If yes, pop it; otherwise the string is invalid.",
+      "At the end, the stack must be empty for the string to be valid."
+    ],
+    "defaultCodeJS": "function isValid(s) {\n}",
+    "defaultCodePY": "def isValid(s: str) -> bool:\n    pass",
+    "defaultCodeC": "bool isValid(char* s) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool isValid(string s) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean isValid(String s) {\n    }\n}"
+  },
+  {
+    "id": "baseball-game",
+    "title": "Baseball Game",
+    "difficulty": "Easy",
+    "description": "You are keeping the scores for a baseball game with a special set of rules. At the beginning of the game, you start with an empty record.\n\nYou are given a list of strings `ops`, where `ops[i]` may be one of the following:\n- An integer `x` — record a new score of `x`.\n- `'+'` — record a new score that is the sum of the previous two scores.\n- `'D'` — record a new score that is double the previous score.\n- `'C'` — invalidate the previous score, removing it from the record.\n\nReturn the sum of all the scores on the record after applying all the operations.",
+    "examples": [
+      { "input": "ops = [\"5\",\"2\",\"C\",\"D\",\"+\"]", "output": "30" },
+      { "input": "ops = [\"5\",\"-2\",\"4\",\"C\",\"D\",\"9\",\"+\",\"+\"]", "output": "27" }
+    ],
+    "constraints": [
+      "1 <= ops.length <= 1000",
+      "ops[i] is 'C', 'D', '+', or a string representing an integer in the range [-3 * 10^4, 3 * 10^4].",
+      "For operation '+', there will always be at least two previous scores on the record.",
+      "For operation 'D', there will always be at least one previous score on the record.",
+      "For operation 'C', there will always be at least one previous score on the record."
+    ],
+    "hints": [
+      "Use a stack to track all valid scores.",
+      "For each operation, apply the rule: integer → push, '+' → push sum of top two, 'D' → push double of top, 'C' → pop the top.",
+      "The answer is the sum of all elements remaining in the stack."
+    ],
+    "defaultCodeJS": "function calPoints(ops) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef calPoints(ops: List[str]) -> int:\n    pass",
+    "defaultCodeC": "int calPoints(char** ops, int opsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int calPoints(vector<string>& ops) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int calPoints(String[] ops) {\n    }\n}"
+  },
+  {
+    "id": "next-greater-element-i",
+    "title": "Next Greater Element I",
+    "difficulty": "Easy",
+    "description": "The next greater element of some element `x` in an array is the first greater element that is to the right of `x` in the same array.\n\nYou are given two distinct 0-indexed integer arrays `nums1` and `nums2`, where `nums1` is a subset of `nums2`. For each `0 <= i < nums1.length`, find the index `j` such that `nums1[i] == nums2[j]` and determine the next greater element of `nums2[j]` in `nums2`. If there is no next greater element, then the answer for this query is `-1`.\n\nReturn an array of length `nums1.length` with the answers.",
+    "examples": [
+      { "input": "nums1 = [4,1,2], nums2 = [1,3,4,2]", "output": "[-1,3,-1]" },
+      { "input": "nums1 = [2,4], nums2 = [1,2,3,4]", "output": "[3,-1]" }
+    ],
+    "constraints": [
+      "1 <= nums1.length <= nums2.length <= 1000",
+      "0 <= nums1[i], nums2[i] <= 10^4",
+      "All integers in nums1 and nums2 are unique.",
+      "All integers of nums1 also appear in nums2."
+    ],
+    "hints": [
+      "Use a monotonic decreasing stack to precompute the next greater element for every element in nums2.",
+      "Store results in a hash map: element → its next greater element.",
+      "For each element in nums1, simply look it up in the hash map."
+    ],
+    "defaultCodeJS": "function nextGreaterElement(nums1, nums2) {\n}",
+    "defaultCodePY": "from typing import List\n\ndef nextGreaterElement(nums1: List[int], nums2: List[int]) -> List[int]:\n    pass",
+    "defaultCodeC": "int* nextGreaterElement(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[] nextGreaterElement(int[] nums1, int[] nums2) {\n    }\n}"
+  },
+  {
+    "id": "backspace-string-compare",
+    "title": "Backspace String Compare",
+    "difficulty": "Easy",
+    "description": "Given two strings `s` and `t`, return `true` if they are equal when both are typed into empty text editors. `'#'` means a backspace character.\n\nNote that after backspacing an empty text, the text will continue to be empty.",
+    "examples": [
+      { "input": "s = \"ab#c\", t = \"ad#c\"", "output": "true" },
+      { "input": "s = \"ab##\", t = \"c#d#\"", "output": "true" },
+      { "input": "s = \"a#c\", t = \"b\"", "output": "false" }
+    ],
+    "constraints": [
+      "1 <= s.length, t.length <= 200",
+      "s and t only contain lowercase letters and '#' characters."
+    ],
+    "hints": [
+      "Simulate the typing process using a stack for each string.",
+      "For each character: if it's not '#', push it; if it is '#' and the stack is non-empty, pop from the stack.",
+      "At the end, compare the two resulting stacks/strings.",
+      "Follow-up: Can you solve it in O(n) time and O(1) space using two pointers traversing from right to left?"
+    ],
+    "defaultCodeJS": "function backspaceCompare(s, t) {\n}",
+    "defaultCodePY": "def backspaceCompare(s: str, t: str) -> bool:\n    pass",
+    "defaultCodeC": "bool backspaceCompare(char* s, char* t) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    bool backspaceCompare(string s, string t) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public boolean backspaceCompare(String s, String t) {\n    }\n}"
+  },
+  {
+    "id": "implement-stack-using-queues",
+    "title": "Implement Stack using Queues",
+    "difficulty": "Easy",
+    "description": "Implement a last-in-first-out (LIFO) stack using only two queues. The implemented stack should support all the functions of a normal stack (`push`, `top`, `pop`, and `empty`).\n\nImplement the `MyStack` class:\n- `void push(int x)` Pushes element x to the top of the stack.\n- `int pop()` Removes the element on the top of the stack and returns it.\n- `int top()` Returns the element on the top of the stack.\n- `boolean empty()` Returns `true` if the stack is empty, `false` otherwise.\n\nYou must use only standard operations of a queue (FIFO).",
+    "examples": [
+      {
+        "input": "[\"MyStack\",\"push\",\"push\",\"top\",\"pop\",\"empty\"]\n[[],[1],[2],[],[],[]]",
+        "output": "[null,null,null,2,2,false]"
+      }
+    ],
+    "constraints": [
+      "1 <= x <= 9",
+      "At most 100 calls will be made to push, pop, top, and empty.",
+      "All calls to pop and top are valid."
+    ],
+    "hints": [
+      "Use one queue. After pushing a new element, rotate the queue so the new element is at the front.",
+      "To rotate: after enqueuing x, dequeue and re-enqueue all elements that were there before x. Now x is at the back... think about how to bring the newest element to the front.",
+      "After pushing x, pop (size-1) elements from the front and push them to the back. Now x is at the front, making it LIFO."
+    ],
+    "defaultCodeJS": "class MyStack {\n    constructor() {\n    }\n    push(x) {\n    }\n    pop() {\n    }\n    top() {\n    }\n    empty() {\n    }\n}",
+    "defaultCodePY": "class MyStack:\n    def __init__(self):\n        pass\n    def push(self, x: int) -> None:\n        pass\n    def pop(self) -> int:\n        pass\n    def top(self) -> int:\n        pass\n    def empty(self) -> bool:\n        pass",
+    "defaultCodeC": "typedef struct {\n} MyStack;\n\nMyStack* myStackCreate() {\n    return NULL;\n}\nvoid myStackPush(MyStack* obj, int x) {}\nint myStackPop(MyStack* obj) { return 0; }\nint myStackTop(MyStack* obj) { return 0; }\nbool myStackEmpty(MyStack* obj) { return true; }\nvoid myStackFree(MyStack* obj) {}",
+    "defaultCodeCPP": "class MyStack {\npublic:\n    MyStack() {}\n    void push(int x) {}\n    int pop() { return 0; }\n    int top() { return 0; }\n    bool empty() { return true; }\n};",
+    "defaultCodeJAVA": "class MyStack {\n    public MyStack() {}\n    public void push(int x) {}\n    public int pop() { return 0; }\n    public int top() { return 0; }\n    public boolean empty() { return true; }\n}"
+  },
+  {
+    "id": "min-stack",
+    "title": "Min Stack",
+    "difficulty": "Medium",
+    "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the `MinStack` class:\n\n*   `MinStack()` initializes the stack object.\n*   `void push(int val)` pushes the element `val` onto the stack.\n*   `void pop()` removes the element on the top of the stack.\n*   `int top()` gets the top element of the stack.\n*   `int getMin()` retrieves the minimum element in the stack.\n\nYou must implement a solution with `O(1)` time complexity for each function.",
+    "examples": [
+      {
+        "input": "[\"MinStack\", \"push\", \"push\", \"push\", \"getMin\", \"pop\", \"top\", \"getMin\"]\n[[], [-2], [0], [-3], [], [], [], []]",
+        "output": "[null, null, null, null, -3, null, 0, -2]"
+      }
+    ],
+    "constraints": [
+      "-2^31 <= val <= 2^31 - 1",
+      "Methods pop, top and getMin operations will always be called on non-empty stacks.",
+      "At most 3 * 10^4 calls will be made to push, pop, top, and getMin."
+    ],
+    "hints": [
+      "Consider using two stacks: one for the elements and one for tracking the minimums.",
+      "When pushing, update the minimum stack only if the new element is less than or equal to the current minimum.",
+      "When popping, if the top of the element stack is also the top of the minimum stack, pop from both."
+    ],
+    "defaultCodeJS": "class MinStack {\n    constructor() {\n    }\n    push(val) {\n    }\n    pop() {\n    }\n    top() {\n    }\n    getMin() {\n    }\n}",
+    "defaultCodePY": "class MinStack:\n    def __init__(self):\n        pass\n    def push(self, val: int) -> None:\n        pass\n    def pop(self) -> None:\n        pass\n    def top(self) -> int:\n        pass\n    def getMin(self) -> int:\n        pass",
+    "defaultCodeC": "typedef struct {\n    // Placeholder for struct members\n} MinStack;\n\nMinStack* minStackCreate() {\n    return NULL; // Placeholder\n}\n\nvoid minStackPush(MinStack* obj, int val) {\n}\n\nvoid minStackPop(MinStack* obj) {\n}\n\nint minStackTop(MinStack* obj) {\n    return 0; // Placeholder\n}\n\nint minStackGetMin(MinStack* obj) {\n    return 0; // Placeholder\n}\n\nvoid minStackFree(MinStack* obj) {\n}",
+    "defaultCodeCPP": "class MinStack {\npublic:\n    MinStack() {\n    }\n\n    void push(int val) {\n    }\n\n    void pop() {\n    }\n\n    int top() {\n        return 0;\n    }\n\n    int getMin() {\n        return 0;\n    }\n};",
+    "defaultCodeJAVA": "class MinStack {\n    public MinStack() {\n    }\n\n    public void push(int val) {\n    }\n\n    public void pop() {\n    }\n\n    public int top() {\n        return 0;\n    }\n\n    public int getMin() {\n        return 0;\n    }\n}"
+  },
+  {
+    "id": "daily-temperatures",
+    "title": "Daily Temperatures",
+    "difficulty": "Medium",
+    "description": "Given an array of integers `temperatures` represents the daily temperatures, return an array `answer` such that `answer[i]` is the number of days you have to wait after the `i`-th day to get a warmer temperature. If there is no future day for which this is possible, keep `answer[i] == 0` instead.",
+    "examples": [
+      {
+        "input": "temperatures = [73,74,75,71,69,72,76,73]",
+        "output": "[1,1,4,2,1,1,0,0]"
+      },
+      {
+        "input": "temperatures = [30,40,50,60]",
+        "output": "[1,1,1,0]"
+      },
+      {
+        "input": "temperatures = [30,60,90]",
+        "output": "[1,1,0]"
+      }
+    ],
+    "constraints": [
+      "1 <= temperatures.length <= 10^5",
+      "30 <= temperatures[i] <= 100"
+    ],
+    "hints": [
+      "Iterate through the temperatures from right to left.",
+      "Maintain a monotonic decreasing stack of indices of temperatures.",
+      "For each temperature, pop elements from the stack that are less than or equal to the current temperature. The top of the stack will then be the next warmer day."
+    ],
+    "defaultCodeJS": "/**\n * @param {number[]} temperatures\n * @return {number[]}\n */\nfunction dailyTemperatures(temperatures) {\n}",
+    "defaultCodePY": "from typing import List\n\nclass Solution:\n    def dailyTemperatures(self, temperatures: List[int]) -> List[int]:\n        pass",
+    "defaultCodeC": "/**\n * Note: The returned array must be malloced, and free'd by the caller.\n */\nint* dailyTemperatures(int* temperatures, int temperaturesSize, int* returnSize) {\n    *returnSize = temperaturesSize;\n    return NULL; // Placeholder\n}",
+    "defaultCodeCPP": "#include <vector>\n\nclass Solution {\npublic:\n    std::vector<int> dailyTemperatures(std::vector<int>& temperatures) {\n        return {}; // Placeholder\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[] dailyTemperatures(int[] temperatures) {\n        return new int[0]; // Placeholder\n    }\n}"
+  },
+  {
+    "id": "evaluate-reverse-polish-notation",
+    "title": "Evaluate Reverse Polish Notation",
+    "difficulty": "Medium",
+    "description": "You are given an array of strings `tokens` that represents an arithmetic expression in a Reverse Polish Notation. Evaluate the expression. Return an integer that represents the value of the expression.\n\nNote that:\n\n*   The valid operators are `+`, `-`, `*`, `/`.\n*   Each operand may be an integer or another expression.\n*   The division between two integers in C++ should truncate toward zero.\n*   There will be at least one operator.\n*   All intermediate results and the final result are guaranteed to be within the range of a 32-bit integer.",
+    "examples": [
+      {
+        "input": "tokens = [\"2\",\"1\",\"+\",\"3\",\"*\"]",
+        "output": "9",
+        "explanation": "((2 + 1) * 3) = 9"
+      },
+      {
+        "input": "tokens = [\"4\",\"13\",\"5\",\"/\",\"+\"]",
+        "output": "6",
+        "explanation": "(4 + (13 / 5)) = 6"
+      },
+      {
+        "input": "tokens = [\"10\",\"6\",\"9\",\"3\",\"+\",\"-11\",\"*\",\"/\",\"*\",\"17\",\"+\",\"5\",\"+\"]",
+        "output": "22",
+        "explanation": "((10 * (6 / ((9 + 3) * -11))) + 17) + 5"
+      }
+    ],
+    "constraints": [
+      "1 <= tokens.length <= 10^4",
+      "`tokens[i]` is either an operator: `\"+\"`, `\"-\"`, `\"*\"`, or `\"/\"`, or an integer in the range `[-200, 200]`."
+    ],
+    "hints": [
+      "Use a stack to process the tokens.",
+      "When you encounter a number, push it onto the stack.",
+      "When you encounter an operator, pop two numbers from the stack, apply the operator, and push the result back onto the stack."
+    ],
+    "defaultCodeJS": "/**\n * @param {string[]} tokens\n * @return {number}\n */\nfunction evalRPN(tokens) {\n}",
+    "defaultCodePY": "from typing import List\n\nclass Solution:\n    def evalRPN(self, tokens: List[str]) -> int:\n        pass",
+    "defaultCodeC": "int evalRPN(char ** tokens, int tokensSize) {\n    return 0; // Placeholder\n}",
+    "defaultCodeCPP": "#include <vector>\n#include <string>\n\nclass Solution {\npublic:\n    int evalRPN(std::vector<std::string>& tokens) {\n        return 0; // Placeholder\n    }\n};",
+    "defaultCodeJAVA": "import java.util.Stack;\n\nclass Solution {\n    public int evalRPN(String[] tokens) {\n        return 0; // Placeholder\n    }\n}"
+  },
+  {
+    "id": "implement-queue-using-stacks",
+    "title": "Implement Queue using Stacks",
+    "difficulty": "Medium",
+    "description": "Implement a first-in-first-out (FIFO) queue using only two stacks. The implemented queue should support all the functions of a normal queue (`push`, `peek`, `pop`, and `empty`).\n\nImplement the `MyQueue` class:\n\n*   `void push(int x)` Pushes element x to the back of the queue.\n*   `int pop()` Removes the element from the front of the queue and returns it.\n*   `int peek()` Returns the element at the front of the queue.\n*   `boolean empty()` Returns `true` if the queue is empty, `false` otherwise.\n\nNotes:\n\n*   You must use only standard operations of a stack, which means only `push to top`, `peek/pop from top`, `size`, and `is empty` operations are valid.\n*   Depending on your language, a stack may not be supported natively. You may simulate a stack using a list or deque (double-ended queue) as long as you use only a stack's standard operations.",
+    "examples": [
+      {
+        "input": "[\"MyQueue\", \"push\", \"push\", \"peek\", \"pop\", \"empty\"]\n[[], [1], [2], [], [], []]",
+        "output": "[null, null, null, 1, 1, false]"
+      }
+    ],
+    "constraints": [
+      "1 <= x <= 9",
+      "At most 100 calls will be made to push, pop, peek, and empty.",
+      "All calls to pop and peek are valid (i.e., a queue will not be empty when the calls are made)."
+    ],
+    "hints": [
+      "Use two stacks, `s1` and `s2`. `s1` can be used for new elements, and `s2` for elements to be popped.",
+      "When `s2` is empty and you need to `pop` or `peek`, transfer all elements from `s1` to `s2`."
+    ],
+    "defaultCodeJS": "class MyQueue {\n    constructor() {\n    }\n    push(x) {\n    }\n    pop() {\n    }\n    peek() {\n    }\n    empty() {\n    }\n}",
+    "defaultCodePY": "class MyQueue:\n    def __init__(self):\n        pass\n    def push(self, x: int) -> None:\n        pass\n    def pop(self) -> int:\n        pass\n    def peek(self) -> int:\n        pass\n    def empty(self) -> bool:\n        pass",
+    "defaultCodeC": "typedef struct {\n    // Placeholder for struct members\n} MyQueue;\n\nMyQueue* myQueueCreate() {\n    return NULL; // Placeholder\n}\n\nvoid myQueuePush(MyQueue* obj, int x) {\n}\n\nint myQueuePop(MyQueue* obj) {\n    return 0; // Placeholder\n}\n\nint myQueuePeek(MyQueue* obj) {\n    return 0; // Placeholder\n}\n\nbool myQueueEmpty(MyQueue* obj) {\n    return false; // Placeholder\n}\n\nvoid myQueueFree(MyQueue* obj) {\n}",
+    "defaultCodeCPP": "class MyQueue {\npublic:\n    MyQueue() {\n    }\n\n    void push(int x) {\n    }\n\n    int pop() {\n        return 0;\n    }\n\n    int peek() {\n        return 0;\n    }\n\n    bool empty() {\n        return false;\n    }\n};",
+    "defaultCodeJAVA": "class MyQueue {\n    public MyQueue() {\n    }\n\n    public void push(int x) {\n    }\n\n    public int pop() {\n        return 0;\n    }\n\n    public int peek() {\n        return 0;\n    }\n\n    public boolean empty() {\n        return false;\n    }\n}"
+  },
+  {
+    "id": "rotting-oranges",
+    "title": "Rotting Oranges",
+    "difficulty": "Medium",
+    "description": "You are given an `m x n` `grid` where each cell can have one of three values:\n\n*   `0` representing an empty cell,\n*   `1` representing a fresh orange, or\n*   `2` representing a rotten orange.\n\nEvery minute, any fresh orange that is `4-directionally` adjacent to a rotten orange becomes rotten.\n\nReturn the minimum number of minutes that must elapse until no fresh oranges remain. If it is impossible to make every fresh orange rotten, return `-1`.",
+    "examples": [
+      {
+        "input": "grid = [[2,1,1],[1,1,0],[0,1,1]]",
+        "output": "4"
+      },
+      {
+        "input": "grid = [[2,1,1],[0,1,1],[1,0,1]]",
+        "output": "-1",
+        "explanation": "The orange in the bottom left corner (row 2, column 0) is never rotten, because it is not adjacent to a rotten orange and there are no empty cells preventing its rot."
+      },
+      {
+        "input": "grid = [[0,2]]",
+        "output": "0",
+        "explanation": "There are no fresh oranges, so 0 minutes needed."
+      }
+    ],
+    "constraints": [
+      "m == grid.length",
+      "n == grid[i].length",
+      "1 <= m, n <= 10",
+      "`grid[i][j]` is `0`, `1`, or `2`."
+    ],
+    "hints": [
+      "This is a classic Breadth-First Search (BFS) problem.",
+      "Initialize a queue with all initially rotten oranges.",
+      "Keep track of the time elapsed and the number of fresh oranges.",
+      "Perform a multi-source BFS, incrementing the time each \"level\" (minute).",
+      "If, after BFS, there are still fresh oranges, return -1."
+    ],
+    "defaultCodeJS": "/**\n * @param {number[][]} grid\n * @return {number}\n */\nfunction orangesRotting(grid) {\n}",
+    "defaultCodePY": "from typing import List\nimport collections\n\nclass Solution:\n    def orangesRotting(self, grid: List[List[int]]) -> int:\n        pass",
+    "defaultCodeC": "int orangesRotting(int** grid, int gridSize, int* gridColSize) {\n    return 0; // Placeholder\n}",
+    "defaultCodeCPP": "#include <vector>\n#include <queue>\n\nclass Solution {\npublic:\n    int orangesRotting(std::vector<std::vector<int>>& grid) {\n        return 0; // Placeholder\n    }\n};",
+    "defaultCodeJAVA": "import java.util.LinkedList;\nimport java.util.Queue;\n\nclass Solution {\n    public int orangesRotting(int[][] grid) {\n        return 0; // Placeholder\n    }\n}"
+  },
+  {
+    "id": "largest-rectangle-in-histogram",
+    "title": "Largest Rectangle in Histogram",
+    "difficulty": "Hard",
+    "description": "Given an array of integers `heights` representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.",
+    "examples": [
+      {
+        "input": "heights = [2,1,5,6,2,3]",
+        "output": "10"
+      },
+      {
+        "input": "heights = [2,4]",
+        "output": "4"
+      }
+    ],
+    "constraints": [
+      "n == heights.length",
+      "1 <= n <= 10^5",
+      "0 <= heights[i] <= 10^4"
+    ],
+    "hints": [
+      "A monotonic stack can be used to find the next smaller element and previous smaller element for each bar efficiently.",
+      "For each bar, the largest rectangle with that bar as its shortest bar extends until it meets a shorter bar on either side."
+    ],
+    "defaultCodeJS": "function largestRectangleArea(heights) {\n}",
+    "defaultCodePY": "def largestRectangleArea(heights):\n    pass",
+    "defaultCodeC": "int largestRectangleArea(int* heights, int heightsSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int largestRectangleArea(vector<int>& heights) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int largestRectangleArea(int[] heights) {\n    }\n}"
+  },
+  {
+    "id": "sliding-window-maximum",
+    "title": "Sliding Window Maximum",
+    "difficulty": "Hard",
+    "description": "You are given an array of integers `nums`, there is a sliding window of size `k` which is moving from the very left of the array to the very right. You can only see the `k` numbers in the window. Each time the sliding window moves right by one position. Return the max sliding window.",
+    "examples": [
+      {
+        "input": "nums = [1,3,-1,-3,5,3,6,7], k = 3",
+        "output": "[3,3,5,5,6,7]"
+      },
+      {
+        "input": "nums = [1], k = 1",
+        "output": "[1]"
+      }
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10^5",
+      "-10^4 <= nums[i] <= 10^4",
+      "1 <= k <= nums.length"
+    ],
+    "hints": [
+      "Use a double-ended queue (deque) to store indices of elements in the current window.",
+      "Maintain the deque in decreasing order of corresponding element values.",
+      "When adding a new element, remove elements from the back of the deque that are smaller than the new element."
+    ],
+    "defaultCodeJS": "function maxSlidingWindow(nums, k) {\n}",
+    "defaultCodePY": "def maxSlidingWindow(nums, k):\n    pass",
+    "defaultCodeC": "int* maxSlidingWindow(int* nums, int numsSize, int k, int* returnSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    vector<int> maxSlidingWindow(vector<int>& nums, int k) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int[] maxSlidingWindow(int[] nums, int k) {\n    }\n}"
+  },
+  {
+    "id": "trapping-rain-water",
+    "title": "Trapping Rain Water",
+    "difficulty": "Hard",
+    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "examples": [
+      {
+        "input": "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+        "output": "6"
+      },
+      {
+        "input": "height = [4,2,0,3,2,5]",
+        "output": "9"
+      }
+    ],
+    "constraints": [
+      "n == height.length",
+      "1 <= n <= 2 * 10^4",
+      "0 <= height[i] <= 10^5"
+    ],
+    "hints": [
+      "For each bar, the amount of water it can trap depends on the maximum height of bars to its left and right.",
+      "A stack can be used to keep track of bars that are potential boundaries. Iterate through the array and process elements when a bar is found that is taller than the stack's top."
+    ],
+    "defaultCodeJS": "function trap(height) {\n}",
+    "defaultCodePY": "def trap(height):\n    pass",
+    "defaultCodeC": "int trap(int* height, int heightSize) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int trap(vector<int>& height) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int trap(int[] height) {\n    }\n}"
+  },
+  {
+    "id": "basic-calculator-iii",
+    "title": "Basic Calculator III",
+    "difficulty": "Hard",
+    "description": "Implement a basic calculator to evaluate a simple expression string. The expression string contains only non-negative integers, `+`, `-`, `*`, `/` operators, open `(` and closing parentheses `)` and empty spaces. The integer division should truncate toward zero. You may assume that the given expression is always valid. All intermediate results will be in the range of `[-2^31, 2^31 - 1]`.",
+    "examples": [
+      {
+        "input": "s = \"1 + 1\"",
+        "output": "2"
+      },
+      {
+        "input": "s = \" 6-4 / 2 \"",
+        "output": "4"
+      },
+      {
+        "input": "s = \"2*(5+5*2)/3+(6/2+8)\"",
+        "output": "31"
+      }
+    ],
+    "constraints": [
+      "1 <= s.length <= 10^5",
+      "s` consists of digits, `'+'`, `'-'`, `'*'`, `'/'`, `'('`, `')'`, and `' '`.",
+      "s` is a valid expression."
+    ],
+    "hints": [
+      "Use two stacks: one for numbers and one for operators.",
+      "Handle operator precedence: `*` and `/` have higher precedence than `+` and `-`.",
+      "Parentheses override precedence. When an opening parenthesis `(` is encountered, push it onto the operator stack. When a closing parenthesis `)` is encountered, evaluate all operations until an opening parenthesis is found."
+    ],
+    "defaultCodeJS": "function calculate(s) {\n}",
+    "defaultCodePY": "def calculate(s):\n    pass",
+    "defaultCodeC": "int calculate(char * s) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    int calculate(string s) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public int calculate(String s) {\n    }\n}"
+  },
+  {
+    "id": "remove-duplicate-letters",
+    "title": "Remove Duplicate Letters",
+    "difficulty": "Hard",
+    "description": "Given a string `s`, remove duplicate letters so that every letter appears once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.",
+    "examples": [
+      {
+        "input": "s = \"bcabc\"",
+        "output": "\"abc\""
+      },
+      {
+        "input": "s = \"cbacdcbc\"",
+        "output": "\"acdb\""
+      }
+    ],
+    "constraints": [
+      "1 <= s.length <= 10^4",
+      "s` consists of lowercase English letters."
+    ],
+    "hints": [
+      "This problem can be solved using a monotonic stack.",
+      "Keep track of the last occurrence of each character.",
+      "When iterating through the string, if the current character is not in the result stack, try to push it. Before pushing, if the stack top is greater than the current character and the stack top appears again later in the string, pop it to make room for a lexicographically smaller character."
+    ],
+    "defaultCodeJS": "function removeDuplicateLetters(s) {\n}",
+    "defaultCodePY": "def removeDuplicateLetters(s):\n    pass",
+    "defaultCodeC": "char * removeDuplicateLetters(char * s) {\n}",
+    "defaultCodeCPP": "class Solution {\npublic:\n    string removeDuplicateLetters(string s) {\n    }\n};",
+    "defaultCodeJAVA": "class Solution {\n    public String removeDuplicateLetters(String s) {\n    }\n}"
+  }
+]
