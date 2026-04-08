@@ -105,7 +105,24 @@ router.get("/", auth, async (req, res) => {
     const materials = await StudyMaterial.find()
       .populate("uploadedBy", "name email")
       .sort({ createdAt: -1 });
-    res.json({ materials });
+
+    // Resolve S3 URLs to presigned URLs for the client
+    const { getPresignedUrl } = require("../utils/s3Storage");
+    const resolved = await Promise.all(
+      materials.map(async (m) => {
+        const obj = m.toObject();
+        if (obj.fileUrl && (obj.fileUrl.startsWith("s3://") || obj.fileUrl.includes("amazonaws.com"))) {
+          try {
+            obj.fileUrl = await getPresignedUrl(obj.fileUrl);
+          } catch (e) {
+            console.error("Presign error for", obj.fileUrl, e.message);
+          }
+        }
+        return obj;
+      })
+    );
+
+    res.json({ materials: resolved });
   } catch (err) {
     console.error("List materials error:", err);
     res.status(500).json({ message: "Server error" });

@@ -76,7 +76,26 @@ router.get("/all", auth, async (req, res) => {
       .populate("taskId", "title type topic bloomLevel difficulty questions phases hasMarks")
       .sort({ createdAt: -1 });
 
-    res.json({ success: true, submissions });
+    // Resolve S3 URLs to presigned URLs
+    const { getPresignedUrl } = require("../utils/s3Storage");
+    const resolved = await Promise.all(
+      submissions.map(async (s) => {
+        const obj = s.toObject();
+        if (obj.fileUrl && (obj.fileUrl.startsWith("s3://") || obj.fileUrl.includes("amazonaws.com"))) {
+          try { obj.fileUrl = await getPresignedUrl(obj.fileUrl); } catch(e) {}
+        }
+        if (obj.questionAnswers) {
+          for (const qa of obj.questionAnswers) {
+            if (qa.fileUrl && (qa.fileUrl.startsWith("s3://") || qa.fileUrl.includes("amazonaws.com"))) {
+              try { qa.fileUrl = await getPresignedUrl(qa.fileUrl); } catch(e) {}
+            }
+          }
+        }
+        return obj;
+      })
+    );
+
+    res.json({ success: true, submissions: resolved });
   } catch (err) {
     console.error("All submissions error:", err);
     res.status(500).json({ message: "Server error" });

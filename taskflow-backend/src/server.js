@@ -47,6 +47,7 @@ app.use("/api/upload", require("./routes/uploadRoutes"));
 app.use("/api/materials", require("./routes/studyMaterialRoutes"));
 app.use("/api/compiler", require("./routes/compilerRoutes"));
 app.use("/api/adaptive", require("./routes/adaptiveRoutes"));
+app.use("/api/file", require("./routes/fileRoutes"));
 
 
 // Health check

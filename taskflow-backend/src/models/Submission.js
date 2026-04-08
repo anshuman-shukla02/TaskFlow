@@ -10,8 +10,8 @@ const submissionSchema = new mongoose.Schema(
     topic: { type: String, default: "" },
     bloomLevel: {
       type: String,
-      enum: ["REMEMBER", "UNDERSTAND", "APPLY", "ANALYZE", "EVALUATE", "CREATE"],
-      default: "REMEMBER",
+      enum: ["none", "REMEMBER", "UNDERSTAND", "APPLY", "ANALYZE", "EVALUATE", "CREATE"],
+      default: "none",
     },
     // Project-specific fields
     milestoneId: { type: Number, default: null },

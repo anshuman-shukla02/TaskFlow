@@ -2,17 +2,17 @@ const router = require('express').Router();
 const auth = require('../middleware/auth');
 const axios = require('axios');
 
-const PISTON_URL = "https://emkc.org/api/v2/piston/execute";
+// Judge0 CE (Community Edition) — free, no API key required
+const JUDGE0_URL = "https://ce.judge0.com";
 
-// Map our internal language names to Piston's language names and versions
+// Map our internal language names to Judge0 language IDs
 const LANGUAGE_MAP = {
-    'javascript': { language: 'javascript', version: '18.15.0' },
-    'python': { language: 'python', version: '3.10.0' },
-    'java': { language: 'java', version: '15.0.2' },
-    'cpp': { language: 'cpp', version: '10.2.0' },
-    'c': { language: 'c', version: '10.2.0' }
+    'javascript': { id: 93, name: 'JavaScript (Node.js 18.15.0)' },
+    'python':     { id: 100, name: 'Python (3.12.5)' },
+    'java':       { id: 91, name: 'Java (JDK 17.0.6)' },
+    'cpp':        { id: 105, name: 'C++ (GCC 14.1.0)' },
+    'c':          { id: 103, name: 'C (GCC 14.1.0)' }
 };
-
 
 router.post('/execute', auth, async (req, res) => {
     const { code, language, questionId } = req.body;
@@ -65,51 +65,54 @@ router.post('/execute', auth, async (req, res) => {
     try {
         const startTime = Date.now();
 
-        // Call Piston API
-        const response = await axios.post(PISTON_URL, {
-            language: langConfig.language,
-            version: langConfig.version,
-            files: [
-                {
-                    content: finalCode
-                }
-            ],
-            compile_timeout: 10000,
-            run_timeout: 10000,
-            compile_memory_limit: -1,
-            run_memory_limit: -1
-        });
+        // Submit to Judge0 with wait=true (synchronous mode)
+        const response = await axios.post(
+            `${JUDGE0_URL}/submissions?base64_encoded=false&wait=true`,
+            {
+                language_id: langConfig.id,
+                source_code: finalCode,
+                cpu_time_limit: 5,
+                wall_time_limit: 10,
+                memory_limit: 128000,
+            },
+            {
+                timeout: 20000,
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
 
         const executionTime = Date.now() - startTime;
-        const result = response.data.run;
+        const result = response.data;
 
-        // Piston returns separate stdout and stderr
-        // If there's a non-zero exit code or stderr, we treat it as an error
-        if (result.stderr || result.code !== 0) {
+        // Judge0 status IDs:
+        // 3 = Accepted, 6 = Compilation Error, 11 = Runtime Error, 5 = Time Limit Exceeded
+        const isAccepted = result.status?.id === 3;
+
+        if (isAccepted) {
             return res.json({ 
-                success: false, 
-                output: result.stderr || result.stdout, 
+                success: true, 
+                output: result.stdout || "Execution finished (No Output)", 
                 executionTime,
-                isError: true
+                isError: false
             });
         }
         
-        // Success
+        // Error cases
+        const errorOutput = result.compile_output || result.stderr || result.stdout || result.status?.description || "Execution Failed";
         return res.json({ 
-            success: true, 
-            output: result.stdout, 
+            success: false, 
+            output: errorOutput, 
             executionTime,
-            isError: false
+            isError: true
         });
         
     } catch (err) {
-        console.error("Piston API execution error:", err.response?.data || err.message);
+        console.error("Judge0 API error:", err.response?.data || err.message);
         res.status(500).json({ 
             success: false, 
-            message: 'Compiler service error: ' + (err.response?.data?.message || err.message) 
+            message: 'Compiler service temporarily unavailable. Please try again in a moment.' 
         });
     }
 });
 
 module.exports = router;
-

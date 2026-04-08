@@ -1,4 +1,5 @@
-const { S3Client } = require("@aws-sdk/client-s3");
+const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { Upload } = require("@aws-sdk/lib-storage");
 const path = require("path");
 
@@ -21,14 +22,39 @@ const uploadToS3 = async (file, folder = "uploads") => {
       Key: fileName,
       Body: file.buffer,
       ContentType: file.mimetype,
-      ACL: "public-read",
     },
   });
 
   await parallelUploads3.done();
 
-  // Return the public URL
-  return `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION || "us-east-1"}.amazonaws.com/${fileName}`;
+  // Return the S3 key (not public URL — we use presigned URLs for access)
+  return `s3://${process.env.S3_BUCKET_NAME}/${fileName}`;
 };
 
-module.exports = { uploadToS3 };
+/**
+ * Generate a presigned URL for an S3 object.
+ * Works with both s3:// URIs and legacy https:// URLs.
+ */
+const getPresignedUrl = async (fileUrl, expiresIn = 3600) => {
+  let bucket, key;
+
+  if (fileUrl.startsWith("s3://")) {
+    // New format: s3://bucket-name/key
+    const parts = fileUrl.replace("s3://", "").split("/");
+    bucket = parts.shift();
+    key = parts.join("/");
+  } else if (fileUrl.includes("amazonaws.com")) {
+    // Legacy format: https://bucket.s3.region.amazonaws.com/key
+    const urlObj = new URL(fileUrl);
+    bucket = urlObj.hostname.split(".")[0];
+    key = urlObj.pathname.substring(1); // Remove leading /
+  } else {
+    // Not an S3 URL, return as-is (local file)
+    return fileUrl;
+  }
+
+  const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+  return getSignedUrl(s3Client, command, { expiresIn });
+};
+
+module.exports = { uploadToS3, getPresignedUrl, s3Client };

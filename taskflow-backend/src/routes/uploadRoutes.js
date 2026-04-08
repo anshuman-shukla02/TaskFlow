@@ -47,18 +47,24 @@ router.post("/", upload.single("file"), async (req, res) => {
     }
 
     let fileUrl;
+    let clientUrl;
     if (useS3) {
+      const { getPresignedUrl } = require("../utils/s3Storage");
       fileUrl = await uploadToS3(req.file);
+      // Return a presigned URL for the client to use immediately
+      clientUrl = await getPresignedUrl(fileUrl);
     } else {
       // Local URL (development only)
       const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5002}`;
       fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+      clientUrl = fileUrl;
     }
 
     res.json({
       success: true,
       message: "File uploaded successfully",
-      fileUrl: fileUrl,
+      fileUrl: fileUrl,       // s3:// URI for database storage
+      clientUrl: clientUrl,   // Presigned URL for immediate client use
       filename: req.file.filename || req.file.originalname,
     });
   } catch (error) {
