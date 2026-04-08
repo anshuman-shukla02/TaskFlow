@@ -164,7 +164,7 @@ export default function AdaptiveLearning() {
             const token = getToken();
             if (token && selectedTopic) {
                 axios.post(
-                    "${API_URL}/api/progress/reset",
+                    `${API_URL}/api/progress/reset`,
                     { topic: selectedTopic.id },
                     { headers: { Authorization: `Bearer ${token}` } }
                 ).catch(err => console.error("Failed to penalize:", err));
@@ -194,7 +194,7 @@ export default function AdaptiveLearning() {
         setOutput({ text: "Compiling in secure Docker Sandbox...", time: null, error: false });
         try {
             const token = getToken();
-            const res = await axios.post("${API_URL}/api/compiler/execute", {
+            const res = await axios.post(`${API_URL}/api/compiler/execute`, {
                 code,
                 language,
                 questionId: currentQuestion?.id
@@ -221,7 +221,7 @@ export default function AdaptiveLearning() {
         
         try {
             const token = getToken();
-            const res = await axios.post("${API_URL}/api/compiler/execute", {
+            const res = await axios.post(`${API_URL}/api/compiler/execute`, {
                 code,
                 language,
                 questionId: currentQuestion?.id

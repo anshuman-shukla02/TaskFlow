@@ -157,8 +157,8 @@ export default function StudentTasks() {
     try {
       const token = getToken();
       const [tasksRes, subsRes] = await Promise.all([
-        axios.get("${API_URL}/api/tasks",          { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get("${API_URL}/api/submissions/me", { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API_URL}/api/tasks`,          { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API_URL}/api/submissions/me`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
       const fetchedTasks  = tasksRes.data.tasks || [];
       const mySubmissions = subsRes.data.submissions || [];
@@ -226,7 +226,7 @@ export default function StudentTasks() {
       if (!isQBased && plainMode === "upload" && plainFile) {
         const fd = new FormData();
         fd.append("file", plainFile);
-        const r = await axios.post("${API_URL}/api/upload", fd, {
+        const r = await axios.post(`${API_URL}/api/upload`, fd, {
           headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
         });
         if (r.data.success) fileUrl = r.data.fileUrl;
@@ -250,7 +250,7 @@ export default function StudentTasks() {
           if (mode === "upload" && imgFile) {
             const qfd = new FormData();
             qfd.append("file", imgFile);
-            const qr = await axios.post("${API_URL}/api/upload", qfd, {
+            const qr = await axios.post(`${API_URL}/api/upload`, qfd, {
               headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
             });
             if (qr.data.success) qFileUrl = qr.data.fileUrl;
@@ -268,7 +268,7 @@ export default function StudentTasks() {
         payload.fileUrl = null;
       }
 
-      await axios.post("${API_URL}/api/submissions", payload, {
+      await axios.post(`${API_URL}/api/submissions`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(prev => prev.map(t => t._id === selectedTask._id ? { ...t, status: "completed" } : t));

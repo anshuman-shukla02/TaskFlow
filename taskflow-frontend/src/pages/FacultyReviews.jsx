@@ -15,7 +15,7 @@ export default function FacultyReviews() {
     const fetchReviews = async () => {
         try {
             const token = getToken();
-            const res = await axios.get("${API_URL}/api/submissions/pending", {
+            const res = await axios.get(`${API_URL}/api/submissions/pending`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.success) {

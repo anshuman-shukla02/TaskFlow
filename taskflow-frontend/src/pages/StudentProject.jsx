@@ -31,7 +31,7 @@ export default function StudentProject() {
     const fetchProjects = async () => {
         try {
             const token = getToken();
-            const res = await axios.get("${API_URL}/api/tasks", {
+            const res = await axios.get(`${API_URL}/api/tasks`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.tasks) {
@@ -117,7 +117,7 @@ export default function StudentProject() {
                 const formData = new FormData();
                 formData.append("file", submissionFile);
                 
-                const uploadRes = await axios.post("${API_URL}/api/upload", formData, {
+                const uploadRes = await axios.post(`${API_URL}/api/upload`, formData, {
                     headers: { 
                         "Content-Type": "multipart/form-data",
                         Authorization: `Bearer ${token}`
@@ -129,7 +129,7 @@ export default function StudentProject() {
                 }
             }
 
-            const res = await axios.post("${API_URL}/api/submissions/project", {
+            const res = await axios.post(`${API_URL}/api/submissions/project`, {
                 taskId: selectedProject._id,
                 milestoneId: activeMilestoneIndex + 1, // 1-indexed for backend readability
                 bloomLevel: phase.bloomLevel,

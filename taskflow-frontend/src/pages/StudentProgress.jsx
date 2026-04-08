@@ -148,7 +148,7 @@ export default function StudentProgress() {
 
   const fetchProgress = async () => {
     try {
-      const res = await fetch("${API_URL}/api/progress", {
+      const res = await fetch(`${API_URL}/api/progress`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const result = await res.json();

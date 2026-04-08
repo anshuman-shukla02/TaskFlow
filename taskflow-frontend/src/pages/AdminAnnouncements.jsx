@@ -28,7 +28,7 @@ export default function AdminAnnouncements() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("${API_URL}/api/announcements", {
+      const res = await fetch(`${API_URL}/api/announcements`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

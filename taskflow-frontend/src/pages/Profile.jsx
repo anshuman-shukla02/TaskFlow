@@ -61,7 +61,7 @@ export default function Profile() {
       }
 
       try {
-        const res = await fetch("${API_URL}/api/auth/me", {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -115,7 +115,7 @@ export default function Profile() {
 
   const checkPendingRequest = async (token) => {
     try {
-      const res = await fetch("${API_URL}/api/auth/profile-request", {
+      const res = await fetch(`${API_URL}/api/auth/profile-request`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -161,8 +161,8 @@ export default function Profile() {
 
       // Admin direct update vs Student/Faculty approval request
       const endpoint = currentRole === "admin"
-        ? "${API_URL}/api/auth/profile-update"
-        : "${API_URL}/api/auth/profile-change-request";
+        ? `${API_URL}/api/auth/profile-update`
+        : `${API_URL}/api/auth/profile-change-request`;
 
       const method = currentRole === "admin" ? "PUT" : "POST";
 

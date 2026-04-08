@@ -43,7 +43,7 @@ export default function StudentMaterials() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch("${API_URL}/api/materials", {
+      const res = await fetch(`${API_URL}/api/materials`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();

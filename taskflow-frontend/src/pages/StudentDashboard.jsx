@@ -56,7 +56,7 @@ export default function StudentDashboard() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("${API_URL}/api/announcements", {
+      const res = await fetch(`${API_URL}/api/announcements`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
@@ -68,7 +68,7 @@ export default function StudentDashboard() {
 
   const fetchDashboardSummary = async () => {
     try {
-      const res = await fetch("${API_URL}/api/progress/dashboard-summary", {
+      const res = await fetch(`${API_URL}/api/progress/dashboard-summary`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

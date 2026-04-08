@@ -38,7 +38,7 @@ export default function AdminProfileApprovals() {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch("${API_URL}/api/admin/profile-requests", {
+      const res = await fetch(`${API_URL}/api/admin/profile-requests`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

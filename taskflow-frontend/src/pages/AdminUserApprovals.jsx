@@ -38,7 +38,7 @@ export default function AdminUserApprovals() {
 
   const fetchPendingUsers = async () => {
     try {
-      const res = await fetch("${API_URL}/api/admin/pending-users", {
+      const res = await fetch(`${API_URL}/api/admin/pending-users`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

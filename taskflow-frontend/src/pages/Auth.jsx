@@ -64,8 +64,8 @@ export default function Auth() {
 
     try {
       const endpoint = isSignup
-        ? "${API_URL}/api/auth/register"
-        : "${API_URL}/api/auth/login";
+        ? `${API_URL}/api/auth/register`
+        : `${API_URL}/api/auth/login`;
 
       const payload = isSignup
         ? { name, email, password, role }

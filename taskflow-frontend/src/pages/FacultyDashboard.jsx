@@ -80,7 +80,7 @@ export default function FacultyDashboard() {
     setGeneratingReport(true);
 
     try {
-      const res = await fetch("${API_URL}/api/analytics/faculty/generate-ai-report", {
+      const res = await fetch(`${API_URL}/api/analytics/faculty/generate-ai-report`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,7 @@ export default function FacultyDashboard() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("${API_URL}/api/announcements", {
+      const res = await fetch(`${API_URL}/api/announcements`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

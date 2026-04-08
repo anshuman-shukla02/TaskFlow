@@ -15,7 +15,7 @@ export default function FacultyAttendance() {
 
     const fetchActiveSession = async () => {
         try {
-            const res = await fetch("${API_URL}/api/attendance/active", {
+            const res = await fetch(`${API_URL}/api/attendance/active`, {
                 headers: { Authorization: `Bearer ${getToken()}` },
             });
             const data = await res.json();
@@ -29,7 +29,7 @@ export default function FacultyAttendance() {
 
     const fetchStats = async () => {
         try {
-            const res = await fetch("${API_URL}/api/attendance/summary", {
+            const res = await fetch(`${API_URL}/api/attendance/summary`, {
                 headers: { Authorization: `Bearer ${getToken()}` },
             });
             const data = await res.json();
@@ -50,7 +50,7 @@ export default function FacultyAttendance() {
             async (position) => {
                 try {
                     const { latitude, longitude } = position.coords;
-                    const res = await fetch("${API_URL}/api/attendance/start", {
+                    const res = await fetch(`${API_URL}/api/attendance/start`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export default function FacultyAttendance() {
     const stopSession = async () => {
         try {
             setLoading(true);
-            await fetch("${API_URL}/api/attendance/stop", {
+            await fetch(`${API_URL}/api/attendance/stop`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${getToken()}` },
             });

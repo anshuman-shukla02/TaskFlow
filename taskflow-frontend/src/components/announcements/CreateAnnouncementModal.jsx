@@ -19,7 +19,7 @@ export default function CreateAnnouncementModal({ isOpen, onClose, userRole, onS
     setError("");
 
     try {
-      const res = await fetch("${API_URL}/api/announcements", {
+      const res = await fetch(`${API_URL}/api/announcements`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

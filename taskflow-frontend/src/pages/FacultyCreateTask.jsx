@@ -14,7 +14,7 @@ export default function FacultyCreateTask() {
     setSaving(true);
     try {
       const payload = { ...form, questions: sanitiseQuestions(form) };
-      const res = await fetch("${API_URL}/api/tasks/create", {
+      const res = await fetch(`${API_URL}/api/tasks/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

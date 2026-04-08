@@ -31,7 +31,7 @@ export default function AdminStudents() {
   /* fetch student list */
   const fetchStudents = async () => {
     try {
-      const res  = await fetch("${API_URL}/api/analytics/faculty/students-overview", {
+      const res  = await fetch(`${API_URL}/api/analytics/faculty/students-overview`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();

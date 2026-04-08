@@ -1,7 +1,6 @@
-import { API_URL } from "./api";
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || '${API_URL}';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -19,4 +18,3 @@ api.interceptors.request.use((config) => {
 
 export default api;
 export { API_URL };
-

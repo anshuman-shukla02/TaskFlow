@@ -38,7 +38,7 @@ export default function FacultyTasks() {
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch("${API_URL}/api/tasks", {
+      const res = await fetch(`${API_URL}/api/tasks`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();

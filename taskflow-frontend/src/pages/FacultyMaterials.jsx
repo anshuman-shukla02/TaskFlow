@@ -39,7 +39,7 @@ export default function FacultyMaterials() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch("${API_URL}/api/materials", {
+      const res = await fetch(`${API_URL}/api/materials`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -63,7 +63,7 @@ export default function FacultyMaterials() {
       formData.append("description", description);
       formData.append("subject", subject);
 
-      const res = await fetch("${API_URL}/api/materials/upload", {
+      const res = await fetch(`${API_URL}/api/materials/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
         body: formData,

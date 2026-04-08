@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       const headers = { Authorization: `Bearer ${token}` };
 
       // Fetch stats
-      const statsRes = await fetch("${API_URL}/api/admin/dashboard-stats", { headers });
+      const statsRes = await fetch(`${API_URL}/api/admin/dashboard-stats`, { headers });
       const statsData = await statsRes.json();
       if (statsData.success) {
         setStats(statsData.stats);
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
       }
 
       // Fetch growth
-      const growthRes = await fetch("${API_URL}/api/admin/student-growth", { headers });
+      const growthRes = await fetch(`${API_URL}/api/admin/student-growth`, { headers });
       const growthResult = await growthRes.json();
       if (growthResult.success && growthResult.growth) {
         setGrowthData(growthResult.growth.map(g => ({ name: g._id, users: g.count })));
@@ -99,14 +99,14 @@ export default function AdminDashboard() {
 
 
       // Fetch pending requests
-      const requestsRes = await fetch("${API_URL}/api/admin/profile-requests", { headers });
+      const requestsRes = await fetch(`${API_URL}/api/admin/profile-requests`, { headers });
       const requestsData = await requestsRes.json();
       if (requestsData.success) {
         setPendingRequests(requestsData.requests);
       }
 
       // Fetch announcements
-      const annRes = await fetch("${API_URL}/api/announcements", { headers });
+      const annRes = await fetch(`${API_URL}/api/announcements`, { headers });
       const annData = await annRes.json();
       if (annData.success) {
         setAnnouncements(annData.announcements);
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
 
   const fetchPendingUsers = async () => {
     try {
-      const res = await fetch("${API_URL}/api/admin/pending-users", {
+      const res = await fetch(`${API_URL}/api/admin/pending-users`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
