@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -63,8 +64,8 @@ export default function Auth() {
 
     try {
       const endpoint = isSignup
-        ? "http://localhost:5002/api/auth/register"
-        : "http://localhost:5002/api/auth/login";
+        ? "${API_URL}/api/auth/register"
+        : "${API_URL}/api/auth/login";
 
       const payload = isSignup
         ? { name, email, password, role }

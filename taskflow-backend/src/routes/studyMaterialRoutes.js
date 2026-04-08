@@ -5,20 +5,28 @@ const fs = require("fs");
 const auth = require("../middleware/auth");
 const StudyMaterial = require("../models/StudyMaterial");
 const MaterialChat = require("../models/MaterialChat");
+const { uploadToS3 } = require("../utils/s3Storage");
+const { GetObjectCommand, S3Client } = require("@aws-sdk/client-s3");
 
-// ────────────────────────── Upload Config ──────────────────────────
-const uploadDir = path.join(__dirname, "../uploads/materials");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// ────────────────────────── Storage Selection ──────────────────────────
+const useS3 = process.env.AWS_ACCESS_KEY_ID && process.env.S3_BUCKET_NAME;
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "material-" + uniqueSuffix + path.extname(file.originalname));
-  },
-});
+// Configure multer
+const storage = useS3
+  ? multer.memoryStorage() // S3 needs buffer
+  : multer.diskStorage({
+      destination: (req, file, cb) => {
+        const uploadDir = path.join(__dirname, "../uploads/materials");
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, "material-" + uniqueSuffix + path.extname(file.originalname));
+      },
+    });
 
 const allowedMimeTypes = [
   "application/pdf",
@@ -63,7 +71,13 @@ router.post("/upload", auth, upload.single("file"), async (req, res) => {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    const fileUrl = `http://localhost:5002/uploads/materials/${req.file.filename}`;
+    let fileUrl;
+    if (useS3) {
+      fileUrl = await uploadToS3(req.file, "materials");
+    } else {
+      const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5002}`;
+      fileUrl = `${baseUrl}/uploads/materials/${req.file.filename}`;
+    }
 
     const material = await StudyMaterial.create({
       title: title.trim(),
@@ -160,31 +174,61 @@ const PRESET_PROMPTS = {
     "List ALL formulas, theorems, key definitions, and important rules found in the following study material. Format them clearly with proper labels. If no formulas exist, list the key definitions and principles instead.",
 };
 
-// Extract text from file on disk
-async function extractTextFromFile(material) {
-  const filename = material.fileUrl.split("/").pop();
-  const filePath = path.join(uploadDir, filename);
+// ────────────────────────── AI Extraction ──────────────────────────
 
-  if (!fs.existsSync(filePath)) {
-    throw new Error("File not found on server");
+async function streamToBuffer(stream) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("error", reject);
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+  });
+}
+
+// Extract text from file (Disk or S3)
+async function extractTextFromFile(material) {
+  let dataBuffer;
+
+  if (material.fileUrl.includes("amazonaws.com")) {
+    const s3Client = new S3Client({
+      region: process.env.AWS_REGION || "us-east-1",
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
+
+    const urlParts = new URL(material.fileUrl);
+    const bucket = urlParts.hostname.split(".")[0];
+    const key = urlParts.pathname.substring(1);
+
+    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+    const response = await s3Client.send(command);
+    dataBuffer = await streamToBuffer(response.Body);
+  } else {
+    // Local file
+    const filename = material.fileUrl.split("/").pop();
+    const filePath = path.join(__dirname, "../uploads/materials", filename);
+    if (!fs.existsSync(filePath)) {
+      throw new Error("File not found on server");
+    }
+    dataBuffer = fs.readFileSync(filePath);
   }
 
   if (material.fileType === "txt") {
-    return fs.readFileSync(filePath, "utf-8");
+    return dataBuffer.toString("utf-8");
   }
 
   if (material.fileType === "pdf") {
     const pdfParse = require("pdf-parse");
-    const dataBuffer = fs.readFileSync(filePath);
     const data = await pdfParse(dataBuffer);
     return data.text;
   }
 
-  // For PPT, PPTX, DOC, DOCX — read raw buffer and convert to base64
-  // Gemini can handle document understanding, but we'll extract what we can
-  const buffer = fs.readFileSync(filePath);
-  return buffer.toString("utf-8").replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
+  // PPT, DOC etc
+  return dataBuffer.toString("utf-8").replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
 }
+
 
 router.post("/:id/ai-query", auth, async (req, res) => {
   try {

@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,7 +38,7 @@ export default function AdminProfileApprovals() {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/admin/profile-requests", {
+      const res = await fetch("${API_URL}/api/admin/profile-requests", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
@@ -70,7 +71,7 @@ export default function AdminProfileApprovals() {
   const executeApprove = async (id) => {
     setActionLoading(true);
     try {
-      const res = await fetch(`http://localhost:5002/api/admin/profile-requests/${id}/approve`, {
+      const res = await fetch(`${API_URL}/api/admin/profile-requests/${id}/approve`, {
         method: "PUT",
         headers: { 
           Authorization: `Bearer ${getToken()}`,
@@ -105,7 +106,7 @@ export default function AdminProfileApprovals() {
     if (!rejectModal) return;
     setActionLoading(true);
     try {
-      const res = await fetch(`http://localhost:5002/api/admin/profile-requests/${rejectModal.id}/reject`, {
+      const res = await fetch(`${API_URL}/api/admin/profile-requests/${rejectModal.id}/reject`, {
         method: "PUT",
         headers: { 
           Authorization: `Bearer ${getToken()}`,

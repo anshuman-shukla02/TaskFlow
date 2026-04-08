@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { Users, Filter, Mail, GraduationCap, X, TrendingUp, CheckCircle, BookOpen, CalendarCheck, CalendarX } from "lucide-react";
@@ -30,7 +31,7 @@ export default function AdminStudents() {
   /* fetch student list */
   const fetchStudents = async () => {
     try {
-      const res  = await fetch("http://localhost:5002/api/analytics/faculty/students-overview", {
+      const res  = await fetch("${API_URL}/api/analytics/faculty/students-overview", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -50,7 +51,7 @@ export default function AdminStudents() {
 
     // growth
     try {
-      const res  = await fetch(`http://localhost:5002/api/analytics/faculty/student-growth/${student._id}`, {
+      const res  = await fetch(`${API_URL}/api/analytics/faculty/student-growth/${student._id}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -65,7 +66,7 @@ export default function AdminStudents() {
 
     // attendance
     try {
-      const res  = await fetch(`http://localhost:5002/api/attendance/student/${student._id}`, {
+      const res  = await fetch(`${API_URL}/api/attendance/student/${student._id}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();

@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +38,7 @@ export default function FacultyTasks() {
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/tasks", {
+      const res = await fetch("${API_URL}/api/tasks", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -54,7 +55,7 @@ export default function FacultyTasks() {
     setLoadingSubmissions(true);
     setScoreDrafts({});
     try {
-      const res = await fetch(`http://localhost:5002/api/submissions/task/${task._id}`, {
+      const res = await fetch(`${API_URL}/api/submissions/task/${task._id}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -79,7 +80,7 @@ export default function FacultyTasks() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      const res = await fetch(`http://localhost:5002/api/tasks/${deleteTarget._id}`, {
+      const res = await fetch(`${API_URL}/api/tasks/${deleteTarget._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -123,7 +124,7 @@ export default function FacultyTasks() {
     const draft = getScoreDraft(sub._id, questions);
     setSavingScore(sub._id);
     try {
-      const res = await fetch(`http://localhost:5002/api/submissions/${sub._id}/score`, {
+      const res = await fetch(`${API_URL}/api/submissions/${sub._id}/score`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
         body: JSON.stringify({ questionScores: draft }),
@@ -151,7 +152,7 @@ export default function FacultyTasks() {
     const score = plainScoreDrafts[sub._id] ?? sub.performanceScore ?? 0;
     setSavingPlainScore(sub._id);
     try {
-      const res = await fetch(`http://localhost:5002/api/submissions/${sub._id}/mark`, {
+      const res = await fetch(`${API_URL}/api/submissions/${sub._id}/mark`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
         body: JSON.stringify({ score }),

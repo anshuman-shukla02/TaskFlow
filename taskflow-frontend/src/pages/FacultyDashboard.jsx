@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -79,7 +80,7 @@ export default function FacultyDashboard() {
     setGeneratingReport(true);
 
     try {
-      const res = await fetch("http://localhost:5002/api/analytics/faculty/generate-ai-report", {
+      const res = await fetch("${API_URL}/api/analytics/faculty/generate-ai-report", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +111,7 @@ export default function FacultyDashboard() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/announcements", {
+      const res = await fetch("${API_URL}/api/announcements", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
@@ -124,7 +125,7 @@ export default function FacultyDashboard() {
 
   const fetchClassStats = async () => {
     try {
-      const res = await fetch(`http://localhost:5002/api/analytics/faculty/class-performance?division=${selectedDivision}`, {
+      const res = await fetch(`${API_URL}/api/analytics/faculty/class-performance?division=${selectedDivision}`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

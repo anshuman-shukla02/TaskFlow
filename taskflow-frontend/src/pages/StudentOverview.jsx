@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,7 +39,7 @@ export default function StudentOverview() {
 
     const fetchStudents = async () => {
         try {
-            const res = await fetch(`http://localhost:5002/api/analytics/faculty/students-overview?division=${selectedDivision}`, {
+            const res = await fetch(`${API_URL}/api/analytics/faculty/students-overview?division=${selectedDivision}`, {
                 headers: { Authorization: `Bearer ${getToken()}` }
             });
             const data = await res.json();
@@ -52,7 +53,7 @@ export default function StudentOverview() {
 
     const fetchGrowthData = async (studentId) => {
         try {
-            const res = await fetch(`http://localhost:5002/api/analytics/faculty/student-growth/${studentId}`, {
+            const res = await fetch(`${API_URL}/api/analytics/faculty/student-growth/${studentId}`, {
                 headers: { Authorization: `Bearer ${getToken()}` }
             });
             const data = await res.json();
@@ -71,7 +72,7 @@ export default function StudentOverview() {
 
     const fetchAttendanceData = async (studentId) => {
         try {
-            const res = await fetch(`http://localhost:5002/api/attendance/student/${studentId}`, {
+            const res = await fetch(`${API_URL}/api/attendance/student/${studentId}`, {
                 headers: { Authorization: `Bearer ${getToken()}` }
             });
             const data = await res.json();

@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,7 +38,7 @@ export default function AdminUserApprovals() {
 
   const fetchPendingUsers = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/admin/pending-users", {
+      const res = await fetch("${API_URL}/api/admin/pending-users", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
@@ -66,7 +67,7 @@ export default function AdminUserApprovals() {
   const executeApprove = async (id, name) => {
     setModalConfig(prev => ({ ...prev, loading: true }));
     try {
-      const res = await fetch(`http://localhost:5002/api/admin/users/${id}/approve`, {
+      const res = await fetch(`${API_URL}/api/admin/users/${id}/approve`, {
         method: "PUT",
         headers: { 
           Authorization: `Bearer ${getToken()}`,
@@ -124,7 +125,7 @@ export default function AdminUserApprovals() {
   const executeReject = async (id, name) => {
     setModalConfig(prev => ({ ...prev, loading: true }));
     try {
-      const res = await fetch(`http://localhost:5002/api/admin/users/${id}/reject`, {
+      const res = await fetch(`${API_URL}/api/admin/users/${id}/reject`, {
         method: "PUT",
         headers: { 
           Authorization: `Bearer ${getToken()}`,

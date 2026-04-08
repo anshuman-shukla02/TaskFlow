@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { MapPin, CheckCircle, XCircle, Loader2 } from "lucide-react";
@@ -19,7 +20,7 @@ export default function StudentAttendance() {
 
     const fetchHistory = async () => {
         try {
-            const res = await fetch("http://localhost:5002/api/attendance/history", {
+            const res = await fetch("${API_URL}/api/attendance/history", {
                 headers: { Authorization: `Bearer ${getToken()}` }
             });
             const data = await res.json();
@@ -47,7 +48,7 @@ export default function StudentAttendance() {
                     const { latitude, longitude } = position.coords;
                     const token = getToken();
 
-                    const res = await fetch("http://localhost:5002/api/attendance/mark", {
+                    const res = await fetch("${API_URL}/api/attendance/mark", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

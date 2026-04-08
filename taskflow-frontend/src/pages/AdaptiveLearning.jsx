@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -43,7 +44,7 @@ export default function AdaptiveLearning() {
                 return;
             }
 
-            const res = await axios.get(`http://localhost:5002/api/topics/${topicId}/notes`, {
+            const res = await axios.get(`${API_URL}/api/topics/${topicId}/notes`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -78,7 +79,7 @@ export default function AdaptiveLearning() {
         // Mark as viewed: axios.post(`/api/topics/${selectedTopic.id}/mark-viewed`)
         try {
             const token = getToken();
-            const res = await axios.post(`http://localhost:5002/api/adaptive/next-question`, {
+            const res = await axios.post(`${API_URL}/api/adaptive/next-question`, {
                 topicId: selectedTopic.id,
                 currentQuestionId: null,
                 executionTime: null
@@ -163,7 +164,7 @@ export default function AdaptiveLearning() {
             const token = getToken();
             if (token && selectedTopic) {
                 axios.post(
-                    "http://localhost:5002/api/progress/reset",
+                    "${API_URL}/api/progress/reset",
                     { topic: selectedTopic.id },
                     { headers: { Authorization: `Bearer ${token}` } }
                 ).catch(err => console.error("Failed to penalize:", err));
@@ -193,7 +194,7 @@ export default function AdaptiveLearning() {
         setOutput({ text: "Compiling in secure Docker Sandbox...", time: null, error: false });
         try {
             const token = getToken();
-            const res = await axios.post("http://localhost:5002/api/compiler/execute", {
+            const res = await axios.post("${API_URL}/api/compiler/execute", {
                 code,
                 language,
                 questionId: currentQuestion?.id
@@ -220,7 +221,7 @@ export default function AdaptiveLearning() {
         
         try {
             const token = getToken();
-            const res = await axios.post("http://localhost:5002/api/compiler/execute", {
+            const res = await axios.post("${API_URL}/api/compiler/execute", {
                 code,
                 language,
                 questionId: currentQuestion?.id
@@ -235,7 +236,7 @@ export default function AdaptiveLearning() {
 
             setOutput({ text: "All tests passed! Consulting adaptive AI for your next challenge...", time: res.data.executionTime, error: false });
             
-            const adaptiveRes = await axios.post(`http://localhost:5002/api/adaptive/next-question`, {
+            const adaptiveRes = await axios.post(`${API_URL}/api/adaptive/next-question`, {
                 topicId: selectedTopic.id,
                 currentQuestionId: currentQuestion.id,
                 executionTime: res.data.executionTime,

@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { useState, useEffect } from "react";
 import { getToken } from "../utils/auth";
 import { Upload, FileText, Trash2, File, X } from "lucide-react";
@@ -38,7 +39,7 @@ export default function FacultyMaterials() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/materials", {
+      const res = await fetch("${API_URL}/api/materials", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -62,7 +63,7 @@ export default function FacultyMaterials() {
       formData.append("description", description);
       formData.append("subject", subject);
 
-      const res = await fetch("http://localhost:5002/api/materials/upload", {
+      const res = await fetch("${API_URL}/api/materials/upload", {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
         body: formData,
@@ -90,7 +91,7 @@ export default function FacultyMaterials() {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      const res = await fetch(`http://localhost:5002/api/materials/${deleteTarget._id}`, {
+      const res = await fetch(`${API_URL}/api/materials/${deleteTarget._id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getToken()}` },
       });

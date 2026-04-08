@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken } from "../utils/auth";
@@ -13,7 +14,7 @@ export default function FacultyCreateTask() {
     setSaving(true);
     try {
       const payload = { ...form, questions: sanitiseQuestions(form) };
-      const res = await fetch("http://localhost:5002/api/tasks/create", {
+      const res = await fetch("${API_URL}/api/tasks/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

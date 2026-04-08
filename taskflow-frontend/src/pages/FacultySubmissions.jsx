@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -64,7 +65,7 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
   const handleSaveMark = async () => {
     setSavingMark(true);
     try {
-      const res = await fetch(`http://localhost:5002/api/submissions/${sub._id}/mark`, {
+      const res = await fetch(`${API_URL}/api/submissions/${sub._id}/mark`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
         body: JSON.stringify({ score: plainScore }),
@@ -95,7 +96,7 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
   const handleSaveQScore = async () => {
     setSavingQ(true);
     try {
-      const res = await fetch(`http://localhost:5002/api/submissions/${sub._id}/score`, {
+      const res = await fetch(`${API_URL}/api/submissions/${sub._id}/score`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
         body: JSON.stringify({ questionScores: qScores }),
@@ -118,7 +119,7 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
   const handleReview = async (status) => {
     setReviewing(status);
     try {
-      const res = await fetch(`http://localhost:5002/api/submissions/${sub._id}/review`, {
+      const res = await fetch(`${API_URL}/api/submissions/${sub._id}/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
         body: JSON.stringify({ status, feedback }),
@@ -536,7 +537,7 @@ export default function FacultySubmissions() {
     setLoading(true);
     setError(null);
     try {
-      const url = `http://localhost:5002/api/submissions/all?division=${division}&type=${tab}`;
+      const url = `${API_URL}/api/submissions/all?division=${division}&type=${tab}`;
       const res  = await fetch(url, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });

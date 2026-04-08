@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -14,7 +15,7 @@ export default function FacultyReviews() {
     const fetchReviews = async () => {
         try {
             const token = getToken();
-            const res = await axios.get("http://localhost:5002/api/submissions/pending", {
+            const res = await axios.get("${API_URL}/api/submissions/pending", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.success) {
@@ -33,7 +34,7 @@ export default function FacultyReviews() {
 
         try {
             const token = getToken();
-            await axios.post(`http://localhost:5002/api/submissions/${id}/review`,
+            await axios.post(`${API_URL}/api/submissions/${id}/review`,
                 { status, feedback },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

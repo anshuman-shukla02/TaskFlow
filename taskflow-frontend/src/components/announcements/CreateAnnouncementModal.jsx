@@ -1,3 +1,4 @@
+import { API_URL } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,7 +19,7 @@ export default function CreateAnnouncementModal({ isOpen, onClose, userRole, onS
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5002/api/announcements", {
+      const res = await fetch("${API_URL}/api/announcements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

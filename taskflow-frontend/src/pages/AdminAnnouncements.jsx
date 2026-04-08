@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,7 +28,7 @@ export default function AdminAnnouncements() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/announcements", {
+      const res = await fetch("${API_URL}/api/announcements", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
@@ -45,7 +46,7 @@ export default function AdminAnnouncements() {
     if (!confirm("Are you sure you want to delete this announcement?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5002/api/announcements/${id}`, {
+      const res = await fetch(`${API_URL}/api/announcements/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getToken()}` }
       });

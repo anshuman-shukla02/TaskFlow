@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +56,7 @@ export default function StudentDashboard() {
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/announcements", {
+      const res = await fetch("${API_URL}/api/announcements", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
@@ -67,7 +68,7 @@ export default function StudentDashboard() {
 
   const fetchDashboardSummary = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/progress/dashboard-summary", {
+      const res = await fetch("${API_URL}/api/progress/dashboard-summary", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();

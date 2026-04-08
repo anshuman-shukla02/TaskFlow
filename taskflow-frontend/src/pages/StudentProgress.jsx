@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -147,7 +148,7 @@ export default function StudentProgress() {
 
   const fetchProgress = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/progress", {
+      const res = await fetch("${API_URL}/api/progress", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const result = await res.json();

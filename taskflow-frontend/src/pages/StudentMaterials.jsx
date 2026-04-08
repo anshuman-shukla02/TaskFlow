@@ -1,3 +1,4 @@
+import { API_URL } from "../utils/api";
 import { useState, useEffect, useRef } from "react";
 import { getToken } from "../utils/auth";
 import { FileText, Download, X, BookOpen, Sparkles, Loader2, ChevronRight, ArrowLeft } from "lucide-react";
@@ -42,7 +43,7 @@ export default function StudentMaterials() {
 
   const fetchMaterials = async () => {
     try {
-      const res = await fetch("http://localhost:5002/api/materials", {
+      const res = await fetch("${API_URL}/api/materials", {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -60,7 +61,7 @@ export default function StudentMaterials() {
     setAiLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:5002/api/materials/${material._id}/chats`, {
+      const res = await fetch(`${API_URL}/api/materials/${material._id}/chats`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       const data = await res.json();
@@ -90,7 +91,7 @@ export default function StudentMaterials() {
 
     try {
       const res = await fetch(
-        `http://localhost:5002/api/materials/${selectedMaterial._id}/ai-query`,
+        `${API_URL}/api/materials/${selectedMaterial._id}/ai-query`,
         {
           method: "POST",
           headers: {
