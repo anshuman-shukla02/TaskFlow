@@ -126,11 +126,13 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(403).json({ message: "You can only delete your own materials" });
     }
 
-    // Delete file from disk
-    const filename = material.fileUrl.split("/").pop();
-    const filePath = path.join(uploadDir, filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Delete file from disk (only for local files, skip for S3)
+    if (!material.fileUrl.includes("amazonaws.com")) {
+      const filename = material.fileUrl.split("/").pop();
+      const filePath = path.join(__dirname, "../uploads/materials", filename);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
     }
 
     await MaterialChat.deleteMany({ material: req.params.id });

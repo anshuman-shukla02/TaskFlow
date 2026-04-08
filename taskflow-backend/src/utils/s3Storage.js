@@ -21,6 +21,7 @@ const uploadToS3 = async (file, folder = "uploads") => {
       Key: fileName,
       Body: file.buffer,
       ContentType: file.mimetype,
+      ACL: "public-read",
     },
   });
 

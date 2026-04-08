@@ -225,12 +225,12 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                 <span className="flex items-center gap-1 text-slate-400 bg-slate-50 px-2.5 py-1 rounded-full border">
                   <Clock size={11} /> {new Date(sub.createdAt).toLocaleString("en-IN")}
                 </span>
-                {task.difficulty && (
+                {task.difficulty && task.difficulty !== "none" && (
                   <span className={`px-2.5 py-1 rounded-full font-bold capitalize ${diffColor[task.difficulty] || "bg-slate-100 text-slate-600"}`}>
                     {task.difficulty}
                   </span>
                 )}
-                {task.bloomLevel && (
+                {task.bloomLevel && task.bloomLevel !== "none" && (
                   <span className="bg-violet-50 text-violet-600 font-semibold px-2.5 py-1 rounded-full capitalize">
                     {task.bloomLevel}
                   </span>

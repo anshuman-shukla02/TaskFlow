@@ -191,7 +191,7 @@ export default function AdaptiveLearning() {
 
     const handleRunCode = async () => {
         setIsExecuting(true);
-        setOutput({ text: "Compiling in secure Docker Sandbox...", time: null, error: false });
+        setOutput({ text: "Compiling in secure cloud sandbox...", time: null, error: false });
         try {
             const token = getToken();
             const res = await axios.post(`${API_URL}/api/compiler/execute`, {
@@ -209,7 +209,7 @@ export default function AdaptiveLearning() {
             }
         } catch (err) {
             console.error(err);
-            setOutput({ text: "Server error or timeout. Ensure Docker Desktop is running.", time: null, error: true });
+            setOutput({ text: "Server error or timeout. Please try again.", time: null, error: true });
         } finally {
             setIsExecuting(false);
         }
