@@ -7,8 +7,12 @@ const PISTON_URL = "https://emkc.org/api/v2/piston/execute";
 // Map our internal language names to Piston's language names and versions
 const LANGUAGE_MAP = {
     'javascript': { language: 'javascript', version: '18.15.0' },
-    'python': { language: 'python', version: '3.10.0' }
+    'python': { language: 'python', version: '3.10.0' },
+    'java': { language: 'java', version: '15.0.2' },
+    'cpp': { language: 'cpp', version: '10.2.0' },
+    'c': { language: 'c', version: '10.2.0' }
 };
+
 
 router.post('/execute', auth, async (req, res) => {
     const { code, language, questionId } = req.body;
