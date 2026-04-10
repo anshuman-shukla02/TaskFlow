@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { getCustomDriver } = require('./customDrivers');
 
 /* ═══════════════════════════════════════════════════════════════
    1. Load every question JSON into a flat lookup map
@@ -185,7 +186,11 @@ function esc(s) { return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/
    ═══════════════════════════════════════════════════════════════ */
 function generateTestDriver(questionId, langKey) {
     const q = questionMap[questionId];
-    if (!q || SKIP_IDS.has(questionId)) return null;
+    if (!q) return null;
+    
+    if (SKIP_IDS.has(questionId)) {
+        return getCustomDriver(questionId, langKey);
+    }
     const examples = q.examples || [];
     if (!examples.length) return null;
 
