@@ -16,7 +16,7 @@ router.get("/", auth, async (req, res) => {
 // POST /api/tasks — create task (from FacultyDashboard CreateTaskModal)
 router.post("/", auth, async (req, res) => {
   try {
-    const { title, description, topic, difficulty, type, bloomLevel, phases, questions, hasMarks } = req.body;
+    const { title, description, topic, difficulty, type, bloomLevel, phases, questions, hasMarks, singleMarks } = req.body;
 
     const task = await Task.create({
       title,
@@ -28,6 +28,7 @@ router.post("/", auth, async (req, res) => {
       phases: type === "project" ? phases : [],
       questions: Array.isArray(questions) ? questions : [],
       hasMarks: !!hasMarks,
+      singleMarks: singleMarks || 10,
       createdBy: req.user.id,
     });
 
@@ -41,7 +42,7 @@ router.post("/", auth, async (req, res) => {
 // POST /api/tasks/create — create task (from FacultyTasks page)
 router.post("/create", auth, async (req, res) => {
   try {
-    const { title, description, topic, difficulty, type, bloomLevel, phases, questions, hasMarks } = req.body;
+    const { title, description, topic, difficulty, type, bloomLevel, phases, questions, hasMarks, singleMarks } = req.body;
 
     const task = await Task.create({
       title,
@@ -53,6 +54,7 @@ router.post("/create", auth, async (req, res) => {
       phases: type === "project" ? phases : [],
       questions: Array.isArray(questions) ? questions : [],
       hasMarks: !!hasMarks,
+      singleMarks: singleMarks || 10,
       createdBy: req.user.id,
     });
 
@@ -73,7 +75,7 @@ router.put("/:id", auth, async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    const { title, description, topic, difficulty, type, bloomLevel, questions, hasMarks } = req.body;
+    const { title, description, topic, difficulty, type, bloomLevel, questions, hasMarks, singleMarks } = req.body;
     if (title !== undefined) task.title = title;
     if (description !== undefined) task.description = description;
     if (topic !== undefined) task.topic = topic;
@@ -82,6 +84,7 @@ router.put("/:id", auth, async (req, res) => {
     if (bloomLevel !== undefined) task.bloomLevel = bloomLevel;
     if (questions !== undefined) task.questions = Array.isArray(questions) ? questions : [];
     if (hasMarks !== undefined) task.hasMarks = !!hasMarks;
+    if (singleMarks !== undefined) task.singleMarks = singleMarks;
 
     await task.save();
     res.json({ success: true, task });

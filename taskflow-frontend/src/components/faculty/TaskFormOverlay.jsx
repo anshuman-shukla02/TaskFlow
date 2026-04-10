@@ -16,6 +16,7 @@ export const EMPTY_TASK = {
   bloomLevel: "none",
   taskMode: "single",   // "single" | "questions"
   hasMarks: false,
+  singleMarks: 10,      // marks for single-mode graded tasks
   questions: [],
 };
 
@@ -343,10 +344,22 @@ export default function TaskFormOverlay({ form, setForm, onSave, onBack, isSavin
         ) : (
           <div className="flex-1 flex flex-col overflow-y-auto items-center py-6 px-6 relative">
             <div className="w-full max-w-5xl bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden shrink-0 min-h-[600px] mb-12">
-              <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
+              <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                   Task Description &amp; Prompt
                 </p>
+                {form.hasMarks && (
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Marks:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={form.singleMarks ?? 10}
+                      onChange={(e) => setForm({ ...form, singleMarks: parseInt(e.target.value, 10) || 1 })}
+                      className="w-16 border border-slate-200 rounded-lg px-2 py-1.5 text-sm font-bold text-center focus:ring-2 focus:ring-slate-300 focus:outline-none"
+                    />
+                  </div>
+                )}
               </div>
               <ReactQuill
                 theme="snow"

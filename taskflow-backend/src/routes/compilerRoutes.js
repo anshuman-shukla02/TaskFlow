@@ -89,11 +89,13 @@ router.post('/execute', auth, async (req, res) => {
         const isAccepted = result.status?.id === 3;
 
         if (isAccepted) {
+            const stdout = (result.stdout || "").trim();
             return res.json({ 
                 success: true, 
-                output: result.stdout || "Execution finished (No Output)", 
+                output: stdout || "Execution finished (No Output)", 
                 executionTime,
-                isError: false
+                isError: false,
+                hasOutput: !!stdout
             });
         }
         

@@ -179,7 +179,7 @@ export default function FacultyTasks() {
     <div className="p-8 space-y-8 relative">
       {/* Header */}
       <div className="flex justify-between items-end">
-        <p className="text-clay-muted mt-1">
+        <p className="text-slate-500 mt-1">
           Total tasks created: <span className="font-medium">{tasks.length}</span>
         </p>
         <button
@@ -272,7 +272,7 @@ export default function FacultyTasks() {
               <div>
                 <h2 className="text-2xl font-bold">{selectedTaskForReview.title}</h2>
                 <div className="flex items-center gap-2 mt-1">
-                  <p className="text-clay-muted text-sm">Student Submissions</p>
+                  <p className="text-slate-500 text-sm">Student Submissions</p>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                     selectedTaskForReview.hasMarks
                       ? "bg-emerald-100 text-emerald-700"
@@ -292,10 +292,10 @@ export default function FacultyTasks() {
 
             <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 space-y-4">
               {loadingSubmissions ? (
-                <div className="text-center py-10 text-clay-muted">Loading submissions...</div>
+                <div className="text-center py-10 text-slate-500">Loading submissions...</div>
               ) : submissions.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-2xl border border-dashed">
-                  <p className="text-clay-muted text-lg">No submissions yet.</p>
+                  <p className="text-slate-500 text-lg">No submissions yet.</p>
                 </div>
               ) : (
                 submissions.map((sub) => {
@@ -309,24 +309,24 @@ export default function FacultyTasks() {
                       {/* Student info */}
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-clay-secondary">
+                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600">
                             <User size={20} />
                           </div>
                           <div>
-                            <p className="font-semibold text-clay-text">{sub.userId?.name || "Student"}</p>
+                            <p className="font-semibold text-slate-800">{sub.userId?.name || "Student"}</p>
                             <div className="flex gap-2 text-xs">
-                              <span className="text-clay-muted">{sub.userId?.email || "No Email"}</span>
+                              <span className="text-slate-500">{sub.userId?.email || "No Email"}</span>
                               <span className="text-slate-300">•</span>
-                              <span className="text-clay-muted">{sub.userId?.rollNumber}</span>
+                              <span className="text-slate-500">{sub.userId?.rollNumber}</span>
                             </div>
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-1">
-                          <div className="flex items-center gap-2 text-xs text-clay-muted bg-slate-50 px-3 py-1 rounded-full border">
+                          <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 px-3 py-1 rounded-full border">
                             <Clock size={12} />
                             {new Date(sub.createdAt).toLocaleString()}
                           </div>
-                          <span className="text-xs font-mono font-bold text-clay-muted">
+                          <span className="text-xs font-mono font-bold text-slate-500">
                             Score: {sub.performanceScore}/10
                           </span>
                         </div>
@@ -344,17 +344,17 @@ export default function FacultyTasks() {
                               <div key={i} className="rounded-xl overflow-hidden">
                                 <div className="bg-slate-50 px-4 py-2.5 flex items-center justify-between">
                                   <div
-                                    className="text-xs font-bold text-clay-secondary flex-1 prose prose-xs max-w-none"
+                                    className="text-xs font-bold text-slate-600 flex-1 prose prose-xs max-w-none"
                                     dangerouslySetInnerHTML={{ __html: `Q${i + 1} — ${q.text}` }}
                                   />
-                                  <span className="shrink-0 text-xs text-clay-muted font-medium ml-2">
+                                  <span className="shrink-0 text-xs text-slate-500 font-medium ml-2">
                                     Max: {q.marks} mark{q.marks !== 1 ? "s" : ""}
                                   </span>
                                 </div>
                                 <div className="p-4 space-y-3">
                                   {answerObj?.fileUrl && (
                                     <div className="mb-3">
-                                      <p className="text-xs font-semibold text-clay-muted mb-1">Attached Image:</p>
+                                      <p className="text-xs font-semibold text-slate-500 mb-1">Attached Image:</p>
                                       <a href={answerObj.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-block border rounded-lg overflow-hidden hover:opacity-90 transition shadow-sm">
                                         <img src={answerObj.fileUrl} alt={`Q${i + 1} attachment`} className="h-32 w-auto object-cover max-w-[300px]" />
                                       </a>
@@ -368,7 +368,7 @@ export default function FacultyTasks() {
                                     )}
                                   </div>
                                   <div className="flex items-center gap-3">
-                                    <label className="text-xs font-semibold text-clay-secondary">Score:</label>
+                                    <label className="text-xs font-semibold text-slate-600">Score:</label>
                                     <input
                                       type="number"
                                       min="0"
@@ -377,7 +377,7 @@ export default function FacultyTasks() {
                                       onChange={(e) => updateScoreDraft(sub._id, i, e.target.value, questions)}
                                       className="w-20 border rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                     />
-                                    <span className="text-xs text-clay-muted">/ {q.marks}</span>
+                                    <span className="text-xs text-slate-500">/ {q.marks}</span>
                                   </div>
                                 </div>
                               </div>
@@ -396,7 +396,7 @@ export default function FacultyTasks() {
                             <button
                               onClick={() => handleSaveScore(sub)}
                               disabled={savingScore === sub._id}
-                              className="flex items-center gap-2 bg-white text-clay-text px-5 py-2 rounded-full font-semibold text-sm hover:bg-slate-100 transition disabled:opacity-60"
+                              className="flex items-center gap-2 bg-white text-slate-800 px-5 py-2 rounded-full font-semibold text-sm hover:bg-slate-100 transition disabled:opacity-60"
                             >
                               <CheckCircle size={16} />
                               {savingScore === sub._id ? "Saving…" : "Save Score"}
@@ -442,7 +442,7 @@ export default function FacultyTasks() {
                           </div>
                           {sub.fileUrl && (
                             <div className="mt-4 border-t pt-4">
-                              <p className="text-xs font-bold text-clay-muted uppercase mb-2 tracking-wider">Attachment</p>
+                              <p className="text-xs font-bold text-slate-500 uppercase mb-2 tracking-wider">Attachment</p>
                               {sub.fileUrl.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
                                 <a href={sub.fileUrl} target="_blank" rel="noopener noreferrer" className="inline-block border rounded-lg overflow-hidden hover:opacity-90 transition shadow-sm mt-1">
                                   <img src={sub.fileUrl} alt="Submitted attachment" className="max-h-64 w-auto object-contain" />

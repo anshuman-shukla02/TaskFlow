@@ -73,7 +73,7 @@ router.get("/all", auth, async (req, res) => {
 
     const submissions = await Submission.find(subFilter)
       .populate("userId", "name email rollNumber division")
-      .populate("taskId", "title type topic bloomLevel difficulty questions phases hasMarks")
+      .populate("taskId", "title type topic bloomLevel difficulty questions phases hasMarks singleMarks")
       .sort({ createdAt: -1 });
 
     // Resolve S3 URLs to presigned URLs

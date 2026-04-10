@@ -32,6 +32,7 @@ const taskSchema = new mongoose.Schema(
       }
     ],
     hasMarks: { type: Boolean, default: false },
+    singleMarks: { type: Number, default: 10, min: 1 },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }

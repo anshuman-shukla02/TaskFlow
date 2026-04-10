@@ -457,7 +457,7 @@ export default function StudentTasks() {
                     )}
                     {!isQBased && taskHasMarks && (
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 uppercase tracking-wide flex items-center gap-1">
-                        <BarChart2 size={8} /> Graded
+                        <BarChart2 size={8} /> Graded{selectedTask.singleMarks ? ` · ${selectedTask.singleMarks} marks` : ""}
                       </span>
                     )}
                     {!taskHasMarks && (

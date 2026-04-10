@@ -267,8 +267,12 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                               <img src={answerObj.fileUrl} alt="" className="h-28 w-auto object-cover max-w-xs" />
                             </a>
                           )}
-                          <div className="bg-slate-50 rounded-lg p-3 text-sm font-mono text-slate-600 max-h-28 overflow-y-auto whitespace-pre-wrap leading-relaxed">
-                            {answerObj?.answer || <span className="italic text-slate-400">No text answer.</span>}
+                          <div className="bg-slate-50 rounded-lg p-3 text-sm text-slate-600 max-h-28 overflow-y-auto leading-relaxed prose prose-sm max-w-none prose-slate">
+                            {answerObj?.answer ? (
+                              <div dangerouslySetInnerHTML={{ __html: answerObj.answer }} />
+                            ) : (
+                              <span className="italic text-slate-400">No text answer.</span>
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
                             <label className="text-xs font-semibold text-slate-500">Score:</label>
@@ -321,8 +325,12 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                           className="bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-500 prose prose-xs max-w-none"
                           dangerouslySetInnerHTML={{ __html: `Q${i + 1} — ${q.text}` }}
                         />
-                        <div className="p-3 text-sm font-mono text-slate-600 bg-white max-h-24 overflow-y-auto whitespace-pre-wrap">
-                          {answerObj?.answer || <span className="italic text-slate-400">No answer.</span>}
+                        <div className="p-3 text-sm text-slate-600 bg-white max-h-24 overflow-y-auto prose prose-sm max-w-none prose-slate">
+                          {answerObj?.answer ? (
+                            <div dangerouslySetInnerHTML={{ __html: answerObj.answer }} />
+                          ) : (
+                            <span className="italic text-slate-400">No answer.</span>
+                          )}
                         </div>
                       </div>
                     );
