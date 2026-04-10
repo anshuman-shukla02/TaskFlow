@@ -205,19 +205,11 @@ export default function AdaptiveLearning() {
             if (res.data.success) {
                 const stdout = res.data.output;
                 if (!stdout || stdout === "Execution finished (No Output)") {
-                    // Help the user understand why there's no output
-                    let helpText = "✅ Code compiled and ran successfully — no output was printed.\n\n";
-                    helpText += "💡 Your function was defined but not called. Add test calls to see results:\n\n";
-                    if (currentQuestion?.examples?.[0]) {
-                        const ex = currentQuestion.examples[0];
-                        if (language === 'python') {
-                            helpText += `# Add at the bottom of your code:\nprint(${currentQuestion.defaultCodePY?.split('(')[0]?.replace('def ','').trim() || 'yourFunction'}(${ex.input.replace(/^.*=\s*/,'').replace(/,\s*\w+\s*=\s*/g,', ')}))\n`;
-                        } else {
-                            helpText += `// Add at the bottom of your code:\nconsole.log(${currentQuestion.defaultCodeJS?.split('(')[0]?.replace('function ','').trim() || 'yourFunction'}(${ex.input.replace(/^.*=\s*/,'').replace(/,\s*\w+\s*=\s*/g,', ')}));\n`;
-                        }
-                        helpText += `\n📋 Expected output: ${ex.output}`;
-                    }
-                    setOutput({ text: helpText, time: res.data.executionTime, error: false });
+                    setOutput({
+                        text: "✅ Code compiled successfully — no output produced.\n\n💡 Add print/console.log statements to see output, or ensure your function handles the test cases correctly.",
+                        time: res.data.executionTime,
+                        error: false
+                    });
                 } else {
                     setOutput({ text: stdout, time: res.data.executionTime, error: false });
                 }

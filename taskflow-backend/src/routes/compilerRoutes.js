@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const auth = require('../middleware/auth');
 const axios = require('axios');
+const { buildFinalCode } = require('../utils/testDrivers');
 
 // Judge0 CE (Community Edition) — free, no API key required
 const JUDGE0_URL = "https://ce.judge0.com";
@@ -24,43 +25,8 @@ router.post('/execute', auth, async (req, res) => {
     const langKey = language || 'javascript';
     const langConfig = LANGUAGE_MAP[langKey] || LANGUAGE_MAP['javascript'];
     
-    let finalCode = code;
-
-    // --- LEETCODE STYLE DRIVER INJECTION ---
-    if (questionId === 'two-sum') {
-        if (langKey === 'javascript') {
-            finalCode += `\n\n// --- SYSTEM DRIVER CODE ---`;
-            finalCode += `\nconst t1 = twoSum([2,7,11,15], 9);`;
-            finalCode += `\nconsole.log("Test Case 1 (nums=[2,7,11,15], target=9):", JSON.stringify(t1));`;
-            finalCode += `\nconst t2 = twoSum([3,2,4], 6);`;
-            finalCode += `\nconsole.log("Test Case 2 (nums=[3,2,4], target=6):", JSON.stringify(t2));`;
-        } else if (langKey === 'python') {
-            finalCode += `\n\n# --- SYSTEM DRIVER CODE ---`;
-            finalCode += `\nimport json`;
-            finalCode += `\nt1 = twoSum([2,7,11,15], 9)`;
-            finalCode += `\nprint("Test Case 1 (nums=[2,7,11,15], target=9):", json.dumps(t1))`;
-            finalCode += `\nt2 = twoSum([3,2,4], 6)`;
-            finalCode += `\nprint("Test Case 2 (nums=[3,2,4], target=6):", json.dumps(t2))`;
-        }
-    } else if (questionId === 'buy-sell-stock') {
-        if (langKey === 'javascript') {
-            finalCode += `\n\n// --- SYSTEM DRIVER CODE ---`;
-            finalCode += `\nconsole.log("Test Case 1:", maxProfit([7,1,5,3,6,4]));`;
-            finalCode += `\nconsole.log("Test Case 2:", maxProfit([7,6,4,3,1]));`;
-        } else if (langKey === 'python') {
-            finalCode += `\n\n# --- SYSTEM DRIVER CODE ---`;
-            finalCode += `\nprint("Test Case 1:", maxProfit([7,1,5,3,6,4]))`;
-            finalCode += `\nprint("Test Case 2:", maxProfit([7,6,4,3,1]))`;
-        }
-    } else if (questionId === 'trapping-rain-water') {
-        if (langKey === 'javascript') {
-            finalCode += `\n\n// --- SYSTEM DRIVER CODE ---`;
-            finalCode += `\nconsole.log("Test Case 1:", trap([0,1,0,2,1,0,1,3,2,1,2,1]));`;
-        } else if (langKey === 'python') {
-            finalCode += `\n\n# --- SYSTEM DRIVER CODE ---`;
-            finalCode += `\nprint("Test Case 1:", trap([0,1,0,2,1,0,1,3,2,1,2,1]))`;
-        }
-    }
+    // Auto-inject test-case driver for every supported question
+    const finalCode = buildFinalCode(code, questionId, langKey);
 
     try {
         const startTime = Date.now();
