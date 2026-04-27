@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArrowLeft, Download, Share2, Sparkles, BarChart, GraduationCap } from "lucide-react";
+import { ArrowLeft, Download, Share2, Sparkles, BarChart, GraduationCap, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 /* ── Custom Markdown Components for a Premium UI ────────────────── */
@@ -72,11 +72,45 @@ export default function FacultyPerformanceReport() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // The report might have the "fallback" note from previous executions, so we strip it out cleanly here too just in case.
-  const rawReport = (location.state?.report || "").replace(
+  const initialReport = (location.state?.report || "").replace(
     /\*Note: This is a fallback report\. Configure a valid Gemini API key for AI-powered analysis\.\*/g, 
     ""
   ).trim();
+
+  const [report, setReport] = useState(initialReport);
+  const [loading, setLoading] = useState(!initialReport);
+
+  useEffect(() => {
+    if (!initialReport) {
+      const fetchReport = async () => {
+        try {
+          const { API_URL } = await import("../utils/api");
+          const { getToken } = await import("../utils/auth");
+          
+          const res = await fetch(`${API_URL}/api/analytics/faculty/generate-ai-report`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getToken()}`
+            },
+            body: JSON.stringify({ division: "All" })
+          });
+          const data = await res.json();
+          if (data.success && data.report) {
+            setReport(data.report.replace(
+              /\*Note: This is a fallback report\. Configure a valid Gemini API key for AI-powered analysis\.\*/g, 
+              ""
+            ).trim());
+          }
+        } catch (err) {
+          console.error("Failed to auto-fetch report:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchReport();
+    }
+  }, [initialReport]);
 
   const handleExportPDF = () => {
     window.print();
@@ -103,7 +137,19 @@ export default function FacultyPerformanceReport() {
     }
   };
 
-  if (!rawReport) {
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-slate-800">Generating AI Report...</h2>
+          <p className="text-slate-500 mt-2">Analyzing class performance across all divisions.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!report) {
     return (
       <div className="h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
@@ -189,7 +235,7 @@ export default function FacultyPerformanceReport() {
               remarkPlugins={[remarkGfm]}
               components={MarkdownComponents}
             >
-              {rawReport}
+              {report}
             </ReactMarkdown>
           </div>
         </motion.div>

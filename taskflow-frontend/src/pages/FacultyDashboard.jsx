@@ -21,7 +21,7 @@ import CreateTaskModal from "../components/faculty/CreateTaskModal";
 import CreateAnnouncementModal from "../components/announcements/CreateAnnouncementModal";
 import ViewAnnouncementsModal from "../components/announcements/ViewAnnouncementsModal";
 import ReactMarkdown from 'react-markdown';
-import { Calendar, ChevronRight, BookOpen, Users, ClipboardCheck, FileText, CheckSquare, Inbox } from "lucide-react";
+import { Calendar, ChevronRight, BookOpen, Users, ClipboardCheck, FileText, CheckSquare, Inbox, PlusCircle } from "lucide-react";
 
 /* ---------------- MOCK DATA (Backend-ready) ---------------- */
 
@@ -146,6 +146,7 @@ export default function FacultyDashboard() {
     { name: "Study Materials", icon: <BookOpen size={24} />, route: "/faculty/materials", desc: "Manage study materials", color: "indigo" },
     { name: "Student Overview", icon: <Users size={24} />, route: "/faculty/students", desc: "View class-wise student insights", color: "blue" },
     { name: "Mark Attendance", icon: <ClipboardCheck size={24} />, route: "/faculty/attendance", desc: "Manage daily attendance", color: "emerald" },
+    { name: "Create Task", icon: <PlusCircle size={24} />, route: "/faculty/tasks", state: { openCreate: true }, desc: "Assign new task to students", color: "rose" },
     { name: "Create / Evaluate Test", icon: <FileText size={24} />, route: "/faculty/tasks/create", desc: "Manage assignments", color: "amber" },
     { name: "Submissions", icon: <Inbox size={24} />, route: "/faculty/submissions", desc: "View & grade all student submissions", color: "violet" },
   ];
@@ -389,13 +390,6 @@ export default function FacultyDashboard() {
         )}
       </div>
 
-      {/* ---------------- BOTTOM ACTION BAR ---------------- */}
-      <div className="border-t px-8 py-4 flex justify-end gap-4 bg-white/95 backdrop-blur sticky bottom-0 z-10 shadow-sm mt-auto">
-        <button
-          onClick={() => navigate("/faculty/tasks", { state: { openCreate: true } })}
-          className="px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-bold tracking-wide hover:bg-blue-700 shadow-sm transition">
-          Create New Task
-        </button>
       </div>
 
       {/* Modals */}
