@@ -1,12 +1,13 @@
 import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { BookOpen, CheckCircle, ChevronRight, Code, PlayCircle, Loader2, Lightbulb, Lock } from "lucide-react";
+import { BookOpen, CheckCircle, ChevronRight, Code, PlayCircle, Loader2, Lightbulb, Lock, RefreshCw, Wand2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Group as PanelGroup, Panel, Separator as PanelResizeHandle } from "react-resizable-panels";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Editor from "@monaco-editor/react";
 
 const TOPICS = [
     { id: "arrays", title: "Arrays", desc: "Fundamental data structure for storing elements sequentially." },
@@ -32,6 +33,30 @@ export default function AdaptiveLearning() {
     const [code, setCode] = useState(`function twoSum(nums, target) {\n  // Write your code here\n  \n\n\n}`);
     const [output, setOutput] = useState(null); // { text, time, error }
     const [isExecuting, setIsExecuting] = useState(false);
+    const editorRef = useRef(null);
+
+    function handleEditorDidMount(editor, monaco) {
+        editorRef.current = editor;
+    }
+
+    function handleFormatCode() {
+        if (editorRef.current) {
+            editorRef.current.getAction('editor.action.formatDocument').run();
+        }
+    }
+
+    function handleResetCode() {
+        if (currentQuestion) {
+            const mapping = {
+                'javascript': currentQuestion.defaultCodeJS,
+                'python': currentQuestion.defaultCodePY,
+                'c': currentQuestion.defaultCodeC,
+                'cpp': currentQuestion.defaultCodeCPP,
+                'java': currentQuestion.defaultCodeJAVA,
+            };
+            setCode(mapping[language] || "");
+        }
+    }
 
     /* ---------------- REAL NOTES FETCH ---------------- */
     const fetchNotes = async (topicId) => {
@@ -491,15 +516,40 @@ export default function AdaptiveLearning() {
                                             <option value="java">Java (JDK)</option>
                                         </select>
                                     </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={handleFormatCode} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-md transition" title="Format Code">
+                                            <Wand2 size={16} />
+                                        </button>
+                                        <button onClick={handleResetCode} className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-md transition" title="Reset to Default">
+                                            <RefreshCw size={16} />
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 {/* Editor Body */}
-                                <textarea
-                                    value={code}
-                                    onChange={(e) => setCode(e.target.value)}
-                                    className="flex-1 bg-transparent p-6 font-mono text-sm focus:outline-none resize-none text-slate-300 leading-loose selection:bg-blue-900/50"
-                                    spellCheck={false}
-                                />
+                                <div className="flex-1 w-full bg-[#0d1117] relative">
+                                    <Editor
+                                        height="100%"
+                                        language={language === 'c' || language === 'cpp' ? 'cpp' : language}
+                                        theme="vs-dark"
+                                        value={code}
+                                        onChange={(val) => setCode(val || "")}
+                                        onMount={handleEditorDidMount}
+                                        options={{
+                                            minimap: { enabled: false },
+                                            fontSize: 14,
+                                            fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
+                                            fontLigatures: true,
+                                            formatOnPaste: true,
+                                            tabSize: 4,
+                                            matchBrackets: "always",
+                                            bracketPairColorization: { enabled: true, independentColorPoolPerBracketType: true },
+                                            guides: { bracketPairs: true },
+                                            wordWrap: "on",
+                                            padding: { top: 16 }
+                                        }}
+                                    />
+                                </div>
                                 </Panel>
 
                                 <PanelResizeHandle className="h-4 flex justify-center items-center group cursor-row-resize relative outline-none bg-[#161b22] border-t border-b border-slate-800 z-10 hover:bg-[#1d232b] transition-colors">

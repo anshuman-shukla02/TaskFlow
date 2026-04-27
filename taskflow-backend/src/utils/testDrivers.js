@@ -208,9 +208,14 @@ function generateTestDriver(questionId, langKey) {
     const isTree = allCode.includes('TreeNode') || hasTreeParam;
     const isPyClass = langKey === 'python' && defCode.includes('class Solution');
 
-    return langKey === 'javascript'
-        ? buildJS(fnName, params, examples, isList, isTree)
-        : buildPY(fnName, params, examples, isList, isTree, isPyClass);
+    if (langKey === 'javascript') {
+        return buildJS(fnName, params, examples, isList, isTree);
+    } else if (langKey === 'python') {
+        return buildPY(fnName, params, examples, isList, isTree, isPyClass);
+    }
+    
+    // Auto-test drivers not yet implemented for statically-typed languages (Java, C++, C)
+    return null;
 }
 
 /* ── JavaScript driver builder ──────────────────────────────── */
