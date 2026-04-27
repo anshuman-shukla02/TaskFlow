@@ -130,18 +130,42 @@ const TREE_PARAMS = new Set(['root','p','q']);
    ═══════════════════════════════════════════════════════════════ */
 function extractFnName(code, lang) {
     if (!code) return null;
-    const re = lang === 'python' ? /def\s+(\w+)\s*\(/g : /function\s+(\w+)\s*\(/g;
+    let re;
+    if (lang === 'python') re = /def\s+(\w+)\s*\(/g;
+    else if (lang === 'java') re = /(?:public|private|protected)?\s*(?:static\s+)?[\w<>[\]]+\s+(\w+)\s*\(/g;
+    else re = /function\s+(\w+)\s*\(/g;
+    
     let m, last = null;
-    while ((m = re.exec(code)) !== null) last = m[1];
+    while ((m = re.exec(code)) !== null) {
+        if (lang === 'java' && ['main', 'Solution', 'if', 'for', 'while', 'catch', 'switch'].includes(m[1])) continue;
+        last = m[1];
+    }
     return last;
 }
 
 function extractParams(code, lang) {
     if (!code) return [];
-    const re = lang === 'python' ? /def\s+\w+\s*\(([^)]*)\)/g : /function\s+\w+\s*\(([^)]*)\)/g;
+    let re;
+    if (lang === 'python') re = /def\s+\w+\s*\(([^)]*)\)/g;
+    else if (lang === 'java') re = /(?:public|private|protected)?\s*(?:static\s+)?[\w<>[\]]+\s+\w+\s*\(([^)]*)\)/g;
+    else re = /function\s+\w+\s*\(([^)]*)\)/g;
+    
     let m, last = null;
-    while ((m = re.exec(code)) !== null) last = m[1];
+    while ((m = re.exec(code)) !== null) {
+        // basic heuristic to avoid grabbing main's arguments over the actual solution method
+        if (lang === 'java' && m[0].includes('main(')) continue;
+        last = m[1];
+    }
     if (!last) return [];
+    
+    if (lang === 'java') {
+        const parts = last.split(',');
+        return parts.map(p => {
+            const tokens = p.trim().split(/\s+/);
+            return tokens[tokens.length - 1]; // parameter name is the last token
+        }).filter(p => p);
+    }
+    
     return last.split(',')
         .map(p => p.trim().split(':')[0].split('=')[0].trim())
         .filter(p => p && p !== 'self');
@@ -212,9 +236,11 @@ function generateTestDriver(questionId, langKey) {
         return buildJS(fnName, params, examples, isList, isTree);
     } else if (langKey === 'python') {
         return buildPY(fnName, params, examples, isList, isTree, isPyClass);
+    } else if (langKey === 'java') {
+        return buildJAVA(fnName, params, examples, isList, isTree);
     }
     
-    // Auto-test drivers not yet implemented for statically-typed languages (Java, C++, C)
+    // Auto-test drivers not yet implemented for statically-typed languages (C++, C)
     return null;
 }
 
@@ -325,6 +351,61 @@ function buildPY(fn, params, examples, isList, isTree, isClass) {
         app += `print()\n`;
     }
     return { prepend, append: app };
+}
+
+/* ── Java driver builder ────────────────────────────────────── */
+function buildJAVA(fn, params, examples, isList, isTree) {
+    if (isList || isTree) return null; // Fallback for complex structural questions
+    
+    let app = '\n// --- SYSTEM TEST DRIVER ---\n';
+    app += 'public class Main {\n';
+    app += '    public static void main(String[] args) {\n';
+    app += '        Solution sol = new Solution();\n';
+    
+    for (let t = 0; t < examples.length; t++) {
+        const ex = examples[t];
+        const parts = parseInput(ex.input);
+        
+        let refs = [];
+        for (let i = 0; i < parts.length; i++) {
+            let v = parts[i].val;
+            
+            // Transform array syntaxes
+            if (v.startsWith('[') && !v.startsWith('[[')) {
+                if (v.includes('"')) {
+                    v = 'new String[]{' + v.substring(1, v.length-1) + '}';
+                } else {
+                    v = 'new int[]{' + v.substring(1, v.length-1) + '}';
+                }
+            } else if (v.startsWith('[[')) {
+                v = 'new int[][]{' + v.substring(1, v.length-1).replace(/\[/g, '{').replace(/\]/g, '}') + '}';
+            } else if (v === 'null') {
+                v = 'null';
+            }
+            
+            refs.push(v);
+        }
+        
+        app += `        System.out.println("Test Case ${t + 1}:");\n`;
+        app += `        System.out.println("Input: ${esc(ex.input)}");\n`;
+        
+        app += `        Object result${t} = sol.${fn}(${refs.join(', ')});\n`;
+        app += `        System.out.println("Output: " + formatOutput(result${t}));\n`;
+        app += `        System.out.println("Expected: ${esc(JSON.stringify(ex.output))}\\n");\n`;
+    }
+    app += '    }\n\n';
+    
+    app += `    private static String formatOutput(Object obj) {
+        if (obj == null) return "null";
+        if (obj instanceof int[]) return java.util.Arrays.toString((int[])obj);
+        if (obj instanceof String[]) return java.util.Arrays.toString((String[])obj);
+        if (obj instanceof int[][]) return java.util.Arrays.deepToString((int[][])obj);
+        if (obj instanceof String) return "\\"" + obj + "\\"";
+        return String.valueOf(obj);
+    }
+}\n`;
+    
+    return { prepend: '', append: app };
 }
 
 /* ═══════════════════════════════════════════════════════════════
