@@ -390,8 +390,6 @@ export default function FacultyDashboard() {
         )}
       </div>
 
-      </div>
-
       {/* Modals */}
       <CreateAnnouncementModal
         isOpen={showCreateAnnouncement}
