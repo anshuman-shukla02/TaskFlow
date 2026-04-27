@@ -18,6 +18,11 @@ export default function StudentAttendance() {
         fetchHistory();
     }, []);
 
+    // Real Local Date logic
+    const today = new Date();
+    const localTodayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const alreadyMarked = history.includes(localTodayStr);
+
     const fetchHistory = async () => {
         try {
             const res = await fetch(`${API_URL}/api/attendance/history`, {
@@ -25,7 +30,11 @@ export default function StudentAttendance() {
             });
             const data = await res.json();
             if (data.success) {
-                setHistory(data.history.map(h => h.date.split('T')[0])); // YYYY-MM-DD
+                // Parse correctly using local time, not UTC slice
+                setHistory(data.history.map(h => {
+                    const d = new Date(h.date);
+                    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                }));
             }
         } catch (err) {
             console.error("Failed to fetch history");
@@ -113,7 +122,7 @@ export default function StudentAttendance() {
         for (let day = 1; day <= daysInMonth; day++) {
             const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const isPresent = history.includes(dateStr);
-            const isToday = dateStr === new Date().toISOString().split('T')[0];
+            const isToday = dateStr === localTodayStr;
 
             days.push(
                 <div key={day} className="flex flex-col items-center justify-center h-10 w-10 relative">
@@ -143,10 +152,26 @@ export default function StudentAttendance() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-100 rounded-full blur-3xl -z-10 opacity-50"></div>
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl -z-10 opacity-50"></div>
 
-                    <div className="mb-4">
+                    <div className="mb-6">
+                        <p className="text-sm font-bold text-clay-secondary tracking-widest uppercase mb-1">Today's Date</p>
+                        <p className="text-xl font-extrabold text-slate-800">
+                            {today.toLocaleDateString("en-US", { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                        </p>
                     </div>
 
-                    {status === "success" ? (
+                    {alreadyMarked ? (
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="text-center bg-green-50 border border-green-100 rounded-3xl p-6 shadow-sm"
+                        >
+                            <div className="w-20 h-20 bg-green-200 text-green-700 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-300">
+                                <CheckCircle size={40} />
+                            </div>
+                            <h2 className="text-lg font-bold text-green-800 mb-1">Session Recorded!</h2>
+                            <p className="text-green-700 font-medium text-sm">Today's session has already been marked.</p>
+                        </motion.div>
+                    ) : status === "success" ? (
                         <motion.div
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
