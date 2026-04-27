@@ -40,4 +40,11 @@ const submissionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes
+submissionSchema.index({ userId: 1 });
+submissionSchema.index({ taskId: 1 });
+submissionSchema.index({ topic: 1 });
+submissionSchema.index({ bloomLevel: 1 });
+submissionSchema.index({ createdAt: 1 });
+
 module.exports = mongoose.model("Submission", submissionSchema);

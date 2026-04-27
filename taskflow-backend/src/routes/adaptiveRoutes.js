@@ -4,11 +4,17 @@ const User = require('../models/User');
 const fs = require('fs');
 const path = require('path');
 
+let adaptiveCache = {};
+
 function getTopicQuestions(topicId) {
+    if (adaptiveCache[topicId]) return adaptiveCache[topicId];
+
     const filePath = path.join(__dirname, '../data/questions', `${topicId}.json`);
     if (fs.existsSync(filePath)) {
         try {
-            return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+            const qs = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+            adaptiveCache[topicId] = qs;
+            return qs;
         } catch (e) {
             console.error(`Error parsing JSON for topic ${topicId}:`, e);
             return null;

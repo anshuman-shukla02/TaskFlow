@@ -38,4 +38,9 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes
+taskSchema.index({ createdBy: 1 });
+taskSchema.index({ type: 1 });
+taskSchema.index({ bloomLevel: 1 });
+
 module.exports = mongoose.model("Task", taskSchema);

@@ -31,12 +31,18 @@ function getTopicQuestionCount(topicId) {
   return 0;
 }
 
+let questionsCache = {};
+
 function getTopicQuestions(topicId) {
+  if (questionsCache[topicId]) return questionsCache[topicId];
+
   const filePath = path.join(__dirname, "../data/questions", `${topicId}.json`);
   if (fs.existsSync(filePath)) {
     try {
       const qs = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-      return Array.isArray(qs) ? qs : [];
+      const result = Array.isArray(qs) ? qs : [];
+      questionsCache[topicId] = result;
+      return result;
     } catch {
       return [];
     }
@@ -59,9 +65,9 @@ router.get("/", auth, async (req, res) => {
     const userId = req.user.id;
 
     const [user, submissions, allTasks] = await Promise.all([
-      User.findById(userId),
-      Submission.find({ userId }).sort({ createdAt: 1 }),
-      Task.find({}),
+      User.findById(userId).lean(),
+      Submission.find({ userId }).sort({ createdAt: 1 }).lean(),
+      Task.find({}).lean(),
     ]);
 
     // Only count submissions from tasks that have marks enabled

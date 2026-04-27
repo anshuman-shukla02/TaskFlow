@@ -14,10 +14,10 @@ router.get("/faculty/class-performance", auth, async (req, res) => {
       studentFilter.division = division;
     }
 
-    const students = await User.find(studentFilter).select("_id");
+    const students = await User.find(studentFilter).select("_id").lean();
     const studentIds = students.map((s) => s._id);
 
-    const submissions = await Submission.find({ userId: { $in: studentIds } });
+    const submissions = await Submission.find({ userId: { $in: studentIds } }).lean();
 
     // Stats
     const tasksCompleted = submissions.filter((s) => s.taskId).length;
@@ -92,9 +92,9 @@ router.post("/faculty/generate-ai-report", auth, async (req, res) => {
       studentFilter.division = division;
     }
 
-    const students = await User.find(studentFilter).select("_id name");
+    const students = await User.find(studentFilter).select("_id name").lean();
     const studentIds = students.map((s) => s._id);
-    const submissions = await Submission.find({ userId: { $in: studentIds } });
+    const submissions = await Submission.find({ userId: { $in: studentIds } }).lean();
 
     // Build summary for AI
     const totalStudents = students.length;
@@ -205,45 +205,53 @@ router.get("/faculty/students-overview", auth, async (req, res) => {
       studentFilter.division = division;
     }
 
-    const students = await User.find(studentFilter).select("name email rollNumber division");
+    const students = await User.find(studentFilter).select("name email rollNumber division").lean();
+
+    const studentIds = students.map((s) => s._id);
+    const allSubmissions = await Submission.find({ userId: { $in: studentIds } }).lean();
+
+    const submissionsByUser = {};
+    allSubmissions.forEach((sub) => {
+      const uId = sub.userId.toString();
+      if (!submissionsByUser[uId]) submissionsByUser[uId] = [];
+      submissionsByUser[uId].push(sub);
+    });
 
     // For each student, compute stats
-    const result = await Promise.all(
-      students.map(async (student) => {
-        const submissions = await Submission.find({ userId: student._id });
+    const result = students.map((student) => {
+      const submissions = submissionsByUser[student._id.toString()] || [];
 
-        const avgPerformance =
-          submissions.length > 0
-            ? Math.round(
-                submissions.reduce((a, s) => a + s.performanceScore, 0) / submissions.length
-              )
-            : 0;
+      const avgPerformance =
+        submissions.length > 0
+          ? Math.round(
+              submissions.reduce((a, s) => a + s.performanceScore, 0) / submissions.length
+            )
+          : 0;
 
-        const tasksCompleted = submissions.filter((s) => s.taskId).length;
-        const projectsCompleted = submissions.filter(
-          (s) => s.milestoneId && s.reviewStatus === "APPROVED"
-        ).length;
-        const questionsSolved = submissions.length;
+      const tasksCompleted = submissions.filter((s) => s.taskId).length;
+      const projectsCompleted = submissions.filter(
+        (s) => s.milestoneId && s.reviewStatus === "APPROVED"
+      ).length;
+      const questionsSolved = submissions.length;
 
-        // Tag assignment
-        let tag = "Average";
-        if (avgPerformance >= 80) tag = "Top Performer";
-        else if (avgPerformance < 50 && submissions.length > 0) tag = "Needs Support";
+      // Tag assignment
+      let tag = "Average";
+      if (avgPerformance >= 80) tag = "Top Performer";
+      else if (avgPerformance < 50 && submissions.length > 0) tag = "Needs Support";
 
-        return {
-          _id: student._id,
-          name: student.name,
-          email: student.email,
-          rollNumber: student.rollNumber,
-          division: student.division,
-          avgPerformance,
-          tasksCompleted,
-          projectsCompleted,
-          questionsSolved,
-          tag,
-        };
-      })
-    );
+      return {
+        _id: student._id,
+        name: student.name,
+        email: student.email,
+        rollNumber: student.rollNumber,
+        division: student.division,
+        avgPerformance,
+        tasksCompleted,
+        projectsCompleted,
+        questionsSolved,
+        tag,
+      };
+    });
 
     res.json({ success: true, students: result });
   } catch (err) {

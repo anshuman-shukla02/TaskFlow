@@ -74,13 +74,14 @@ router.get("/all", auth, async (req, res) => {
     const submissions = await Submission.find(subFilter)
       .populate("userId", "name email rollNumber division")
       .populate("taskId", "title type topic bloomLevel difficulty questions phases hasMarks singleMarks")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     // Resolve S3 URLs to presigned URLs
     const { getPresignedUrl } = require("../utils/s3Storage");
     const resolved = await Promise.all(
       submissions.map(async (s) => {
-        const obj = s.toObject();
+        const obj = { ...s };
         if (obj.fileUrl && (obj.fileUrl.startsWith("s3://") || obj.fileUrl.includes("amazonaws.com"))) {
           try { obj.fileUrl = await getPresignedUrl(obj.fileUrl); } catch(e) {}
         }
