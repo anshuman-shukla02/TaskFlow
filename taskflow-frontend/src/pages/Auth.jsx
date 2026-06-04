@@ -1,7 +1,7 @@
 import { API_URL } from "../utils/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Sparkles, GraduationCap, Briefcase, Copy, Check, ShieldAlert } from "lucide-react";
 import "../styles/auth-3d.css";
 
 export default function Auth() {
@@ -17,6 +17,23 @@ export default function Auth() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [copiedRole, setCopiedRole] = useState("");
+
+  const handleAutoFill = (selectedRole, selectedEmail, selectedPassword) => {
+    setIsSignup(false);
+    setRole(selectedRole);
+    setEmail(selectedEmail);
+    setPassword(selectedPassword);
+    setError("");
+  };
+
+  const handleCopy = (text, roleName) => {
+    navigator.clipboard.writeText(text);
+    setCopiedRole(roleName);
+    setTimeout(() => setCopiedRole(""), 1500);
+  };
+
 
   // ── Validation ──
   const validateForm = () => {
@@ -136,8 +153,12 @@ export default function Auth() {
   const strength = getPasswordStrength();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
-      <div className="auth-container">
+    <div className="min-h-screen relative flex flex-col items-center justify-center bg-stone-50 px-4 py-12 overflow-hidden">
+      {/* Background ambient glowing blobs for Glassmorphism effect */}
+      <div className="bg-blob-1"></div>
+      <div className="bg-blob-2"></div>
+
+      <div className="auth-container z-10">
 
         {/* Toggle */}
         <div className="text-center mb-6">
@@ -304,6 +325,84 @@ export default function Auth() {
           </div>
 
         </div>
+
+        {/* Glassmorphic Credentials & Registration Info Note */}
+        <div className="glass-panel mt-6 p-5 text-slate-700">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+            <h4 className="font-bold text-xs text-slate-800 tracking-wide uppercase">Quick Demo Access</h4>
+          </div>
+
+          <div className="grid grid-cols-1 gap-2.5 mb-3">
+            {/* Student Row */}
+            <div className="p-2.5 bg-white/40 rounded-xl border border-white/50 backdrop-blur-sm flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full badge-student flex items-center gap-1 flex-shrink-0 w-20 justify-center">
+                  <GraduationCap className="w-3 h-3" /> Student
+                </span>
+                <div className="text-[11px] text-slate-600 font-mono truncate flex flex-col">
+                  <span className="truncate">student.demo@taskflow.com</span>
+                  <span className="text-[9px] text-slate-400 font-semibold">Pass: Student@123</span>
+                </div>
+              </div>
+              <div className="flex gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleCopy("student.demo@taskflow.com", "stu-email")}
+                  className="hover:text-slate-900 p-1 bg-white/60 rounded border border-slate-200/50 transition"
+                  title="Copy Email"
+                >
+                  {copiedRole === "stu-email" ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAutoFill("student", "student.demo@taskflow.com", "Student@123")}
+                  className="btn-fill-demo"
+                >
+                  Auto Fill
+                </button>
+              </div>
+            </div>
+
+            {/* Faculty Row */}
+            <div className="p-2.5 bg-white/40 rounded-xl border border-white/50 backdrop-blur-sm flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full badge-faculty flex items-center gap-1 flex-shrink-0 w-20 justify-center">
+                  <Briefcase className="w-3 h-3" /> Faculty
+                </span>
+                <div className="text-[11px] text-slate-600 font-mono truncate flex flex-col">
+                  <span className="truncate">faculty.demo@taskflow.com</span>
+                  <span className="text-[9px] text-slate-400 font-semibold">Pass: Faculty@123</span>
+                </div>
+              </div>
+              <div className="flex gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleCopy("faculty.demo@taskflow.com", "fac-email")}
+                  className="hover:text-slate-900 p-1 bg-white/60 rounded border border-slate-200/50 transition"
+                  title="Copy Email"
+                >
+                  {copiedRole === "fac-email" ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAutoFill("faculty", "faculty.demo@taskflow.com", "Faculty@123")}
+                  className="btn-fill-demo"
+                >
+                  Auto Fill
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2.5 border-t border-slate-200/50 flex gap-2 items-start text-[11px] text-slate-500">
+            <ShieldAlert className="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
+            <p className="leading-relaxed">
+              New accounts can be registered but will be set to <strong className="text-slate-600 font-semibold">pending</strong> and require admin approval before they can be used to log in.
+            </p>
+          </div>
+        </div>
+
       </div>
     </div>
   );
