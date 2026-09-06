@@ -161,25 +161,19 @@ export default function FacultyDashboard() {
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full h-full relative">
-      {/* ---------------- MAIN CONTENT ---------------- */}
-      <div className="flex-1 p-6 space-y-8 bg-gradient-to-br from-slate-50 to-slate-100 pb-20">
-        {/* QUICK ACTIONS HEADER */}
-        <div className="flex justify-end items-center mb-4 px-1">
-        </div>
-
-        {/* QUICK ACTIONS */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {quickActions.map((item) => (
-            <motion.div
-              key={item.name}
-              variants={quickActionItem}
-              whileHover={{ y: -4, scale: 1.01 }}
-              onClick={() => navigate(item.route, { state: item.state })}
-              className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
-            >
+    <div className="space-y-8 pb-16 min-w-0 max-w-full overflow-hidden">
+      {/* QUICK ACTIONS */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {quickActions.map((item) => (
+          <motion.div
+            key={item.name}
+            variants={quickActionItem}
+            whileHover={{ y: -4, scale: 1.01 }}
+            onClick={() => navigate(item.route, { state: item.state })}
+            className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
+          >
               <div>
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`p-3 rounded-2xl ${actionColors[item.color].bg} ${actionColors[item.color].text}`}>
@@ -274,7 +268,7 @@ export default function FacultyDashboard() {
             {/* CHART GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Progress Overview */}
-              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition min-w-0 overflow-hidden">
                 <h3 className="font-semibold mb-2">Progress Overview</h3>
                 <ResponsiveContainer width="100%" height={250}>
                   <LineChart data={progressData}>
@@ -292,7 +286,7 @@ export default function FacultyDashboard() {
               </div>
 
               {/* Topic-wise Performance */}
-              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition min-w-0 overflow-hidden">
                 <h3 className="font-semibold mb-2">Topic-wise Performance</h3>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={topicPerformance}>
@@ -305,7 +299,7 @@ export default function FacultyDashboard() {
               </div>
 
               {/* Difficulty-wise Performance */}
-              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition min-w-0 overflow-hidden">
                 <h3 className="font-semibold mb-2">
                   Difficulty-wise Performance
                 </h3>
@@ -328,7 +322,7 @@ export default function FacultyDashboard() {
               </div>
 
               {/* Task Accuracy & Class Performance */}
-              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition flex flex-col justify-center">
+              <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition flex flex-col justify-center min-w-0 overflow-hidden">
                 <h3 className="font-semibold mb-4 text-center">
                   Class Performance Metrics
                 </h3>
@@ -388,7 +382,6 @@ export default function FacultyDashboard() {
             </div>
           </div>
         )}
-      </div>
 
       {/* Modals */}
       <CreateAnnouncementModal

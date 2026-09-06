@@ -36,6 +36,34 @@ const submissionSchema = new mongoose.Schema(
       }
     ],
     countForProgress: { type: Boolean, default: false },
+    // AI Automated Pre-Evaluation Fields
+    aiEvaluation: {
+      suggestedScore: { type: Number, default: null },
+      suggestedStatus: {
+        type: String,
+        enum: ["APPROVED", "REJECTED", "PENDING", null],
+        default: null,
+      },
+      suggestedFeedback: { type: String, default: "" },
+      questionScores: [
+        {
+          questionIndex: { type: Number },
+          score: { type: Number, default: 0 },
+          feedback: { type: String, default: "" },
+        }
+      ],
+      evaluatedAt: { type: Date, default: null },
+      isFacultyAccepted: { type: Boolean, default: false },
+    },
+    // Plagiarism Check Fields
+    plagiarismCheck: {
+      score: { type: Number, default: null },          // 0-100 similarity %
+      flagged: { type: Boolean, default: false },       // true if score > threshold
+      matchedWith: { type: mongoose.Schema.Types.ObjectId, ref: "Submission", default: null },
+      matchedStudentName: { type: String, default: "" },
+      summary: { type: String, default: "" },           // AI explanation
+      checkedAt: { type: Date, default: null },
+    },
   },
   { timestamps: true }
 );

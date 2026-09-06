@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { LogOut, User, Menu, X, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ErrorBoundary from "../common/ErrorBoundary";
 
 export default function DashboardLayout({ role }) {
   const navigate = useNavigate();
@@ -43,7 +44,8 @@ export default function DashboardLayout({ role }) {
     ]},
     { section: "Academics", items: [
       { name: "Attendance", path: "/student/attendance" },
-      { name: "Progress", path: "/student/progress" }
+      { name: "Progress", path: "/student/progress" },
+      { name: "Leaderboard", path: "/student/leaderboard" }
     ]}
   ];
 
@@ -95,6 +97,7 @@ export default function DashboardLayout({ role }) {
     "/faculty/profile": "My Profile",
     "/student/profile": "My Profile",
     "/student/materials": "Study Materials",
+    "/student/leaderboard": "Leaderboard & Badges",
     "/admin/students": "Student Registration & Growth",
     "/admin/approvals": "Profile Change Requests",
     "/admin/user-approvals": "Account Registration Requests",
@@ -113,7 +116,6 @@ export default function DashboardLayout({ role }) {
   const fullScreenRoutes = [
     "/student/tasks",
     "/student/adaptive-learning",
-    "/student/materials",
     "/student/materials",
     "/student/project",
     "/faculty/tasks/create",
@@ -223,16 +225,29 @@ export default function DashboardLayout({ role }) {
         )}
 
         {/* PAGE CONTENT */}
-        <main className={`flex-1 overflow-y-auto ${isFullScreen ? "" : "p-6 lg:p-8"} print:overflow-visible print:p-0`}>
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden min-w-0 ${isFullScreen ? "" : "p-6 lg:p-8"} print:overflow-visible print:p-0`}>
           {isFullScreen && (
             <button
-              onClick={() => navigate(-1)}
-              className="absolute top-6 left-6 z-[100] p-2.5 bg-white text-slate-700 hover:bg-slate-100 rounded-full shadow-lg border border-slate-200 transition-colors flex items-center justify-center group"
+              onClick={() => {
+                if (location.pathname.startsWith("/faculty")) {
+                  navigate("/faculty/tasks");
+                } else if (location.pathname.startsWith("/student")) {
+                  navigate("/student");
+                } else if (location.pathname.startsWith("/admin")) {
+                  navigate("/admin");
+                } else {
+                  navigate("/");
+                }
+              }}
+              className="fixed top-6 left-6 z-[100] p-2.5 bg-white text-slate-700 hover:bg-slate-100 rounded-full shadow-lg border border-slate-200 transition-colors flex items-center justify-center group shadow-md cursor-pointer"
+              title="Back"
             >
               <ArrowLeft size={22} className="group-hover:-translate-x-1 transition-transform" />
             </button>
           )}
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
     </div>

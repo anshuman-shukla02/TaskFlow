@@ -16,5 +16,25 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add a response interceptor to handle expired/invalid tokens
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      const activeRole = sessionStorage.getItem('activeRole');
+      if (activeRole) {
+        localStorage.removeItem(`token_${activeRole}`);
+        localStorage.removeItem(`user_${activeRole}`);
+        sessionStorage.removeItem('activeRole');
+      }
+      // Redirect to auth page — avoid redirect loop if already on /auth
+      if (window.location.pathname !== '/auth' && window.location.pathname !== '/') {
+        window.location.href = '/auth';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
 export { API_URL };

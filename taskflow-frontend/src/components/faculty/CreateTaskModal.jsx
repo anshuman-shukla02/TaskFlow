@@ -9,6 +9,7 @@ export default function CreateTaskModal({ onClose, onSubmit }) {
     difficulty: "medium",
     type: "task",
     bloomLevel: "REMEMBER",
+    dueDate: "",
     phases: [],
   });
 
@@ -141,6 +142,16 @@ export default function CreateTaskModal({ onClose, onSubmit }) {
                 <option value="CREATE">Create</option>
               </select>
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Due Date (Optional)</label>
+            <input
+              type="date"
+              name="dueDate"
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-black focus:outline-none"
+              value={formData.dueDate}
+              onChange={handleChange}
+            />
           </div>
 
           {/* DYNAMIC PHASES (ONLY FOR PROJECTS) */}

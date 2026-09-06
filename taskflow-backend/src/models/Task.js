@@ -33,6 +33,7 @@ const taskSchema = new mongoose.Schema(
     ],
     hasMarks: { type: Boolean, default: false },
     singleMarks: { type: Number, default: 10, min: 1 },
+    dueDate: { type: Date, default: null },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
@@ -42,5 +43,6 @@ const taskSchema = new mongoose.Schema(
 taskSchema.index({ createdBy: 1 });
 taskSchema.index({ type: 1 });
 taskSchema.index({ bloomLevel: 1 });
+taskSchema.index({ dueDate: 1 });
 
 module.exports = mongoose.model("Task", taskSchema);

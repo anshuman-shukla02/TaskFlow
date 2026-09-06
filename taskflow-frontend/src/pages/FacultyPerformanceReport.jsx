@@ -4,6 +4,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, Download, Share2, Sparkles, BarChart, GraduationCap, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { API_URL } from "../utils/api";
+import { getToken } from "../utils/auth";
 
 /* ── Custom Markdown Components for a Premium UI ────────────────── */
 const MarkdownComponents = {
@@ -84,9 +86,6 @@ export default function FacultyPerformanceReport() {
     if (!initialReport) {
       const fetchReport = async () => {
         try {
-          const { API_URL } = await import("../utils/api");
-          const { getToken } = await import("../utils/auth");
-          
           const res = await fetch(`${API_URL}/api/analytics/faculty/generate-ai-report`, {
             method: "POST",
             headers: {

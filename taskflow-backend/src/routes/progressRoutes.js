@@ -122,7 +122,7 @@ router.get("/", auth, async (req, res) => {
     );
     const tasksSubmitted = submittedTaskIds.size;
     const taskRatio =
-      totalTasks > 0 ? Math.round((tasksSubmitted / totalTasks) * 100) : 0;
+      totalTasks > 0 ? Math.min(100, Math.round((tasksSubmitted / totalTasks) * 100)) : 0;
 
     /* ── Project (milestone) stats ── */
     const projectTasks = allTasks.filter((t) => t.type === "project");
@@ -135,13 +135,13 @@ router.get("/", auth, async (req, res) => {
     ).length;
     const projectRatio =
       totalMilestones > 0
-        ? Math.round((approvedMilestones / totalMilestones) * 100)
+        ? Math.min(100, Math.round((approvedMilestones / totalMilestones) * 100))
         : 0;
 
     /* ── Overall weighted score (Adaptive 40% + Tasks 35% + Projects 25%) ── */
-    const overallScore = Math.round(
+    const overallScore = Math.min(100, Math.round(
       adaptiveOverall * 0.4 + taskRatio * 0.35 + projectRatio * 0.25
-    );
+    ));
 
     /* ── Existing analytics (only scored/marked submissions) ── */
     let avgScore = 0;
@@ -152,12 +152,12 @@ router.get("/", auth, async (req, res) => {
     // recentScores shows all submissions so student can see their history
     recentScores = submissions.slice(-20).map((s) => ({
       date: s.createdAt.toISOString().split("T")[0],
-      score: s.performanceScore,
+      score: s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore,
     }));
 
     if (scoredSubmissions.length > 0) {
       const totalScore = scoredSubmissions.reduce(
-        (acc, s) => acc + s.performanceScore,
+        (acc, s) => acc + (s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore),
         0
       );
       avgScore = Math.round(totalScore / scoredSubmissions.length);
@@ -177,7 +177,8 @@ router.get("/", auth, async (req, res) => {
       scoredSubmissions.forEach((s) => {
         if (!s.topic) return;
         if (!topicMap[s.topic]) topicMap[s.topic] = { total: 0, count: 0 };
-        topicMap[s.topic].total += s.performanceScore;
+        const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+        topicMap[s.topic].total += sc;
         topicMap[s.topic].count++;
       });
 
@@ -250,7 +251,8 @@ router.get("/dashboard-summary", auth, async (req, res) => {
       const week = getWeekNumber(s.createdAt);
       const key = `W${week}`;
       if (!weeklyMap[key]) weeklyMap[key] = { total: 0, count: 0 };
-      weeklyMap[key].total += s.performanceScore;
+      const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+      weeklyMap[key].total += sc;
       weeklyMap[key].count++;
     });
 
@@ -266,7 +268,8 @@ router.get("/dashboard-summary", auth, async (req, res) => {
     submissions.forEach((s) => {
       if (!s.topic) return;
       if (!topicMap[s.topic]) topicMap[s.topic] = { total: 0, count: 0 };
-      topicMap[s.topic].total += s.performanceScore;
+      const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+      topicMap[s.topic].total += sc;
       topicMap[s.topic].count++;
     });
 

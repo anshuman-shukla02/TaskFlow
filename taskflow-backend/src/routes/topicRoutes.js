@@ -33,20 +33,8 @@ Format: Return ONLY a JSON array of arrays. Each inner array represents a page, 
         throw new Error("Invalid or missing Gemini API Key");
       }
 
-      const { GoogleGenerativeAI } = require("@google/generative-ai");
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Gemini API timeout")), 5000)
-      );
-
-      const result = await Promise.race([
-        model.generateContent(prompt),
-        timeoutPromise
-      ]);
-
-      const text = result.response.text();
+      const { generateContentWithFallback } = require("../utils/gemini");
+      const { text } = await generateContentWithFallback({ prompt });
 
       // Try to parse JSON from response
       const jsonMatch = text.match(/\[[\s\S]*\]/);

@@ -16,8 +16,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { MoreVertical, Search, BookOpen, CheckSquare, BarChart2, Puzzle, LogOut, Calendar, ChevronRight, Library } from "lucide-react";
+import { MoreVertical, Search, BookOpen, CheckSquare, BarChart2, Puzzle, LogOut, Calendar, ChevronRight, Library, Trophy, Clock, AlertTriangle } from "lucide-react";
 import ViewAnnouncementsModal from "../components/announcements/ViewAnnouncementsModal";
+import BadgeDisplay from "../components/common/BadgeDisplay";
 
 const CHART_COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#ec4899", "#06b6d4", "#8b5cf6"];
 
@@ -48,11 +49,46 @@ export default function StudentDashboard() {
   const [progressData, setProgressData] = useState([]);
   const [topicPerformance, setTopicPerformance] = useState([]);
   const [chartsLoading, setChartsLoading] = useState(true);
+  const [badges, setBadges] = useState([]);
+  const [badgesLoading, setBadgesLoading] = useState(true);
+  const [dueTasks, setDueTasks] = useState([]);
 
   useEffect(() => {
     fetchAnnouncements();
     fetchDashboardSummary();
+    fetchBadges();
+    fetchDueTasks();
   }, []);
+
+  const fetchDueTasks = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/tasks/due-soon`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDueTasks(data.tasks || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch due tasks:", err);
+    }
+  };
+
+  const fetchBadges = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/gamification/my-badges`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBadges(data.badges || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch badges:", err);
+    } finally {
+      setBadgesLoading(false);
+    }
+  };
 
   const fetchAnnouncements = async () => {
     try {
@@ -60,7 +96,7 @@ export default function StudentDashboard() {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await res.json();
-      if (data.success) setAnnouncements(data.announcements);
+      if (data.success) setAnnouncements(Array.isArray(data.announcements) ? data.announcements : []);
     } catch (err) {
       console.error("Failed to fetch announcements:", err);
     }
@@ -73,8 +109,8 @@ export default function StudentDashboard() {
       });
       const data = await res.json();
       if (data.success) {
-        setProgressData(data.progressData);
-        setTopicPerformance(data.topicPerformance);
+        setProgressData(Array.isArray(data.progressData) ? data.progressData : []);
+        setTopicPerformance(Array.isArray(data.topicPerformance) ? data.topicPerformance : []);
       }
     } catch (err) {
       console.error("Failed to fetch dashboard summary:", err);
@@ -87,9 +123,10 @@ export default function StudentDashboard() {
     { name: "View Tasks", icon: <CheckSquare size={24} />, route: "/student/tasks", desc: "View and submit assigned tasks", color: "blue" },
     { name: "Adaptive Learning", icon: <BookOpen size={24} />, route: "/student/adaptive-learning", desc: "Learn topics with AI assistance", color: "violet" },
     { name: "Project Based Learning", icon: <Puzzle size={24} />, route: "/student/project", desc: "Build real-world applications", color: "emerald" },
+    { name: "Leaderboard & Badges", icon: <Trophy size={24} />, route: "/student/leaderboard", desc: "Rankings, streaks & achievements", color: "amber" },
     { name: "Mark Attendance", icon: <Calendar size={24} />, route: "/student/attendance", desc: "Mark today's attendance & view history", color: "rose" },
     { name: "Study Materials", icon: <Library size={24} />, route: "/student/materials", desc: "Access uploaded notes & syllabus", color: "sky" },
-    { name: "My Progress", icon: <BarChart2 size={24} />, route: "/student/progress", desc: "Detailed analytics of your performance", color: "amber" },
+    { name: "My Progress", icon: <BarChart2 size={24} />, route: "/student/progress", desc: "Detailed analytics of your performance", color: "violet" },
   ];
 
   const actionColors = {
@@ -102,7 +139,7 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="flex-1 p-6 space-y-8 bg-gradient-to-br from-slate-50 to-slate-100 pb-20">
+    <div className="space-y-8 pb-16 min-w-0 max-w-full overflow-hidden">
       {/* QUICK ACTIONS HEADER */}
       <div className="flex justify-between items-center mb-4 px-1">
         <h2 className="text-xl font-semibold text-slate-900">Quick Actions</h2>
@@ -121,7 +158,7 @@ export default function StudentDashboard() {
             variants={quickActionItem}
             whileHover={{ y: -4, scale: 1.01 }}
             onClick={() => navigate(item.route)}
-            className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
+            className={`min-h-[160px] bg-white rounded-3xl p-6 shadow-sm border border-slate-100 ${actionColors[item.color].border} hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between cursor-pointer group relative overflow-hidden`}
           >
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -142,6 +179,70 @@ export default function StudentDashboard() {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* ---------------- UPCOMING DEADLINES ---------------- */}
+      {dueTasks.length > 0 && (
+        <div className="border border-amber-200 bg-amber-50/50 rounded-3xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-amber-500 text-white rounded-2xl shadow-sm">
+                <Clock size={22} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  Upcoming Deadlines
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900 font-bold">
+                    {dueTasks.length} Pending
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-500">Tasks requiring your attention soon</p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate("/student/tasks")}
+              className="text-xs font-bold text-amber-800 hover:text-amber-900 flex items-center gap-1 transition"
+            >
+              All Tasks <ChevronRight size={14} />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {dueTasks.slice(0, 3).map((task) => (
+              <div
+                key={task._id}
+                onClick={() => navigate("/student/tasks")}
+                className={`p-4 rounded-2xl border transition hover:shadow-md cursor-pointer bg-white ${
+                  task.isOverdue
+                    ? "border-rose-200 hover:border-rose-300"
+                    : "border-amber-200 hover:border-amber-300"
+                }`}
+              >
+                <div className="flex justify-between items-start gap-2 mb-2">
+                  <h3 className="font-bold text-slate-800 text-sm truncate" title={task.title}>
+                    {task.title}
+                  </h3>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                      task.isOverdue
+                        ? "bg-rose-100 text-rose-700 animate-pulse"
+                        : "bg-amber-100 text-amber-800"
+                    }`}
+                  >
+                    {task.isOverdue
+                      ? "Overdue"
+                      : task.diffHours <= 24
+                      ? `Due in ${task.diffHours}h`
+                      : `Due in ${Math.ceil(task.diffHours / 24)}d`}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 capitalize">
+                  {task.topic ? `Topic: ${task.topic}` : "Assignment"} • {new Date(task.dueDate).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ---------------- ANNOUNCEMENTS ---------------- */}
       <div className="border rounded-3xl p-8 space-y-6 bg-white shadow-sm">
@@ -184,6 +285,37 @@ export default function StudentDashboard() {
         </div>
       </div>
 
+      {/* ---------------- BADGES & ACHIEVEMENTS ---------------- */}
+      <div className="border rounded-3xl p-8 space-y-6 bg-white shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-amber-50 text-amber-600 rounded-2xl">
+              <Trophy size={22} />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-slate-800">Earned Badges & Achievements</h2>
+              <p className="text-xs text-slate-400 mt-0.5">Collect badges by completing tasks, maintaining streaks, and mastering topics</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate("/student/leaderboard")}
+            className="text-sm text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1 transition self-start sm:self-auto"
+          >
+            View Leaderboard <ChevronRight size={14} />
+          </button>
+        </div>
+
+        {badgesLoading ? (
+          <div className="flex gap-3 animate-pulse py-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-14 w-40 bg-slate-100 rounded-xl" />
+            ))}
+          </div>
+        ) : (
+          <BadgeDisplay badges={badges} />
+        )}
+      </div>
+
       {/* ---------------- ANALYTICS OVERVIEW ---------------- */}
       <div className="border rounded-3xl p-8 space-y-8 bg-white shadow-sm">
         <div className="flex justify-between items-center">
@@ -208,7 +340,7 @@ export default function StudentDashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Weekly Progress */}
-            <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+            <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition min-w-0 overflow-hidden">
               <h3 className="font-semibold mb-1 text-slate-800">Weekly Score Trend</h3>
               <p className="text-xs text-slate-400 mb-4">Average submission score per week</p>
               {progressData.length === 0 ? (
@@ -233,7 +365,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Topic Performance */}
-            <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition">
+            <div className="border rounded-2xl p-5 bg-white hover:shadow-sm transition min-w-0 overflow-hidden">
               <h3 className="font-semibold mb-1 text-slate-800">Topic Performance</h3>
               <p className="text-xs text-slate-400 mb-4">Average score per topic from task submissions</p>
               {topicPerformance.length === 0 ? (

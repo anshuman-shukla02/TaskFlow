@@ -2,13 +2,29 @@ import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import FacultyProjectReviewModal from "../components/FacultyProjectReviewModal";
 import {
   User, Clock, FileText, CheckCircle, XCircle, ChevronDown,
-  ChevronUp, Inbox, Search, Filter,
+  ChevronUp, Inbox, Search, Filter, Code, Copy, Check, Maximize2, Minimize2, ExternalLink, Sparkles, Download
 } from "lucide-react";
+import CommentThread from "../components/common/CommentThread";
+import { exportToCsv } from "../utils/csv";
 
 /* ── helpers ─────────────────────────────────────────────────── */
 const DIVISIONS = ["All", "A", "B", "C"];
+
+const formatMarkdownText = (text) => {
+  if (!text) return "";
+  let formatted = text.replace(/\r\n/g, "\n");
+  formatted = formatted
+    .replace(/([^\n])\s*(\d+\.\s*\*\*)/gi, "$1\n\n$2")
+    .replace(/([^\n])\s*(\b[a-z]\.\s*\*\*)/gi, "$1\n\n$2")
+    .replace(/([^\n])\s*(\d+\.\s+[A-Z])/g, "$1\n\n$2")
+    .replace(/([^\n])\s*(\b[a-z]\.\s+[A-Z])/g, "$1\n\n$2");
+  return formatted.trim();
+};
 
 const diffColor = {
   easy:   "bg-green-100 text-green-700",
@@ -29,8 +45,92 @@ const reviewBadge = {
   REJECTED: "bg-red-100 text-red-700",
 };
 
+/* ── CodeSubmissionViewer ────────────────────────────────────── */
+function CodeSubmissionViewer({ code, fileUrl }) {
+  const [copied, setCopied] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (!code && !fileUrl) {
+    return (
+      <div className="text-slate-400 text-xs italic bg-slate-50 rounded-2xl p-4 border border-dashed text-center">
+        No code content submitted.
+      </div>
+    );
+  }
+
+  const codeLines = (code || "").split("\n");
+
+  return (
+    <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden font-mono text-xs shadow-inner my-3">
+      {/* Code Header Bar */}
+      <div className="bg-slate-900 border-b border-slate-800 px-4 py-2 flex items-center justify-between text-slate-400">
+        <div className="flex items-center gap-2 text-[11px] font-bold text-slate-300">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+          <Code size={13} className="text-purple-400" />
+          <span>{code ? `Submitted Code / Pseudocode (${codeLines.length} lines)` : "Artifact View"}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {code && (
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(code);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold flex items-center gap-1.5 transition"
+            >
+              {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              <span>{copied ? "Copied!" : "Copy"}</span>
+            </button>
+          )}
+          {code && codeLines.length > 5 && (
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold flex items-center gap-1.5 transition"
+            >
+              {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
+              <span>{isExpanded ? "Collapse" : "Expand Code"}</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Code Viewer Body */}
+      {code && (
+        <div className={`p-4 overflow-auto font-mono text-xs leading-relaxed text-slate-200 transition-all ${isExpanded ? "max-h-[600px]" : "min-h-[140px] max-h-[280px]"}`}>
+          <div className="flex">
+            <div className="select-none text-slate-600 pr-3.5 text-right border-r border-slate-800 font-mono shrink-0">
+              {codeLines.map((_, i) => (
+                <div key={i}>{i + 1}</div>
+              ))}
+            </div>
+            <pre className="pl-3.5 whitespace-pre overflow-x-auto flex-1 font-mono text-slate-100 tab-size-2">
+              {code}
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {fileUrl && (
+        <div className="p-3 bg-slate-900 border-t border-slate-800 text-right">
+          <a
+            href={fileUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-purple-400 hover:text-purple-300 font-bold underline"
+          >
+            <ExternalLink size={13} /> Open Attached File / Deployment URL
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── SubmissionCard ──────────────────────────────────────────── */
-function SubmissionCard({ sub, onScored, onReviewed }) {
+function SubmissionCard({ sub, onScored, onReviewed, onOpenModal }) {
   const [expanded, setExpanded] = useState(false);
 
   const task    = sub.taskId || {};
@@ -57,9 +157,16 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
   const [savingQ, setSavingQ] = useState(false);
 
   /* project review state */
+  const [projScore, setProjScore] = useState(
+    sub.performanceScore ?? (sub.aiEvaluation?.suggestedScore ? sub.aiEvaluation.suggestedScore * 10 : 85)
+  );
   const [reviewing,    setReviewing]    = useState(null); // "APPROVED"|"REJECTED"
-  const [feedback,     setFeedback]     = useState("");
+  const [feedback,     setFeedback]     = useState(sub.reviewFeedback || sub.aiEvaluation?.suggestedFeedback || "");
   const [showFeedback, setShowFeedback] = useState(false);
+
+  /* plagiarism check state */
+  const [plagiarismResult, setPlagiarismResult] = useState(sub.plagiarismCheck || null);
+  const [checkingPlagiarism, setCheckingPlagiarism] = useState(false);
 
   /* ── plain mark save ── */
   const handleSaveMark = async () => {
@@ -122,13 +229,13 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
       const res = await fetch(`${API_URL}/api/submissions/${sub._id}/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
-        body: JSON.stringify({ status, feedback }),
+        body: JSON.stringify({ status, feedback, performanceScore: Number(projScore) || 0 }),
       });
       const data = await res.json();
       if (data.success) {
         onReviewed(sub._id, status, feedback);
+        if (onScored) onScored(sub._id, Number(projScore) || 0);
         setShowFeedback(false);
-        setFeedback("");
       } else {
         alert("Failed to save review: " + (data.message || "Unknown error"));
       }
@@ -235,14 +342,118 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                     {task.bloomLevel}
                   </span>
                 )}
-                {isProject && sub.milestoneId && (
+                {isProject && sub.milestoneId !== null && sub.milestoneId !== undefined && (
                   <span className="bg-purple-50 text-purple-600 font-semibold px-2.5 py-1 rounded-full">
-                    Phase {sub.milestoneId}
-                    {task.phases?.[Number(sub.milestoneId) - 1]?.milestone &&
-                      ` — ${task.phases[Number(sub.milestoneId) - 1].milestone}`}
+                    Phase {Number(sub.milestoneId) + 1}
+                    {task.phases?.[Number(sub.milestoneId)]?.milestone &&
+                      ` — ${task.phases[Number(sub.milestoneId)].milestone}`}
                   </span>
                 )}
               </div>
+
+              {/* ✨ AI Auto-Evaluation Banner (if present) */}
+              {sub.aiEvaluation && (
+                <div className="bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-100/70 p-4 rounded-2xl border border-purple-200 text-purple-950 flex flex-col gap-2 shadow-2xs">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-purple-900">
+                      <Sparkles size={15} className="text-amber-500 shrink-0 animate-pulse" />
+                      <span>✨ AI Recommended Grade:</span>
+                      <span className="px-2.5 py-0.5 rounded-md text-[11px] font-black bg-purple-200 text-purple-900 border border-purple-300">
+                        {sub.aiEvaluation.suggestedScore ?? 8} / 10
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sub.aiEvaluation.suggestedScore !== null) {
+                          setPlainScore(sub.aiEvaluation.suggestedScore);
+                          setProjScore(sub.aiEvaluation.suggestedScore * 10);
+                        }
+                        if (sub.aiEvaluation.suggestedFeedback) {
+                          setFeedback(sub.aiEvaluation.suggestedFeedback);
+                        }
+                        if (Array.isArray(sub.aiEvaluation.questionScores) && sub.aiEvaluation.questionScores.length > 0) {
+                          setQScores(sub.aiEvaluation.questionScores);
+                        }
+                      }}
+                      className="px-2.5 py-1 bg-purple-700 hover:bg-purple-800 text-white rounded-lg text-[10px] font-bold shadow-xs transition cursor-pointer"
+                    >
+                      Pre-fill AI Scores & Remarks
+                    </button>
+                  </div>
+                  {sub.aiEvaluation.suggestedFeedback && (
+                    <div className="text-xs text-slate-800 leading-relaxed font-sans prose prose-slate max-w-none">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({ children }) => <p className="text-xs text-slate-800 leading-relaxed mb-1 font-normal">{children}</p>,
+                          strong: ({ children }) => <strong className="font-extrabold text-purple-950 bg-purple-100/80 px-1 py-0.5 rounded text-[11px] border border-purple-200/80">{children}</strong>,
+                          li: ({ children }) => <li className="text-slate-800 text-xs leading-relaxed mb-0.5">{children}</li>
+                        }}
+                      >
+                        {formatMarkdownText(sub.aiEvaluation.suggestedFeedback)}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 🔍 Plagiarism Check Section */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  onClick={async () => {
+                    setCheckingPlagiarism(true);
+                    try {
+                      const res = await fetch(`${API_URL}/api/plagiarism/check/${sub._id}`, {
+                        method: "POST",
+                        headers: { Authorization: `Bearer ${getToken()}` },
+                      });
+                      const data = await res.json();
+                      if (data.success) setPlagiarismResult(data.result);
+                      else alert(data.message || "Check failed");
+                    } catch (err) {
+                      console.error(err);
+                      alert("Plagiarism check failed");
+                    } finally {
+                      setCheckingPlagiarism(false);
+                    }
+                  }}
+                  disabled={checkingPlagiarism}
+                  className="text-[11px] font-bold px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition disabled:opacity-50 flex items-center gap-1.5"
+                >
+                  {checkingPlagiarism ? (
+                    <><span className="animate-spin">⏳</span> Checking...</>
+                  ) : (
+                    <>🔍 Check Plagiarism</>
+                  )}
+                </button>
+
+                {plagiarismResult && plagiarismResult.checkedAt && (
+                  <div className={`flex items-center gap-2 text-[11px] font-bold px-3 py-1.5 rounded-lg border ${
+                    plagiarismResult.flagged
+                      ? "bg-red-50 text-red-700 border-red-200"
+                      : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  }`}>
+                    <span>{plagiarismResult.flagged ? "⚠️" : "✅"}</span>
+                    <span>{plagiarismResult.score}% similar</span>
+                    {plagiarismResult.matchedStudentName && plagiarismResult.flagged && (
+                      <span className="text-[10px] font-normal">— matched with {plagiarismResult.matchedStudentName}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {plagiarismResult && plagiarismResult.summary && plagiarismResult.checkedAt && (
+                <div className={`text-xs p-3 rounded-xl border ${
+                  plagiarismResult.flagged
+                    ? "bg-red-50/50 border-red-100 text-red-800"
+                    : "bg-slate-50 border-slate-100 text-slate-600"
+                }`}>
+                  <p className="font-bold text-[10px] uppercase tracking-wider mb-1 opacity-70">AI Analysis</p>
+                  <p className="leading-relaxed">{plagiarismResult.summary}</p>
+                </div>
+              )}
+
 
               {/* ════════════════════════════════════════════
                   TASK: QUESTION-BASED + HAS MARKS
@@ -346,34 +557,8 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                   ════════════════════════════════════════════ */}
               {isPlain && taskHasMarks && (
                 <div className="space-y-3">
-                  {/* Submission content */}
-                  {sub.code ? (
-                    <div 
-                      className="bg-slate-50 rounded-xl p-6 text-[15px] text-slate-700 max-h-64 overflow-y-auto border prose prose-sm max-w-none prose-slate"
-                      dangerouslySetInnerHTML={{ __html: sub.code }}
-                    />
-                  ) : (
-                    <div className="text-slate-400 text-sm italic bg-slate-50 rounded-xl p-4 border border-dashed">
-                      No text written by student.
-                    </div>
-                  )}
-
-                  {/* File attachment */}
-                  {sub.fileUrl && (
-                    <div>
-                      {sub.fileUrl.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
-                        <a href={sub.fileUrl} target="_blank" rel="noreferrer"
-                          className="inline-block border rounded-lg overflow-hidden hover:opacity-90 shadow-sm">
-                          <img src={sub.fileUrl} alt="Attachment" className="max-h-48 w-auto object-contain" />
-                        </a>
-                      ) : (
-                        <a href={sub.fileUrl} target="_blank" rel="noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl hover:bg-indigo-100 border border-indigo-100 font-medium text-sm transition">
-                          <FileText size={16} /> View Attached File
-                        </a>
-                      )}
-                    </div>
-                  )}
+                  {/* Code Submission Viewer */}
+                  <CodeSubmissionViewer code={sub.code} fileUrl={sub.fileUrl} />
 
                   {/* Mark input */}
                   <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl border border-indigo-100">
@@ -419,26 +604,7 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                   ════════════════════════════════════════════ */}
               {isPlain && !taskHasMarks && (
                 <div className="space-y-2">
-                  <div className="bg-slate-50 rounded-xl p-6 text-[15px] text-slate-700 max-h-40 overflow-y-auto border prose prose-sm max-w-none prose-slate">
-                    {sub.code ? (
-                      <div dangerouslySetInnerHTML={{ __html: sub.code }} />
-                    ) : (
-                      <span className="italic text-slate-400">No content submitted.</span>
-                    )}
-                  </div>
-                  {sub.fileUrl && (
-                    sub.fileUrl.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
-                      <a href={sub.fileUrl} target="_blank" rel="noreferrer"
-                        className="inline-block border rounded-lg overflow-hidden hover:opacity-90 shadow-sm">
-                        <img src={sub.fileUrl} alt="Attachment" className="max-h-40 w-auto object-contain" />
-                      </a>
-                    ) : (
-                      <a href={sub.fileUrl} target="_blank" rel="noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 font-medium text-sm transition">
-                        <FileText size={16} /> View Attached File
-                      </a>
-                    )
-                  )}
+                  <CodeSubmissionViewer code={sub.code} fileUrl={sub.fileUrl} />
                   <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-50 px-3 py-2 rounded-lg border border-dashed">
                     Practice task — no marks assigned
                   </div>
@@ -449,68 +615,138 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                   PROJECT MILESTONE
                   ════════════════════════════════════════════ */}
               {isProject && (
-                <div className="space-y-3">
-                  {sub.code && (
-                    <div 
-                      className="bg-slate-50 rounded-xl p-6 text-[15px] text-slate-700 max-h-64 overflow-y-auto border prose prose-sm max-w-none prose-slate"
-                      dangerouslySetInnerHTML={{ __html: sub.code }}
-                    />
-                  )}
-                  {sub.fileUrl && (
-                    <a href={sub.fileUrl} target="_blank" rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 border border-purple-100 font-medium text-sm transition">
-                      <FileText size={16} />
-                      {sub.fileUrl.includes("/uploads/") ? "View Attached PDF" : "Open Project Link"}
-                    </a>
-                  )}
+                <div className="space-y-4">
+                  {/* Code Submission Viewer */}
+                  <CodeSubmissionViewer code={sub.code} fileUrl={sub.fileUrl} />
+
+                  {/* Open Detailed Modal Button */}
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => onOpenModal && onOpenModal(sub)}
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-xs shadow-sm transition flex items-center gap-2 cursor-pointer"
+                    >
+                      <Sparkles size={15} />
+                      <span>Open Detailed Review Modal & AI Co-Pilot</span>
+                    </button>
+                  </div>
 
                   {/* Existing feedback */}
                   {sub.reviewFeedback && (
-                    <div className="p-3 bg-slate-50 rounded-xl border text-sm text-slate-600 italic">
-                      <span className="font-semibold not-italic text-slate-400 text-xs uppercase tracking-wider">Feedback: </span>
-                      {sub.reviewFeedback}
+                    <div className="p-4 bg-slate-50/90 rounded-2xl border border-slate-200 text-xs text-slate-800 space-y-1">
+                      <span className="font-extrabold text-slate-500 text-[10px] uppercase tracking-wider block mb-1">
+                        Faculty Feedback:
+                      </span>
+                      <div className="text-xs text-slate-800 leading-relaxed font-sans prose prose-slate max-w-none">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => <p className="text-xs text-slate-800 leading-relaxed mb-1.5 font-normal">{children}</p>,
+                            strong: ({ children }) => <strong className="font-extrabold text-purple-950 bg-purple-100/80 px-1 py-0.5 rounded text-[11px] border border-purple-200/80">{children}</strong>,
+                            li: ({ children }) => <li className="text-slate-800 text-xs leading-relaxed mb-1">{children}</li>
+                          }}
+                        >
+                          {formatMarkdownText(sub.reviewFeedback)}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   )}
 
-                  {/* Review actions — only when pending */}
+                  {/* Review actions & score inputs — only when pending */}
                   {sub.reviewStatus === "PENDING" && (
-                    <>
-                      {showFeedback && (
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
+                      {/* Score & Presets Row */}
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <label className="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">
+                            🏆 Award Score (0 - 100):
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number" min="0" max="100"
+                              value={projScore}
+                              onChange={e => setProjScore(Math.min(100, Math.max(0, Number(e.target.value) || 0)))}
+                              className="w-24 border border-slate-300 rounded-xl px-3 py-1.5 text-sm font-bold text-center bg-white focus:ring-2 focus:ring-purple-500/20"
+                            />
+                            <span className="text-xs text-slate-500 font-bold">/ 100</span>
+                          </div>
+                        </div>
+
+                        {/* Presets */}
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          <span className="text-[10px] font-bold text-slate-400">Presets:</span>
+                          {[60, 75, 85, 90, 100].map((s) => (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => setProjScore(s)}
+                              className={`px-2 py-0.5 text-[11px] font-bold rounded-lg border transition cursor-pointer ${
+                                projScore === s
+                                  ? "bg-purple-600 text-white border-purple-700"
+                                  : "bg-white text-slate-700 hover:bg-slate-100 border-slate-200"
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Feedback Textarea & AI insertion buttons */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
+                            💬 Reviewer Feedback:
+                          </label>
+                          <div className="flex items-center gap-2">
+                            {sub.aiEvaluation?.suggestedFeedback && (
+                              <button
+                                type="button"
+                                onClick={() => setFeedback(sub.aiEvaluation.suggestedFeedback)}
+                                className="text-[10px] font-bold text-purple-700 bg-purple-100 hover:bg-purple-200 border border-purple-200 px-2 py-0.5 rounded-lg transition flex items-center gap-1 cursor-pointer"
+                              >
+                                <Sparkles size={11} />
+                                <span>Insert AI Remarks</span>
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setFeedback("")}
+                              className="text-[10px] font-semibold text-slate-500 hover:text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-lg transition cursor-pointer"
+                            >
+                              Clear Field
+                            </button>
+                          </div>
+                        </div>
+
                         <textarea
                           value={feedback}
                           onChange={e => setFeedback(e.target.value)}
-                          placeholder="Optional feedback for the student…"
-                          rows={2}
-                          className="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                          placeholder="Enter custom manual feedback or click 'Insert AI Remarks'..."
+                          rows={3}
+                          className="w-full border border-slate-300 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500/20 resize-none bg-white leading-relaxed font-sans"
                         />
-                      )}
-                      <div className="flex gap-3 flex-wrap items-center">
-                        <button
-                          onClick={() => setShowFeedback(s => !s)}
-                          className="text-xs font-medium text-slate-500 hover:text-slate-700 transition underline underline-offset-2"
-                        >
-                          {showFeedback ? "Hide feedback" : "Add feedback"}
-                        </button>
-                        <div className="flex gap-3 ml-auto">
-                          <button
-                            onClick={() => handleReview("REJECTED")}
-                            disabled={!!reviewing}
-                            className="flex items-center gap-2 px-5 py-2.5 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 font-semibold text-sm transition disabled:opacity-60"
-                          >
-                            <XCircle size={16} />
-                            {reviewing === "REJECTED" ? "Rejecting…" : "Reject"}
-                          </button>
-                          <button
-                            onClick={() => handleReview("APPROVED")}
-                            disabled={!!reviewing}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm transition shadow-sm disabled:opacity-60"
-                          >
-                            <CheckCircle size={16} />
-                            {reviewing === "APPROVED" ? "Approving…" : "Approve"}
-                          </button>
-                        </div>
                       </div>
-                    </>
+
+                      <div className="flex gap-3 justify-end flex-wrap pt-1">
+                        <button
+                          onClick={() => handleReview("REJECTED")}
+                          disabled={!!reviewing}
+                          className="flex items-center gap-2 px-5 py-2.5 border border-rose-200 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-100 font-bold text-xs transition disabled:opacity-60 cursor-pointer"
+                        >
+                          <XCircle size={16} />
+                          {reviewing === "REJECTED" ? "Rejecting…" : "Request Revision (Reject)"}
+                        </button>
+                        <button
+                          onClick={() => handleReview("APPROVED")}
+                          disabled={!!reviewing}
+                          className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs transition shadow-sm disabled:opacity-60 cursor-pointer"
+                        >
+                          <CheckCircle size={16} />
+                          {reviewing === "APPROVED" ? "Approving…" : "Approve & Unlock"}
+                        </button>
+                      </div>
+                    </div>
                   )}
 
                   {/* Already reviewed */}
@@ -521,6 +757,15 @@ function SubmissionCard({ sub, onScored, onReviewed }) {
                   )}
                 </div>
               )}
+
+              {/* Discussion Thread */}
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <CommentThread
+                  taskId={task._id}
+                  submissionId={sub._id}
+                  compact
+                />
+              </div>
 
             </div>
           </motion.div>
@@ -602,6 +847,42 @@ export default function FacultySubmissions() {
     );
   };
 
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleExportCsv = () => {
+    if (visible.length === 0) {
+      alert("No submissions available to export for the selected filter.");
+      return;
+    }
+    const headers = [
+      "Student Name",
+      "Roll Number",
+      "Email",
+      "Division",
+      "Task Title",
+      "Type",
+      "Status",
+      "Score",
+      "AI Suggested Score",
+      "Submitted At",
+    ];
+    const rows = visible.map((s) => [
+      s.userId?.name || "N/A",
+      s.userId?.rollNumber || "N/A",
+      s.userId?.email || "N/A",
+      s.userId?.division || "N/A",
+      s.taskId?.title || "N/A",
+      tab === "project" ? "Project Milestone" : "Regular Task",
+      tab === "project" ? s.reviewStatus || "PENDING" : s.status || "submitted",
+      s.performanceScore != null ? `${s.performanceScore}/10` : "Not Scored",
+      s.aiEvaluation?.suggestedScore != null ? `${s.aiEvaluation.suggestedScore}/10` : "N/A",
+      s.createdAt ? new Date(s.createdAt).toLocaleString() : "N/A",
+    ]);
+    const filename = `submissions_${tab}_${division}_${new Date().toISOString().slice(0, 10)}.csv`;
+    exportToCsv(filename, headers, rows);
+  };
+
   return (
     <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-6 pb-16">
 
@@ -611,10 +892,20 @@ export default function FacultySubmissions() {
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Submissions Hub</h1>
           <p className="text-slate-400 text-sm mt-0.5">Review and grade all student submissions in one place.</p>
         </div>
-        <div className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
-          loading ? "bg-slate-100 text-slate-400" : "bg-indigo-50 text-indigo-600"
-        }`}>
-          {loading ? "Loading…" : `${visible.length} submission${visible.length !== 1 ? "s" : ""}`}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCsv}
+            disabled={visible.length === 0}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition disabled:opacity-40 disabled:cursor-not-allowed shadow-xs cursor-pointer"
+            title="Export filtered submissions to CSV"
+          >
+            <Download size={14} /> Export CSV
+          </button>
+          <div className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
+            loading ? "bg-slate-100 text-slate-400" : "bg-indigo-50 text-indigo-600"
+          }`}>
+            {loading ? "Loading…" : `${visible.length} submission${visible.length !== 1 ? "s" : ""}`}
+          </div>
         </div>
       </div>
 
@@ -718,10 +1009,32 @@ export default function FacultySubmissions() {
               sub={sub}
               onScored={handleScored}
               onReviewed={handleReviewed}
+              onOpenModal={(submission) => {
+                setSelectedSubmission(submission);
+                setIsModalOpen(true);
+              }}
             />
           ))}
         </div>
       ) : null}
+
+      {/* Faculty Project Review Modal */}
+      {selectedSubmission && (
+        <FacultyProjectReviewModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedSubmission(null);
+          }}
+          submission={selectedSubmission}
+          onReviewComplete={(updatedSub) => {
+            if (updatedSub) {
+              handleReviewed(updatedSub._id, updatedSub.reviewStatus, updatedSub.reviewFeedback);
+              handleScored(updatedSub._id, updatedSub.performanceScore);
+            }
+          }}
+        />
+      )}
 
     </div>
   );

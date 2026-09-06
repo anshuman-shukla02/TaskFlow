@@ -4,9 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   X, User, Clock, FileText, Trash2,
-  CheckCircle, BarChart2,
+  CheckCircle, BarChart2, Sparkles, Bot, AlertTriangle
 } from "lucide-react";
 import ConfirmationModal from "../components/common/ConfirmationModal";
+import FacultyTaskGeneratorModal from "../components/FacultyTaskGeneratorModal";
+import FacultyProjectReviewModal from "../components/FacultyProjectReviewModal";
 
 /* ════════════════════════════════════════════════════════
    FacultyTasks — main page component
@@ -22,6 +24,12 @@ export default function FacultyTasks() {
 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // AI Generator Modal
+  const [isAiGeneratorOpen, setIsAiGeneratorOpen] = useState(false);
+
+  // Project Milestone Review Modal
+  const [selectedProjectSub, setSelectedProjectSub] = useState(null);
 
   // Question-based grading
   const [scoreDrafts, setScoreDrafts] = useState({});
@@ -178,16 +186,28 @@ export default function FacultyTasks() {
   return (
     <div className="p-8 space-y-8 relative">
       {/* Header */}
-      <div className="flex justify-between items-end">
-        <p className="text-slate-500 mt-1">
-          Total tasks created: <span className="font-medium">{tasks.length}</span>
-        </p>
-        <button
-          onClick={() => navigate("/faculty/tasks/create")}
-          className="bg-black text-white px-6 py-2 rounded-full font-medium hover:bg-slate-800 transition"
-        >
-          + Create New Task
-        </button>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Faculty Tasks & Projects</h1>
+          <p className="text-slate-500 mt-1">
+            Total tasks created: <span className="font-bold text-slate-800">{tasks.length}</span>
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsAiGeneratorOpen(true)}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-5 py-2.5 rounded-full font-bold text-sm shadow-md transition flex items-center gap-2"
+          >
+            <Sparkles size={16} />
+            <span>✨ AI Generate Task</span>
+          </button>
+          <button
+            onClick={() => navigate("/faculty/tasks/create")}
+            className="bg-slate-900 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-slate-800 transition shadow-sm"
+          >
+            + Create New Task
+          </button>
+        </div>
       </div>
 
       {/* Task List */}
@@ -500,6 +520,23 @@ export default function FacultyTasks() {
           </div>
         </div>
       )}
+
+      {/* AI TASK & CAPSTONE GENERATOR MODAL */}
+      <FacultyTaskGeneratorModal
+        isOpen={isAiGeneratorOpen}
+        onClose={() => setIsAiGeneratorOpen(false)}
+        onTaskCreated={() => fetchTasks()}
+      />
+
+      {/* PROJECT MILESTONE REVIEW MODAL */}
+      <FacultyProjectReviewModal
+        isOpen={!!selectedProjectSub}
+        submission={selectedProjectSub}
+        onClose={() => setSelectedProjectSub(null)}
+        onReviewComplete={() => {
+          if (selectedTaskForReview) handleReviewClick(selectedTaskForReview);
+        }}
+      />
 
       {/* DELETE MODAL */}
       <ConfirmationModal

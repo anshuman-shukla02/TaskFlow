@@ -30,7 +30,8 @@ router.get("/faculty/class-performance", auth, async (req, res) => {
       const week = getWeekNumber(s.createdAt);
       const key = `W${week}`;
       if (!weeklyMap[key]) weeklyMap[key] = { total: 0, count: 0 };
-      weeklyMap[key].total += s.performanceScore;
+      const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+      weeklyMap[key].total += sc;
       weeklyMap[key].count++;
     });
 
@@ -46,7 +47,8 @@ router.get("/faculty/class-performance", auth, async (req, res) => {
     submissions.forEach((s) => {
       if (!s.topic) return;
       if (!topicMap[s.topic]) topicMap[s.topic] = { total: 0, count: 0 };
-      topicMap[s.topic].total += s.performanceScore;
+      const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+      topicMap[s.topic].total += sc;
       topicMap[s.topic].count++;
     });
 
@@ -61,7 +63,8 @@ router.get("/faculty/class-performance", auth, async (req, res) => {
       // We need Task info for difficulty — use bloom levels as a proxy
       const level = s.bloomLevel || "REMEMBER";
       if (!diffMap[level]) diffMap[level] = { total: 0, count: 0 };
-      diffMap[level].total += s.performanceScore;
+      const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+      diffMap[level].total += sc;
       diffMap[level].count++;
     });
 
@@ -101,7 +104,7 @@ router.post("/faculty/generate-ai-report", auth, async (req, res) => {
     const totalSubmissions = submissions.length;
     const avgScore =
       submissions.length > 0
-        ? Math.round(submissions.reduce((a, s) => a + s.performanceScore, 0) / submissions.length)
+        ? Math.round(submissions.reduce((a, s) => a + (s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore), 0) / submissions.length)
         : 0;
 
     // Topic breakdown
@@ -109,7 +112,8 @@ router.post("/faculty/generate-ai-report", auth, async (req, res) => {
     submissions.forEach((s) => {
       if (!s.topic) return;
       if (!topicMap[s.topic]) topicMap[s.topic] = { total: 0, count: 0 };
-      topicMap[s.topic].total += s.performanceScore;
+      const sc = s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore;
+      topicMap[s.topic].total += sc;
       topicMap[s.topic].count++;
     });
 
@@ -157,7 +161,7 @@ Use markdown formatting with headers, bullet points, and emphasis.`;
 
       const { GoogleGenerativeAI } = require("@google/generative-ai");
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
       const result = await model.generateContent(prompt);
       report = result.response.text();
     } catch (aiErr) {
@@ -224,7 +228,7 @@ router.get("/faculty/students-overview", auth, async (req, res) => {
       const avgPerformance =
         submissions.length > 0
           ? Math.round(
-              submissions.reduce((a, s) => a + s.performanceScore, 0) / submissions.length
+              submissions.reduce((a, s) => a + (s.performanceScore <= 10 ? s.performanceScore * 10 : s.performanceScore), 0) / submissions.length
             )
           : 0;
 
@@ -266,9 +270,15 @@ router.get("/faculty/student-growth/:id", auth, async (req, res) => {
     const studentId = req.params.id;
     const history = await Submission.find({ userId: studentId })
       .sort({ createdAt: 1 })
-      .select("performanceScore topic createdAt");
+      .select("performanceScore topic createdAt")
+      .lean();
 
-    res.json({ success: true, history });
+    const normalizedHistory = history.map((item) => ({
+      ...item,
+      performanceScore: item.performanceScore <= 10 ? item.performanceScore * 10 : item.performanceScore,
+    }));
+
+    res.json({ success: true, history: normalizedHistory });
   } catch (err) {
     console.error("Student growth error:", err);
     res.status(500).json({ success: false, message: "Server error" });

@@ -1,7 +1,7 @@
 import { API_URL } from "../utils/api";
 import { useState, useEffect } from "react";
 import { getToken } from "../utils/auth";
-import { Upload, FileText, Trash2, File, X } from "lucide-react";
+import { Upload, FileText, Trash2, File, X, Download } from "lucide-react";
 import ConfirmationModal from "../components/common/ConfirmationModal";
 
 const FILE_ICONS = {
@@ -278,12 +278,26 @@ export default function FacultyMaterials() {
                   <span>{m.originalName}</span>
                   <span>{formatFileSize(m.fileSize)}</span>
                 </div>
-                <div className="text-xs text-clay-muted mt-1">
-                  {new Date(m.createdAt).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-200/60">
+                  <div className="text-xs text-clay-muted">
+                    {new Date(m.createdAt).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </div>
+                  {m.fileUrl && (
+                    <a
+                      href={m.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-800 transition"
+                    >
+                      <Download size={13} />
+                      <span>Download</span>
+                    </a>
+                  )}
                 </div>
               </div>
             ))}

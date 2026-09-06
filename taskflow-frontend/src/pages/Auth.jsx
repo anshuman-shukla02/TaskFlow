@@ -1,7 +1,7 @@
 import { API_URL } from "../utils/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Sparkles, GraduationCap, Briefcase, Copy, Check, ShieldAlert } from "lucide-react";
+import { Eye, EyeOff, Sparkles, GraduationCap, Briefcase, Shield, Copy, Check, ShieldAlert } from "lucide-react";
 import "../styles/auth-3d.css";
 
 export default function Auth() {
@@ -387,6 +387,36 @@ export default function Auth() {
                 <button
                   type="button"
                   onClick={() => handleAutoFill("faculty", "faculty.demo@taskflow.com", "Faculty@123")}
+                  className="btn-fill-demo"
+                >
+                  Auto Fill
+                </button>
+              </div>
+            </div>
+
+            {/* Admin Row */}
+            <div className="p-2.5 bg-white/40 rounded-xl border border-white/50 backdrop-blur-sm flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 flex items-center gap-1 flex-shrink-0 w-20 justify-center">
+                  <Shield className="w-3 h-3" /> Admin
+                </span>
+                <div className="text-[11px] text-slate-600 font-mono truncate flex flex-col">
+                  <span className="truncate">admin@taskflow.com</span>
+                  <span className="text-[9px] text-slate-400 font-semibold">Pass: Admin@123</span>
+                </div>
+              </div>
+              <div className="flex gap-1.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleCopy("admin@taskflow.com", "adm-email")}
+                  className="hover:text-slate-900 p-1 bg-white/60 rounded border border-slate-200/50 transition"
+                  title="Copy Email"
+                >
+                  {copiedRole === "adm-email" ? <Check className="w-3 h-3 text-green-600" /> : <Copy className="w-3 h-3 text-slate-400" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAutoFill("admin", "admin@taskflow.com", "Admin@123")}
                   className="btn-fill-demo"
                 >
                   Auto Fill

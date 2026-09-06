@@ -225,4 +225,69 @@ router.get("/active", auth, async (req, res) => {
   }
 });
 
+// GET /api/attendance/daily-sheet — faculty exports full attendance roster for a date & division
+router.get("/daily-sheet", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "faculty" && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const { division, date } = req.query;
+
+    const queryDate = date ? new Date(date) : new Date();
+    const dayStart = new Date(queryDate);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(queryDate);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const studentFilter = { role: "student", status: "approved" };
+    if (division && division !== "All") {
+      studentFilter.division = division;
+    }
+
+    const students = await User.find(studentFilter)
+      .select("name email rollNumber division")
+      .sort({ division: 1, rollNumber: 1 })
+      .lean();
+
+    const studentIds = students.map((s) => s._id);
+
+    const attendances = await Attendance.find({
+      studentId: { $in: studentIds },
+      date: { $gte: dayStart, $lte: dayEnd },
+    }).lean();
+
+    const attendanceMap = {};
+    attendances.forEach((a) => {
+      attendanceMap[a.studentId.toString()] = a;
+    });
+
+    const roster = students.map((s) => {
+      const record = attendanceMap[s._id.toString()];
+      return {
+        _id: s._id,
+        name: s.name,
+        rollNumber: s.rollNumber || "N/A",
+        division: s.division || "N/A",
+        email: s.email,
+        status: record ? "Present" : "Absent",
+        distance: record?.distance != null ? `${record.distance}m` : "-",
+        markedAt: record?.date ? new Date(record.date).toLocaleTimeString() : "-",
+      };
+    });
+
+    res.json({
+      success: true,
+      date: dayStart.toISOString().slice(0, 10),
+      division: division || "All",
+      totalStudents: students.length,
+      presentCount: attendances.length,
+      roster,
+    });
+  } catch (err) {
+    console.error("Daily attendance sheet error:", err);
+    res.status(500).json({ message: "Failed to generate attendance sheet" });
+  }
+});
+
 module.exports = router;

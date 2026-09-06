@@ -30,3 +30,7 @@ dist-ssr
 # Local admin files
 admin_login.json
 admin_token.txt
+
+# Uploads
+uploads/
+**/uploads/*

@@ -48,6 +48,9 @@ app.use("/api/materials", require("./routes/studyMaterialRoutes"));
 app.use("/api/compiler", require("./routes/compilerRoutes"));
 app.use("/api/adaptive", require("./routes/adaptiveRoutes"));
 app.use("/api/file", require("./routes/fileRoutes"));
+app.use("/api/comments", require("./routes/commentRoutes"));
+app.use("/api/plagiarism", require("./routes/plagiarismRoutes"));
+app.use("/api/gamification", require("./routes/gamificationRoutes"));
 
 
 // Health check

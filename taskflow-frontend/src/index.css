@@ -2,11 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.tab-size-2 {
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+/* Ensure code blocks in prose wrap nicely and do not overflow containers */
+.prose pre {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 1.25rem !important;
+  border-radius: 1rem !important;
+  overflow-x: auto !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  border: 1px solid #1e293b !important;
+}
+
+.prose code {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.prose pre code {
+  color: inherit !important;
+  font-weight: inherit !important;
+  background: transparent !important;
+  padding: 0 !important;
 }
 
 /* Custom Quill Editor Styles for Notepad feel */
@@ -64,4 +102,41 @@ body {
 }
 .custom-quill-wrapper .ql-toolbar .ql-picker:hover {
   background-color: #e2e8f0;
+}
+
+/* ─── Exam-view Quill editor (fills flex parent in split pane) ─── */
+.exam-quill-container .quill {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  height: 100% !important;
+}
+.exam-quill-container .ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 10px 16px !important;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+.exam-quill-container .ql-container {
+  border: none !important;
+  font-family: inherit !important;
+  font-size: 0.9375rem !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden;
+}
+.exam-quill-container .ql-editor {
+  padding: 20px 24px 40px 24px !important;
+  flex: 1 !important;
+  line-height: 1.75;
+  color: #1e293b;
+  overflow-y: auto;
+  min-height: 200px;
+}
+.exam-quill-container .ql-editor.ql-blank::before {
+  left: 24px !important;
+  font-style: normal !important;
+  color: #94a3b8 !important;
 }

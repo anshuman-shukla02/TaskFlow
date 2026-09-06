@@ -1,12 +1,16 @@
 import { API_URL } from "../utils/api";
 import { getToken } from "../utils/auth";
 import { useState, useEffect } from "react";
-import { Users, MapPin, Play, Square, Loader2 } from "lucide-react";
+import { Users, MapPin, Play, Square, Loader2, Download, Calendar, Filter } from "lucide-react";
+import { exportToCsv } from "../utils/csv";
 
 export default function FacultyAttendance() {
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(false);
     const [stats, setStats] = useState({ totalStudents: 0, presentToday: 0 });
+    const [selectedDiv, setSelectedDiv] = useState("All");
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+    const [exporting, setExporting] = useState(false);
 
     useEffect(() => {
         fetchStats();
@@ -96,10 +100,57 @@ export default function FacultyAttendance() {
         }
     };
 
+    const handleExportAttendanceCsv = async () => {
+        try {
+            setExporting(true);
+            const res = await fetch(`${API_URL}/api/attendance/daily-sheet?division=${selectedDiv}&date=${selectedDate}`, {
+                headers: { Authorization: `Bearer ${getToken()}` },
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert(data.message || "Failed to fetch attendance data");
+                return;
+            }
+
+            if (!data.roster || data.roster.length === 0) {
+                alert("No student records found for the selected filter.");
+                return;
+            }
+
+            const headers = [
+                "Roll Number",
+                "Student Name",
+                "Division",
+                "Email",
+                "Status",
+                "Distance from Faculty",
+                "Marked Time",
+            ];
+
+            const rows = data.roster.map((r) => [
+                r.rollNumber,
+                r.name,
+                r.division,
+                r.email,
+                r.status,
+                r.distance,
+                r.markedAt,
+            ]);
+
+            const filename = `attendance_${selectedDiv}_${selectedDate}.csv`;
+            exportToCsv(filename, headers, rows);
+        } catch (err) {
+            console.error("Export attendance error:", err);
+            alert("Error exporting attendance sheet");
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
-        <div className="p-8 max-w-4xl mx-auto">
+        <div className="p-8 max-w-4xl mx-auto space-y-8">
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm  flex items-center gap-4">
                     <div className="p-3 bg-blue-100 text-purple-600 rounded-xl">
                         <Users size={24} />
@@ -121,7 +172,7 @@ export default function FacultyAttendance() {
             </div>
 
             {/* Control Panel */}
-            <div className="bg-white rounded-3xl shadow-lg  p-8 text-center">
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 text-center">
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-clay-muted">
                     <MapPin size={32} />
                 </div>
@@ -154,6 +205,68 @@ export default function FacultyAttendance() {
                         Start Session
                     </button>
                 )}
+            </div>
+
+            {/* Attendance Export & Reports Panel */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <Download size={20} className="text-emerald-600" /> Export Attendance Records
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-1">
+                            Generate and download complete class attendance sheets (Present & Absent) in CSV format.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Division
+                        </label>
+                        <select
+                            value={selectedDiv}
+                            onChange={(e) => setSelectedDiv(e.target.value)}
+                            className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                        >
+                            <option value="All">All Divisions</option>
+                            <option value="A">Division A</option>
+                            <option value="B">Division B</option>
+                            <option value="C">Division C</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Attendance Date
+                        </label>
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                        />
+                    </div>
+
+                    <div>
+                        <button
+                            onClick={handleExportAttendanceCsv}
+                            disabled={exporting}
+                            className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-sm disabled:opacity-50 cursor-pointer"
+                        >
+                            {exporting ? (
+                                <>
+                                    <Loader2 size={16} className="animate-spin" /> Exporting…
+                                </>
+                            ) : (
+                                <>
+                                    <Download size={16} /> Download CSV
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );

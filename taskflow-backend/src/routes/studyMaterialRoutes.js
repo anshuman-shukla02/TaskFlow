@@ -5,6 +5,7 @@ const fs = require("fs");
 const auth = require("../middleware/auth");
 const StudyMaterial = require("../models/StudyMaterial");
 const MaterialChat = require("../models/MaterialChat");
+const StudyMaterialChatSession = require("../models/StudyMaterialChatSession");
 const { uploadToS3 } = require("../utils/s3Storage");
 const { GetObjectCommand, S3Client } = require("@aws-sdk/client-s3");
 
@@ -204,47 +205,79 @@ async function streamToBuffer(stream) {
   });
 }
 
-// Extract text from file (Disk or S3)
+// Extract text from file (Disk, S3, or Remote HTTP)
 async function extractTextFromFile(material) {
   let dataBuffer;
+  const fileUrl = material.fileUrl || "";
 
-  if (material.fileUrl.includes("amazonaws.com")) {
+  // 1. Check if S3 URL (starts with s3:// or contains amazonaws.com)
+  if (fileUrl.startsWith("s3://") || fileUrl.includes("amazonaws.com")) {
+    let bucket = process.env.S3_BUCKET_NAME || "taskflow-assets-zephyr";
+    let key;
+
+    if (fileUrl.startsWith("s3://")) {
+      const parts = fileUrl.substring(5).split("/");
+      bucket = parts[0] || bucket;
+      key = parts.slice(1).join("/");
+    } else {
+      const urlParts = new URL(fileUrl);
+      bucket = urlParts.hostname.split(".")[0];
+      key = urlParts.pathname.substring(1);
+    }
+
     const s3Client = new S3Client({
-      region: process.env.AWS_REGION || "us-east-1",
+      region: process.env.AWS_REGION || "ap-south-1",
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     });
 
-    const urlParts = new URL(material.fileUrl);
-    const bucket = urlParts.hostname.split(".")[0];
-    const key = urlParts.pathname.substring(1);
-
     const command = new GetObjectCommand({ Bucket: bucket, Key: key });
     const response = await s3Client.send(command);
     dataBuffer = await streamToBuffer(response.Body);
   } else {
-    // Local file
-    const filename = material.fileUrl.split("/").pop();
+    // 2. Check local disk upload directory
+    const filename = fileUrl.split("/").pop().split("?")[0];
     const filePath = path.join(__dirname, "../uploads/materials", filename);
-    if (!fs.existsSync(filePath)) {
-      throw new Error("File not found on server");
+
+    if (fs.existsSync(filePath)) {
+      dataBuffer = fs.readFileSync(filePath);
+    } else if (fileUrl.startsWith("http://") || fileUrl.startsWith("https://")) {
+      // 3. Fallback: Download via axios if it's a remote HTTP file
+      const axios = require("axios");
+      const httpRes = await axios.get(fileUrl, { responseType: "arraybuffer" });
+      dataBuffer = Buffer.from(httpRes.data);
+    } else {
+      throw new Error(`File not found on server or storage: ${filename}`);
     }
-    dataBuffer = fs.readFileSync(filePath);
   }
 
-  if (material.fileType === "txt") {
+  const ext = (material.fileType || path.extname(material.originalName || "").replace(".", "")).toLowerCase();
+
+  if (ext === "txt") {
     return dataBuffer.toString("utf-8");
   }
 
-  if (material.fileType === "pdf") {
+  if (ext === "pdf") {
     const pdfParse = require("pdf-parse");
     const data = await pdfParse(dataBuffer);
     return data.text;
   }
 
-  // PPT, DOC etc
+  if (["ppt", "pptx", "doc", "docx", "xls", "xlsx", "ods", "odt"].includes(ext)) {
+    try {
+      const { parseOffice } = require("officeparser");
+      const text = await parseOffice(dataBuffer, { fileType: ext });
+      if (text && text.trim().length > 0) {
+        return text;
+      }
+    } catch (officeErr) {
+      console.warn("OfficeParser extraction warning:", officeErr.message);
+    }
+  }
+
+  // Fallback string extraction for all other formats
   return dataBuffer.toString("utf-8").replace(/[^\x20-\x7E\n\r\t]/g, " ").replace(/\s+/g, " ").trim();
 }
 
@@ -305,7 +338,7 @@ router.post("/:id/ai-query", auth, async (req, res) => {
 
     const { GoogleGenerativeAI } = require("@google/generative-ai");
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const result = await model.generateContent(fullPrompt);
     const responseText = result.response.text();
@@ -329,4 +362,155 @@ router.post("/:id/ai-query", auth, async (req, res) => {
   }
 });
 
+// ────────────────────────── CONVERSATIONAL CHAT ENDPOINTS ──────────────────────────
+
+// GET /api/materials/:id/conversation — retrieve chat history
+router.get("/:id/conversation", auth, async (req, res) => {
+  try {
+    let session = await StudyMaterialChatSession.findOne({
+      student: req.user.id,
+      material: req.params.id,
+    });
+
+    if (!session) {
+      session = await StudyMaterialChatSession.create({
+        student: req.user.id,
+        material: req.params.id,
+        messages: [],
+      });
+    }
+
+    res.json({ success: true, messages: session.messages });
+  } catch (err) {
+    console.error("Get conversation error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST /api/materials/:id/chat — send message and get context-aware reply
+router.post("/:id/chat", auth, async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
+    const material = await StudyMaterial.findById(req.params.id);
+    if (!material) return res.status(404).json({ message: "Material not found" });
+
+    // Find or create session
+    let session = await StudyMaterialChatSession.findOne({
+      student: req.user.id,
+      material: req.params.id,
+    });
+
+    if (!session) {
+      session = new StudyMaterialChatSession({
+        student: req.user.id,
+        material: req.params.id,
+        messages: [],
+      });
+    }
+
+    // Extract text
+    let fileText;
+    try {
+      fileText = await extractTextFromFile(material);
+    } catch (extractErr) {
+      console.error("Text extraction error:", extractErr);
+      return res.status(400).json({ message: "Could not extract text from document: " + extractErr.message });
+    }
+
+    const truncatedText = (fileText || "").substring(0, 30000);
+
+    // Build Gemini history (limit to last 15 messages to stay within token sizes)
+    const maxHistoryMessages = session.messages.slice(-15);
+    const history = maxHistoryMessages.map((m) => ({
+      role: m.role === "user" ? "user" : "model",
+      parts: [{ text: m.content }],
+    }));
+
+    const systemInstruction = `You are an expert computer science tutor and study assistant.
+You are helping a student understand the following study material:
+--- STUDY MATERIAL START ---
+Title: ${material.title}
+Subject: ${material.subject || "Not specified"}
+
+${truncatedText}
+--- STUDY MATERIAL END ---
+
+Instructions:
+1. Provide accurate, clear, and educational answers based on the study material.
+2. If the user asks general questions about the topics in the material, explain them clearly using standard computer science concepts.
+3. If the user asks questions that are completely unrelated to the study material or computer science, politely steer them back to studying.
+4. Use rich markdown formatting (bold, code snippets, lists, tables) in your responses to make them easy to read.`;
+
+    let responseText;
+    const hasKey = process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "mock_key_for_now";
+    
+    if (!hasKey) {
+      responseText = `**[MOCK MODE: Gemini API key not configured]**\n\nI received your query: *"${message}"*.\n\nI parsed **${truncatedText.length}** characters from the document *"${material.originalName}"*.\n\nTo get full AI responses, please set a valid \`GEMINI_API_KEY\` in your \`.env\` file.`;
+    } else {
+      const candidateModels = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash"];
+      let chatSuccess = false;
+      let lastChatErr = null;
+
+      for (const mName of candidateModels) {
+        try {
+          const { GoogleGenerativeAI } = require("@google/generative-ai");
+          const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+          const model = genAI.getGenerativeModel({
+            model: mName,
+            systemInstruction: systemInstruction,
+          });
+
+          const chat = model.startChat({ history });
+          const result = await chat.sendMessage(message);
+          responseText = result.response.text();
+          chatSuccess = true;
+          break;
+        } catch (geminiError) {
+          lastChatErr = geminiError;
+          console.warn(`[Material Chat] Model ${mName} failed:`, geminiError.message);
+        }
+      }
+
+      if (!chatSuccess) {
+        console.warn("All Gemini models failed for material chat. Reason:", lastChatErr?.message);
+        responseText = `**[FALLBACK MODE: Gemini API rate limited / overloaded]**\n\nYour query: *"${message}"* was received successfully.\n\nHowever, the Gemini API is currently experiencing heavy traffic or quota exhaustion.\n\nHere is a summary based on your document:\n- Document: **${material.title}**\n- Character Count parsed: **${truncatedText.length} characters**\n\nPlease wait a few moments and try your query again.`;
+      }
+    }
+
+    // Append to messages in DB
+    session.messages.push({ role: "user", content: message });
+    session.messages.push({ role: "model", content: responseText });
+    await session.save();
+
+    res.json({
+      success: true,
+      userMessage: session.messages[session.messages.length - 2],
+      modelMessage: session.messages[session.messages.length - 1],
+    });
+  } catch (err) {
+    console.error("Chat response error:", err);
+    res.status(500).json({ message: "Failed to get AI response: " + (err.message || "Server error") });
+  }
+});
+
+// POST /api/materials/:id/chat/clear — reset chat thread
+router.post("/:id/chat/clear", auth, async (req, res) => {
+  try {
+    await StudyMaterialChatSession.findOneAndDelete({
+      student: req.user.id,
+      material: req.params.id,
+    });
+
+    res.json({ success: true, message: "Chat history cleared" });
+  } catch (err) {
+    console.error("Clear chat error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.extractTextFromFile = extractTextFromFile;
 module.exports = router;
